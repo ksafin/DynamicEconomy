@@ -1,0 +1,77 @@
+# This file stores information for all types of purchase-able items.
+# These properties are automatically updated, but feel free to change them at your whim.
+
+# Original prices based around the "Gold Standard" ie; Gold Ingot is 300g, all other prices based on 
+# their value in relation to a Gold Ingot.
+
+# Some blocks are commented out due to the fact that they aren't normally attained without spawning.
+# Their values are not set, but feel free to enable them and set their values.
+
+STONE:
+  velocity: .01
+  id: 1
+  price: .5
+  priceFloor: .01
+  priceCeiling: 1
+  description: 'A Smooth Stone'
+  
+# GRASS:
+#   velocity: .01
+#   id: 2
+#   price: .5
+#   priceFloor: .01
+#   priceCeiling: 1
+#   description: 'A Smooth Stone'
+
+DIRT:
+  velocity: .001
+  id: 3
+  price: .02
+  priceFloor: .001
+  priceCeiling: .3
+  description: 'Dirt dug from the crust of the world'
+  
+COBBLESTONE:
+  velocity: .01
+  id: 4
+  price: .1
+  priceFloor: .01
+  priceCeiling: .5
+  description: 'Un-refined rock'
+
+PLANK:
+  velocity: .01
+  id: 5
+  price: .2
+  priceFloor: .01
+  priceCeiling: .4
+  description: 'Processed wood. Ready for construction!'
+
+SAPLING:
+  velocity: .01
+  id: 6
+  price: .2
+  priceFloor: .01
+  priceCeiling: .45
+  description: 'A small plant, able to become a flourishing tree.'
+    
+# BEDROCK:
+#   velocity: .01
+#   id: 7
+#   price: .5
+#   priceFloor: .01
+#   priceCeiling: 1
+#   description: 'A Smooth Stone'
+
+
+SAND:
+  velocity: .001
+  id: 12
+  price: .04
+  priceFloor: .001
+  priceCeiling: .3
+  description: 'Found on beaches!'
+
+
+    
+---
