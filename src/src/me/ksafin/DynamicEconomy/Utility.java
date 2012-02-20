@@ -40,6 +40,18 @@ public class Utility {
 		}
 		return intCoords;
 	}
+	
+	public static String encodeCoordinates(int[] coordsArray) {
+		String coords = "";
+		for (int x =0; x < 3; x++) {
+			if (x < 2) {
+			   coords += coordsArray[x] + " ";
+			} else {
+			   coords += coordsArray[x];
+			}
+		}
+		return coords;
+	}
 
 	public void checkLog() {
 		

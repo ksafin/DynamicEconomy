@@ -220,6 +220,11 @@ public class DynamicEconomy extends JavaPlugin {
             getCommand("curtaxes").setExecutor(commandExec);
             getCommand("settax").setExecutor(commandExec);
             getCommand("shopregion").setExecutor(commandExec);
+            getCommand("removeshopregion").setExecutor(commandExec);
+            getCommand("expandreg").setExecutor(commandExec);
+            getCommand("contractreg").setExecutor(commandExec);
+            getCommand("shopregionwand").setExecutor(commandExec);
+            getCommand("curregion").setExecutor(commandExec);
             
             if (altCommands) {
             	getCommand("debuy").setExecutor(commandExec);

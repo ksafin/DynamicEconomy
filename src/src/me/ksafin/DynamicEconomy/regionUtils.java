@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import couk.Adamki11s.Extras.Colour.ExtrasColour;
 
@@ -130,6 +132,7 @@ public class regionUtils {
 			regionFileConfig.set(zMinStr, zMin);
 			
 			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Region &f" + regionName + "&2 created!");
+			Utility.writeToLog(player.getName() + " created region '" + regionName + "'");
 			DynamicEconomy.selectedCorners.remove(name);
 			
 			try {
@@ -186,6 +189,356 @@ public class regionUtils {
 		}
 		return false;
 		
+	}
+	
+	public static boolean expandRegion(Player player, String[] args) {
+		String stringPlay = player.getName();
+		if ((args.length != 2) && (args.length != 1)){
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wrong Command Usage. &f/expandreg [north|south|east|west|up|down|vert] (amount)");
+			 Utility.writeToLog(stringPlay + " incorrectly called /expandreg");
+			return false;
+		} else {
+			String dir = "";
+			int amt = 0;
+			try {
+				dir = args[0];
+				
+				if (!(dir.equalsIgnoreCase("vert"))) {
+					amt = Integer.parseInt(args[1]);
+				}
+				
+			} catch (Exception e) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wrong Command Usage. &f/expandreg [north|south|east|west|up|down|vert] (amount)");
+				return false;
+			}
+			
+			Object selections = DynamicEconomy.selectedCorners.get(stringPlay);
+			
+			String[] selectionsArr = (String[]) selections;
+			
+			
+			if ((selectionsArr[0] == null) || (selectionsArr[1] == null)) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				return false;
+			}
+			
+			if ((selectionsArr[0].isEmpty()) || (selectionsArr[1].isEmpty())) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				return false;
+			}
+		
+			
+			
+			int[] coord1 = Utility.decodeCoordinates(selectionsArr[0]);
+			int[] coord2 = Utility.decodeCoordinates(selectionsArr[1]);
+			
+			amt = Math.abs(amt);
+			
+			String xMax = "";
+			String yMax = "";
+			String zMax = "";
+			
+			String xMin = "";
+			String yMin = "";
+			String zMin = "";
+			
+			if (coord1[0] > coord2[0]) {
+				xMax = "1";
+				xMin = "2";
+			} else {
+				xMax = "2";
+				xMin = "1";
+			}
+			
+			if (coord1[1] > coord2[1]) {
+				yMax = "1";
+				yMin = "2";
+			} else {
+				yMax = "2";
+				yMin = "1";
+			}
+			
+			if (coord1[2] > coord2[2]) {
+				zMax = "1";
+				zMin = "2";
+			} else {
+				zMax = "2";
+				zMin = "1";
+			}
+			
+			if (dir.equalsIgnoreCase("up")) {
+				if (yMax.equals("1")) {
+					coord1[1] = coord1[1] + amt;
+					if (coord1[1] > 128) {
+						coord1[1] = 128;
+					}
+				} else {
+					coord2[1] = coord2[1] + amt;
+					if (coord2[1] > 128) {
+						coord2[1] = 128;
+					}
+				}
+			} else if (dir.equalsIgnoreCase("down")) {
+				if (yMin.equals("1")) {
+					coord1[1] = coord1[1] - amt;
+					if (coord1[1] < 0) {
+						coord1[1] = 0;
+					}
+				} else {
+					coord2[1] = coord2[1] - amt;
+					if (coord2[1] < 0) {
+						coord2[1] = 0;
+					}
+				}
+			} else if (dir.equalsIgnoreCase("west")) {
+				if (zMax.equals("1")) {
+					coord1[2] = coord1[2] + amt;
+				} else {
+					coord2[2] = coord2[2] + amt;
+				}
+			} else if (dir.equalsIgnoreCase("east")) {
+				if (zMin.equals("1")) {
+					coord1[2] = coord1[2] - amt;
+				} else {
+					coord2[2] = coord2[2] - amt;
+				}
+			} else if (dir.equalsIgnoreCase("north")) {
+				if (xMin.equals("1")) {
+					coord1[0] = coord1[0] - amt;
+				} else {
+					coord2[0] = coord2[0] - amt;
+				}
+			} else if (dir.equalsIgnoreCase("south")) {
+				if (xMax.equals("1")) {
+					coord1[0] = coord1[0] + amt;
+				} else {
+					coord2[0] = coord2[0] + amt;
+				}
+			} else if (dir.equalsIgnoreCase("vert")) {
+				if (yMax.equals("1")) {
+					coord1[1] = 128;
+					coord2[1] = 0;
+				} else {
+					coord2[1] = 128;
+					coord1[1] = 0;
+				}
+				
+			}
+			
+			String coords1 = Utility.encodeCoordinates(coord1);
+			String coords2 = Utility.encodeCoordinates(coord2);
+			
+			String[] coordsArray = {coords1,coords2};
+			
+			DynamicEconomy.selectedCorners.put(stringPlay, coordsArray);
+			
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Region expanded!");
+			return true;
+			
+		}
+	}
+	
+	public static boolean contractRegion(Player player, String[] args) {
+		String stringPlay = player.getName();
+		if ((args.length != 2) && (args.length != 1)){
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wrong Command Usage. &f/expandreg [north|south|east|west|up|down|vert] (amount)");
+			 Utility.writeToLog(stringPlay + " incorrectly called /expandreg");
+			return false;
+		} else {
+			String dir = "";
+			int amt = 0;
+			try {
+				dir = args[0];
+				
+				if (!(dir.equalsIgnoreCase("vert"))) {
+					amt = Integer.parseInt(args[1]);
+				}
+				
+			} catch (Exception e) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wrong Command Usage. &f/expandreg [north|south|east|west|up|down|vert] (amount)");
+				return false;
+			}
+			
+			Object selections = DynamicEconomy.selectedCorners.get(stringPlay);
+			
+			String[] selectionsArr = (String[]) selections;
+			
+			
+			if ((selectionsArr[0] == null) || (selectionsArr[1] == null)) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				return false;
+			}
+			
+			if ((selectionsArr[0].isEmpty()) || (selectionsArr[1].isEmpty())) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				return false;
+			}
+		
+			
+			
+			int[] coord1 = Utility.decodeCoordinates(selectionsArr[0]);
+			int[] coord2 = Utility.decodeCoordinates(selectionsArr[1]);
+			
+			amt = Math.abs(amt);
+			
+			String xMax = "";
+			String yMax = "";
+			String zMax = "";
+			
+			String xMin = "";
+			String yMin = "";
+			String zMin = "";
+			
+			if (coord1[0] > coord2[0]) {
+				xMax = "1";
+				xMin = "2";
+			} else {
+				xMax = "2";
+				xMin = "1";
+			}
+			
+			if (coord1[1] > coord2[1]) {
+				yMax = "1";
+				yMin = "2";
+			} else {
+				yMax = "2";
+				yMin = "1";
+			}
+			
+			if (coord1[2] > coord2[2]) {
+				zMax = "1";
+				zMin = "2";
+			} else {
+				zMax = "2";
+				zMin = "1";
+			}
+			
+			if (dir.equalsIgnoreCase("up")) {
+				if (yMin.equals("1")) {
+					coord1[1] = coord1[1] + amt;
+					if (coord1[1] > 128) {
+						coord1[1] = 128;
+					}
+				} else {
+					coord2[1] = coord2[1] + amt;
+					if (coord2[1] > 128) {
+						coord2[1] = 128;
+					}
+				}
+			} else if (dir.equalsIgnoreCase("down")) {
+				if (yMax.equals("1")) {
+					coord1[1] = coord1[1] - amt;
+					if (coord1[1] < 0) {
+						coord1[1] = 0;
+					}
+				} else {
+					coord2[1] = coord2[1] - amt;
+					if (coord2[1] < 0) {
+						coord2[1] = 0;
+					}
+				}
+			} else if (dir.equalsIgnoreCase("west")) {
+				if (zMin.equals("1")) {
+					coord1[2] = coord1[2] + amt;
+				} else {
+					coord2[2] = coord2[2] + amt;
+				}
+			} else if (dir.equalsIgnoreCase("east")) {
+				if (zMax.equals("1")) {
+					coord1[2] = coord1[2] - amt;
+				} else {
+					coord2[2] = coord2[2] - amt;
+				}
+			} else if (dir.equalsIgnoreCase("north")) {
+				if (xMax.equals("1")) {
+					coord1[0] = coord1[0] - amt;
+				} else {
+					coord2[0] = coord2[0] - amt;
+				}
+			} else if (dir.equalsIgnoreCase("south")) {
+				if (xMin.equals("1")) {
+					coord1[0] = coord1[0] + amt;
+				} else {
+					coord2[0] = coord2[0] + amt;
+				}
+			}
+			
+			String coords1 = Utility.encodeCoordinates(coord1);
+			String coords2 = Utility.encodeCoordinates(coord2);
+			
+			String[] coordsArray = {coords1,coords2};
+			
+			DynamicEconomy.selectedCorners.put(stringPlay, coordsArray);
+			
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Region expanded!");
+			return true;
+			
+		}
+	}
+	
+	public static boolean wand(Player player, String[] args) {
+		ItemStack wand = new ItemStack(org.bukkit.Material.WOOD_SPADE);
+		Inventory inv = player.getInventory();
+		inv.addItem(wand);
+		return true;
+	}
+	
+	public static boolean getCorners (Player player, String[] args) {
+		String stringPlay = player.getName();
+		if (args.length != 0) {
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wrong Command Usage. &f/curregion");
+			 Utility.writeToLog(stringPlay + " incorrectly called /curregion");
+			return false;
+		} else {
+			Object selections = DynamicEconomy.selectedCorners.get(stringPlay);
+			
+			String[] selectionsArr = (String[]) selections;
+			
+			
+			if ((selectionsArr[0] == null) || (selectionsArr[1] == null)) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				return false;
+			}
+			
+			if ((selectionsArr[0].isEmpty()) || (selectionsArr[1].isEmpty())) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				return false;
+			}
+			
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Current Region Selections:");
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Block 1: &f" + selectionsArr[0]);
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Block 2: &f" + selectionsArr[1]);
+			return true;
+		}
+				
+	}
+	public static boolean deleteShopRegion(Player player, String[] args) {
+		String stringPlay = player.getName();
+		if (args.length != 1) {
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wrong Command Usage. &f/removeshopregion [name]");
+			 Utility.writeToLog(stringPlay + " incorrectly called /removeshopregion");
+			return false;
+		} else {
+			String region = args[0];
+			region = region.toUpperCase();
+			String node = "regions." + region;
+			if (regionFileConfig.contains(node)) {
+				regionFileConfig.set(node, null);
+				try {
+					regionFileConfig.save(regionFile);
+				} catch (Exception e) {
+					log.info("Erro Saving Regions.yml");
+					Utility.writeToLog(stringPlay + "Error Saving regions.yml");
+				}
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Region &f" + region + "&2 deleted.");
+				Utility.writeToLog(stringPlay + " removed region '" + region + "'");
+				return true;
+			} else {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Region &f" + region + "&2 not found.");
+				Utility.writeToLog(stringPlay + " attempted to remove the non-existant region '" + region + "'");
+				return false;
+			}
+		}
 	}
 	
 	

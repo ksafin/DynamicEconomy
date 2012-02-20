@@ -1,6 +1,6 @@
 name: DynamicEconomy
 main: me.ksafin.DynamicEconomy.DynamicEconomy
-version: .6.0
+version: .6.1
 
 description: This plugin allows users to buy and sell items at dynamically generated prices.
 author: kSafin (Kirill Safin)
@@ -113,6 +113,26 @@ commands:
      description: Allows user to define a shop region
      permission: dynamiceconomy.shopregion
      usage: /shopregion [Name]
+   removeshopregion:
+     description: Removes the given shop region, if it exists
+     permission: dynamiceconomy.removeshopregion
+     usage: /removeshopregion [Name]
+   expandreg:
+     description: Expands the currently selected region, if it exists
+     permission: dynamiceconomy.shopregion
+     usage: /expandreg [north|south|east|west|up|down|vert] [amount]
+   contractreg:
+     description: Contracts the currently selected region, if it exists
+     permission: dynamiceconomy.shopregion
+     usage: /contractreg [north|south|east|west|up|down] [amount]
+   shopregionwand:
+     description: Gives user a wooden spade to use as a region wand
+     permission: dynamiceconomy.shopregion
+     usage: /shopregionwand
+   curregion:
+     description: Tells user currently selected region corners
+     permission: dynamiceconomy.shopregion
+     usage: /curregion
 
 permissions:
   dynamiceconomy.*:
@@ -141,6 +161,7 @@ permissions:
       dynamiceconomy.settax: true
       dynamiceconomy.selectregion: true
       dynamiceconomy.shopregion: true
+      dynamiceconomy.removeshopregion: true
   dynamiceconomy.customer:
     description: Gives access to all basic user settings of dynamiceconomy
     children:
@@ -167,6 +188,7 @@ permissions:
       dynamiceconomy.settax: false
       dynamiceconomy.selectregion: false
       dynamiceconomy.shopregion: false
+      dynamiceconomy.removeshopregion: false
       
   dynamiceconomy.price:
     description: Allows user to find price of an Item
@@ -230,6 +252,9 @@ permissions:
     default: false
   dynamiceconomy.shopregion:
     description: Allows player to create a shop region
+    default: false
+  dynamiceconomy.removeshopregion:
+    description: Removes the given shop region
     default: false
       
     

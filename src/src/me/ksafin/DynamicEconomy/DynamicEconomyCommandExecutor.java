@@ -372,6 +372,66 @@ public class DynamicEconomyCommandExecutor implements org.bukkit.command.Command
             	return true;
             }
           
+          // REMOVE SHOP REGION COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("removeshopregion")) {
+            	if (permission.has(player, "dynamiceconomy.shopregion")) {
+            		regionUtils.deleteShopRegion(player, args);
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
+                    Utility.writeToLog(player.getName() + " called /shopregion but didn't have permission");
+                }
+            	return true;
+            }
+          
+          // EXPAND SHOP REGION COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("expandreg")) {
+            	if (permission.has(player, "dynamiceconomy.shopregion")) {
+            		regionUtils.expandRegion(player, args);
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
+                    Utility.writeToLog(player.getName() + " called /shopregion but didn't have permission");
+                }
+            	return true;
+            }
+          
+          // CONTRACT SHOP REGION COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("contractreg")) {
+            	if (permission.has(player, "dynamiceconomy.shopregion")) {
+            		regionUtils.contractRegion(player, args);
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
+                    Utility.writeToLog(player.getName() + " called /shopregion but didn't have permission");
+                }
+            	return true;
+            }
+          
+          // SHOP REGION WAND COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("shopregionwand")) {
+            	if (permission.has(player, "dynamiceconomy.shopregion")) {
+            		regionUtils.wand(player, args);
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
+                    Utility.writeToLog(player.getName() + " called /shopregionwand but didn't have permission");
+                }
+            	return true;
+            }
+          
+          // SHOP CURREGION COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("curregion")) {
+            	if (permission.has(player, "dynamiceconomy.shopregion")) {
+            		regionUtils.getCorners(player, args);
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
+                    Utility.writeToLog(player.getName() + " called /curregion but didn't have permission");
+                }
+            	return true;
+            }
+          
 	
 	
 	
