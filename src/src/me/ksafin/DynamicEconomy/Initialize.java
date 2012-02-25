@@ -31,7 +31,23 @@ public class Initialize {
 	    config.set("minimum-y",0);
 	    config.set("maximum-y",128);
 	    config.set("alt-commands",false);
+	    config.set("enable-update-checker",true);
 	    config.set("use-regions",false);
+	    config.set("use-loans",true);
+	    config.set("use-static-interest",false);
+	    config.set("interest-rate",0.05);
+	    config.set("dynamic-interest-rate",0.0);
+	    config.set("dynamic-compression-rate",0.0);
+	    config.set("payback-time",20);
+	    config.set("max-num-loans",1);
+	    config.set("max-loan-amount",500);
+	    config.set("min-loan-amount",10);
+	    config.set("use-loan-account",false);
+	    config.set("loan-account-name","");
+	    config.set("loan-check-interval",300);
+	    config.set("banned-sale-items","");
+	    config.set("banned-purchase-items","");
+	    
 		
 		try {
 			config.save(configFile);

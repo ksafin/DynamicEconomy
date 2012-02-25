@@ -36,6 +36,7 @@ public class DynamicEconomyPlayerListener extends PlayerListener {
     
     @Override
     public void onPlayerJoin(PlayerJoinEvent event) {
+    	if (DynamicEconomy.enableUpdateChecker) {
     	final Player player = event.getPlayer();
     	final String stringPlay = player.getName();
     	boolean latest = updater.checkVersion(fullver,subver,"DynamicEconomy");
@@ -51,6 +52,7 @@ public class DynamicEconomyPlayerListener extends PlayerListener {
     			 
     		 }
     	}
+    }
     }
     
     public void onPlayerInteract(PlayerInteractEvent event){

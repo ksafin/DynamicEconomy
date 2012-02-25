@@ -1,6 +1,6 @@
 name: DynamicEconomy
 main: me.ksafin.DynamicEconomy.DynamicEconomy
-version: .6.1
+version: .7.3
 
 description: This plugin allows users to buy and sell items at dynamically generated prices.
 author: kSafin (Kirill Safin)
@@ -133,6 +133,18 @@ commands:
      description: Tells user currently selected region corners
      permission: dynamiceconomy.shopregion
      usage: /curregion
+   loan:
+     description: Lets user request a loan for an amount specified
+     permission: dynamiceconomy.loan
+     usage: /loan [Amount]
+   curinterest:
+     description: Tells user current interest rate on loans
+     permission: dynamiceconomy.curinterest
+     usage: /curinterest
+   curloans:
+     description: Tells user their current loans, and info of these loans.
+     permission: dynamiceconomy.loan
+     usage: /curloans (loan #)
 
 permissions:
   dynamiceconomy.*:
@@ -162,6 +174,8 @@ permissions:
       dynamiceconomy.selectregion: true
       dynamiceconomy.shopregion: true
       dynamiceconomy.removeshopregion: true
+      dynamiceconomy.loan: true
+      dynamiceconomy.curinterest: true
   dynamiceconomy.customer:
     description: Gives access to all basic user settings of dynamiceconomy
     children:
@@ -189,6 +203,8 @@ permissions:
       dynamiceconomy.selectregion: false
       dynamiceconomy.shopregion: false
       dynamiceconomy.removeshopregion: false
+      dynamiceconomy.loan: true
+      dynamiceconomy.curinterest: true
       
   dynamiceconomy.price:
     description: Allows user to find price of an Item
@@ -256,5 +272,10 @@ permissions:
   dynamiceconomy.removeshopregion:
     description: Removes the given shop region
     default: false
-      
+  dynamiceconomy.loan:
+    description: Lets users get loans, and find info on their current loans
+    default: true
+  dynamiceconomy.curinterest:
+    description: Lets users find out current loan interest rate
+    default: true
     

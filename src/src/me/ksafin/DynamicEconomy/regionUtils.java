@@ -137,6 +137,7 @@ public class regionUtils {
 			
 			try {
 				regionFileConfig.save(regionFile);
+				regionFileConfig.load(regionFile);
 			} catch (Exception e) {
 				log.info("[DynamicEconomy]IOException saving Region.yml");
 			}

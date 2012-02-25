@@ -31,7 +31,7 @@ import couk.Adamki11s.Extras.Extras.Extras;
  */
 public class DynamicEconomy extends JavaPlugin {
     
-    protected static FileConfiguration config;
+    public static FileConfiguration config;
     
     String name;
     String version;
@@ -61,11 +61,37 @@ public class DynamicEconomy extends JavaPlugin {
     public static int maximum_y;
     public static boolean altCommands;
     public static boolean useRegions;
+    public static boolean useLoans;
+    public static double interestRate;
+    public static int paybackTime;
+    public static int maxLoans;
+    public static double maxLoanAmount;
+    public static double minLoanAmount;
+    public static boolean useLoanAccount;
+    public static String loanAccountName;
+    public static long loanCheckInterval;
+    public static boolean enableUpdateChecker;
+    public static boolean useStaticInterest;
+    public static double dynamicCompressionRate;
+    public static String[] bannedSaleItems;
+    public static String[] bannedPurchaseItems;
+    
     public AUCore updater = new AUCore("http://cabin.minecraft.ms/index.html", log, "[DynamicEconomy]");
+    
+    File regionFile;
+    
+    static DynamicEconomy plugin;
     
     public static HashMap selectedCorners = new HashMap();
     
     public static File configFile;
+    FileConfiguration regionConfig;
+    
+    public static File loansFile;
+    FileConfiguration loansFileConfig;
+    
+    public static File itemsFile;
+    FileConfiguration itemConfig;
 
     static Logger log = Logger.getLogger("Minecraft");
     
@@ -80,7 +106,7 @@ public class DynamicEconomy extends JavaPlugin {
             PluginManager pm = this.getServer().getPluginManager();
             PluginDescriptionFile pdf = pm.getPlugin("DynamicEconomy").getDescription();
             
-            
+            plugin = this;
             
             name = pdf.getName();
             version = pdf.getVersion();
@@ -118,14 +144,20 @@ public class DynamicEconomy extends JavaPlugin {
             playerListener.subver = subVer;
             playerListener.setUpdater(updater);
             
-            File itemsFile = new File(this.getDataFolder(),"Items.yml");
+            itemsFile = new File(this.getDataFolder(),"Items.yml");
             Item.setItemsFile(itemsFile);
-            FileConfiguration itemConfig = YamlConfiguration.loadConfiguration(itemsFile);
+            itemConfig = YamlConfiguration.loadConfiguration(itemsFile);
             
-            File regionFile = new File(this.getDataFolder(),"Regions.yml");
+            regionFile = new File(this.getDataFolder(),"Regions.yml");
             regionUtils.setRegionFile(regionFile);
-            FileConfiguration regionConfig = YamlConfiguration.loadConfiguration(regionFile);
+            regionConfig = YamlConfiguration.loadConfiguration(regionFile);
             regionUtils.setRegionFileConfig(regionConfig);
+            
+            
+            loansFile = new File(this.getDataFolder(),"Loans.yml");
+            loansFileConfig = YamlConfiguration.loadConfiguration(loansFile);
+            
+            loan.initFiles(loansFile, loansFileConfig);
             
             configFile = new File(this.getDataFolder(),"config.yml");
             config = YamlConfiguration.loadConfiguration(configFile);
@@ -163,6 +195,19 @@ public class DynamicEconomy extends JavaPlugin {
             	}
             }
             
+            if (loansFile.exists()) {
+            	log.info("[DynamicEconomy] Loans database loaded.");
+            } else {
+            	try {
+                   	loansFileConfig.save(loansFile);
+                   	loansFileConfig.createSection("loans");
+                } catch (Exception e) {
+            		log.info("[DynamicEconomy] IOException when creating Loans.yml in Main");
+            		log.info(loansFile.toString());
+            		e.printStackTrace();
+            	}
+            }
+            
             if (configFile.exists()) {
             	log.info("[DynamicEconomy] Core Config loaded.");
             } else {
@@ -176,11 +221,15 @@ public class DynamicEconomy extends JavaPlugin {
             	Initialize.setConfig(config);
             }
             
+            //this.getServer().getScheduler().scheduleSyncDelayedTask(this, new loan(this));
+            
             
             
             relConfig();
             
-            
+            if (DynamicEconomy.useLoans) {
+            	this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new loan(), 300L, loanCheckInterval);
+            }
             
             // End Initialize
             
@@ -225,6 +274,9 @@ public class DynamicEconomy extends JavaPlugin {
             getCommand("contractreg").setExecutor(commandExec);
             getCommand("shopregionwand").setExecutor(commandExec);
             getCommand("curregion").setExecutor(commandExec);
+            getCommand("loan").setExecutor(commandExec);
+            getCommand("curinterest").setExecutor(commandExec);
+            getCommand("curloans").setExecutor(commandExec);
             
             if (altCommands) {
             	getCommand("debuy").setExecutor(commandExec);
@@ -297,6 +349,37 @@ public class DynamicEconomy extends JavaPlugin {
         maximum_y = config.getInt("maximum-y",0);
         altCommands = config.getBoolean("alt-commands",false);
         useRegions = config.getBoolean("use-regions",false);
+        useLoans = config.getBoolean("use-loans",true);
+        useStaticInterest = config.getBoolean("use-static-interest",false);
+        dynamicCompressionRate = config.getDouble("dynamic-compression-rate",0.0);
+        
+        if (useStaticInterest) {
+        	interestRate = config.getDouble("interest-rate",0.05);
+        } else {
+        	interestRate = config.getDouble("dynamic-interest-rate",0.0);
+        }
+        
+        if (interestRate == 0.0) {
+        	
+        	plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+        	    public void run() {
+        	    	loan.dynamicInterest(true);
+        	    }
+        	}, 100L);
+        }
+        
+        paybackTime = config.getInt("payback-time",20);
+        maxLoans = config.getInt("max-num-loans",1);
+        maxLoanAmount = config.getDouble("max-loan-amount",500);
+        minLoanAmount = config.getInt("min-loan-amount",10);
+        useLoanAccount = config.getBoolean("use-loan-account",false);
+        loanAccountName = config.getString("loan-account-name","");
+        loanCheckInterval = config.getLong("loan-check-interval",300);
+        enableUpdateChecker = config.getBoolean("enable-update-checker",true);
+        bannedSaleItems = config.getString("banned-sale-items","").split(",");
+        bannedPurchaseItems = config.getString("banned-purchase-items","").split(",");
+        
         
     }
         
@@ -307,6 +390,9 @@ public class DynamicEconomy extends JavaPlugin {
     		Utility.out.close();
     		Utility.bf.close();
     		selectedCorners.clear();
+    		regionConfig.save(regionFile);
+    		loansFileConfig.save(loansFile);
+    		itemConfig.save(itemsFile);
     	} catch (Exception e) {
     		log.info("[DynamicEconomy] Exception when disabling log writer");
     	}

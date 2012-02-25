@@ -73,8 +73,15 @@ public class Transaction {
 			}
 			
 		}
+		String[] itemInfo = new String[7];
 		
-			String[] itemInfo = Item.getAllInfo(args[0]);
+		try {
+			itemInfo = Item.getAllInfo(args[0]);
+		} catch (Exception e) {
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You entered the command arguments in the wrong order, or your item name was invalid ");
+			Utility.writeToLog(stringPlay + " entered an invalid item, or entered command arguments in the wrong order");
+			return false;
+		}
 			String itemName = itemInfo[0];
 			double itemPrice = Double.parseDouble(itemInfo[1]);
 			double itemFloor = Double.parseDouble(itemInfo[2]);
@@ -88,6 +95,17 @@ public class Transaction {
 			Utility.writeToLog(stringPlay + " attempted to buy the non-existent item '" + itemName + "'");
 
 			return false;
+		}
+		
+		String bannedItem;
+		
+		for (int x = 0; x < DynamicEconomy.bannedPurchaseItems.length; x++) {
+			bannedItem = Item.getTrueName(DynamicEconomy.bannedPurchaseItems[x]);
+			if (bannedItem.equals(itemName)) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2This item is banned, and not allowed to be purchased in the economy.");
+				Utility.writeToLog(stringPlay + " attempted to buy the banned item: " + bannedItem);
+				return false;
+			}
 		}
 		
 		
@@ -105,7 +123,14 @@ public class Transaction {
 				 Utility.writeToLog(stringPlay + " attempted to buy 'all' of '" + itemName + "', but stock is disabled.");
 			 }
 			} else {
-			purchaseAmount = Integer.parseInt(args[1]);
+				try {
+					purchaseAmount = Integer.parseInt(args[1]);
+				} catch (Exception e) {
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You entered the command arguments in the wrong order, or your amount was invalid. Try again. ");
+					Utility.writeToLog(stringPlay + " entered an invalid purchase amount, or entered command arguments in the wrong order.");
+					return false;
+				}
+			
 			}
 		}
 		
@@ -234,7 +259,15 @@ public boolean sell(Player player, String[] args) {
 			return false;
 		} 
 		
-			String[] itemInfo = Item.getAllInfo(args[0]);
+		String[] itemInfo = new String[7];
+		
+		try {
+			itemInfo = Item.getAllInfo(args[0]);
+		} catch (Exception e) {
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You entered the command arguments in the wrong order, or your item name was invalid ");
+			Utility.writeToLog(stringPlay + " entered an invalid item, or entered command arguments in the wrong order");
+			return false;
+		}
 			String itemName = itemInfo[0];
 			double itemPrice = Double.parseDouble(itemInfo[1]);
 			double itemFloor = Double.parseDouble(itemInfo[2]);
@@ -269,6 +302,17 @@ public boolean sell(Player player, String[] args) {
 			return false;
 		}
 		
+		String bannedItem;
+		
+		for (int x = 0; x < DynamicEconomy.bannedSaleItems.length; x++) {
+			bannedItem = Item.getTrueName(DynamicEconomy.bannedSaleItems[x]);
+			if (bannedItem.equals(itemName)) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2This item is banned, and not allowed to be sold in the economy.");
+				Utility.writeToLog(stringPlay + " attempted to sell the banned item: " + bannedItem);
+				return false;
+			}
+		}
+		
 		
 		int saleAmount = 0;
 		
@@ -280,7 +324,13 @@ public boolean sell(Player player, String[] args) {
 			if (args[1].equalsIgnoreCase("all")){
 				saleAmount = inv.getAmountOf(player, itemID);
 			} else {
-			saleAmount = Integer.parseInt(args[1]);
+				try {
+					saleAmount = Integer.parseInt(args[1]);
+				} catch (Exception e) {
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You entered the command arguments in the wrong order, or your amount was invalid. Try again. ");
+					Utility.writeToLog(stringPlay + " entered an invalid purchase amount, or entered command arguments in the wrong order.");
+					return false;
+				}
 			}
 		}
 		
@@ -401,9 +451,11 @@ public boolean sell(Player player, String[] args) {
 			} else {
 				ItemStack i = new ItemStack(itemID,saleAmount);
 				Material mat = Material.getMaterial(itemID);
-				removeInventoryItems(player.getInventory(),mat,saleAmount);
+				//removeInventoryItems(player.getInventory(),mat,saleAmount);
+				player.getInventory().removeItem(new ItemStack (mat, saleAmount));
+				
 				//player.getInventory().removeItem(i);
-				//player.updateInventory();
+				player.updateInventory();
 				totalSale = Double.valueOf(decFormat.format(totalSale));
 				oldPrice = Double.valueOf(decFormat.format(oldPrice));
 				newPrice = Double.valueOf(decFormat.format(newPrice));

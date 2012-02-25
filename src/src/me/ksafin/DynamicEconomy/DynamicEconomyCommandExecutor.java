@@ -309,12 +309,14 @@ public class DynamicEconomyCommandExecutor implements org.bukkit.command.Command
           
           if (cmd.getName().equalsIgnoreCase("hasupdate")) {
           	if (permission.has(player, "dynamiceconomy.update")) {
-          		boolean isLatest = updater.checkVersion(fullver,subver,"DynamicEconomy");
-          		Utility.writeToLog(player.getName() + " called /hasupdate");
-          		if (!isLatest) {
+          		if (DynamicEconomy.enableUpdateChecker) {
+          			boolean isLatest = updater.checkVersion(fullver,subver,"DynamicEconomy");
+          			Utility.writeToLog(player.getName() + " called /hasupdate");
+          			if (!isLatest) {
           			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2New Version of DynamicEconomy Available!");
-          		} else {
+          			} else {
           			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have the latest version of DynamicEconomy!");
+          			}
           		}
           	} else {
                   color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
@@ -327,8 +329,10 @@ public class DynamicEconomyCommandExecutor implements org.bukkit.command.Command
           
           if (cmd.getName().equalsIgnoreCase("dyneconupdate")) {
             	if (permission.has(player, "dynamiceconomy.update")) {
-            		Utility.writeToLog(player.getName() + " called /dyneconupdate and downloaded the latest version of DynamicEconomy");
-            		updater.forceDownload("http://cabin.minecraft.ms/downloads/DynamicEconomy.jar", "DynamicEconomy",player);
+            		if (DynamicEconomy.enableUpdateChecker) {
+            			Utility.writeToLog(player.getName() + " called /dyneconupdate and downloaded the latest version of DynamicEconomy");
+            			updater.forceDownload("http://cabin.minecraft.ms/downloads/DynamicEconomy.jar", "DynamicEconomy",player);
+            		}
             	} else {
                     color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
                     Utility.writeToLog(player.getName() + " called /dyneconupdate but did not have permission.");
@@ -431,6 +435,57 @@ public class DynamicEconomyCommandExecutor implements org.bukkit.command.Command
                 }
             	return true;
             }
+          
+          // LOANS COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("loan")) {
+          	if (permission.has(player, "dynamiceconomy.loan")) {
+          		if (DynamicEconomy.useLoans) {
+          		   loan.lend(player, args);
+          		} else {
+          			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2The Bank is not available for loans at this time.");
+                    Utility.writeToLog(player.getName() + " called /loan but loans are disabled.");
+          		}
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
+                  Utility.writeToLog(player.getName() + " called /loan but didn't have permission");
+              }
+          	return true;
+          }
+          
+          // GET INTEREST RATE COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("curinterest")) {
+          	if (permission.has(player, "dynamiceconomy.curinterest")) {
+          		if (DynamicEconomy.useLoans) {
+          		    loan.getInterest(player, args);
+          		} else {
+          			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2The Bank is not available for loans at this time.");
+                    Utility.writeToLog(player.getName() + " called /curinterest but loans are disabled.");
+          		}
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
+                  Utility.writeToLog(player.getName() + " called /curinterest but didn't have permission");
+              }
+          	return true;
+          }
+          
+          // GET LOANS COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("curloans")) {
+          	if (permission.has(player, "dynamiceconomy.loan")) {
+          		if (DynamicEconomy.useLoans) {
+          		   loan.getLoans(player,args);
+          		} else {
+          			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2The Bank is not available for loans at this time.");
+                    Utility.writeToLog(player.getName() + " called /curloans but loans are disabled.");
+          		}
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You do not have permission to use this command.");
+                  Utility.writeToLog(player.getName() + " called /curloans but didn't have permission");
+              }
+          	return true;
+          }
           
 	
 	
