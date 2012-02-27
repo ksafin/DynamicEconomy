@@ -58,8 +58,14 @@ public class Item {
 				return "SAND";
 			} else if (arg.equalsIgnoreCase("GRAVEL") || (arg.equalsIgnoreCase("13"))) {
 				return "GRAVEL";
-			} else if (arg.equalsIgnoreCase("WOOD") || (arg.equalsIgnoreCase("LOG")) || (arg.equalsIgnoreCase("17")) || (arg.equalsIgnoreCase("17:0")) || (arg.equalsIgnoreCase("17:1")) || (arg.equalsIgnoreCase("17:2")) || (arg.equalsIgnoreCase("17:3"))) {
+			} else if (arg.equalsIgnoreCase("WOOD") || (arg.equalsIgnoreCase("LOG")) || (arg.equalsIgnoreCase("17")) || (arg.equalsIgnoreCase("17:0"))) {
 				return "WOOD";
+			} else if (arg.equalsIgnoreCase("BIRCHWOOD") || (arg.equalsIgnoreCase("BIRCHLOG")) || (arg.equalsIgnoreCase("17:1"))) {
+				return "BIRCHWOOD";
+			} else if (arg.equalsIgnoreCase("DARKWOOD") || (arg.equalsIgnoreCase("DARKLOG")) || (arg.equalsIgnoreCase("PINEWOOD")) || (arg.equalsIgnoreCase("SPRUCEWOOD")) || (arg.equalsIgnoreCase("17:2"))) {
+				return "PINEWOOD";
+			} else if (arg.equalsIgnoreCase("JUNGLEWOOD") || (arg.equalsIgnoreCase("JUNGLELOG")) || (arg.equalsIgnoreCase("17:3"))) {
+				return "JUNGLEWOOD";
 			} else if (arg.equalsIgnoreCase("GLASS") || (arg.equalsIgnoreCase("GLASSBLOCK")) || (arg.equalsIgnoreCase("20"))) {
 				return "GLASS";
 			} else if (arg.equalsIgnoreCase("DISPENSER") || (arg.equalsIgnoreCase("23"))) {
@@ -78,6 +84,36 @@ public class Item {
 				return "PISTON";
 			} else if (arg.equalsIgnoreCase("WOOL") || (arg.equalsIgnoreCase("35"))) {
 				return "WOOL";
+			} else if (arg.equalsIgnoreCase("ORANGEWOOL") || (arg.equalsIgnoreCase("35:1"))) {
+				return "ORANGEWOOL";
+			} else if (arg.equalsIgnoreCase("MAGENTAWOOL") || (arg.equalsIgnoreCase("35:2"))) {
+				return "MAGENTAWOOL";
+			} else if (arg.equalsIgnoreCase("LIGHTBLUEWOOL") || (arg.equalsIgnoreCase("35:3"))) {
+				return "LIGHTBLUEWOOL";
+			} else if (arg.equalsIgnoreCase("YELLOWWOOL") || (arg.equalsIgnoreCase("35:4"))) {
+				return "YELLOWWOOL";
+			} else if (arg.equalsIgnoreCase("LIMEWOOL") || (arg.equalsIgnoreCase("35:5"))) {
+				return "LIMEWOOL";
+			} else if (arg.equalsIgnoreCase("PINKWOOL") || (arg.equalsIgnoreCase("35:6"))) {
+				return "PINKWOOL";
+			} else if (arg.equalsIgnoreCase("GRAYWOOL") || arg.equalsIgnoreCase("GREYWOOL") || (arg.equalsIgnoreCase("35:7"))) {
+				return "GRAYWOOL";
+			} else if (arg.equalsIgnoreCase("LIGHTGRAYWOOL") || arg.equalsIgnoreCase("LIGHTGREYWOOL") || (arg.equalsIgnoreCase("35:8"))) {
+				return "LIGHTGRAYWOOL";
+			} else if (arg.equalsIgnoreCase("CYANWOOL") ||  (arg.equalsIgnoreCase("35:9"))) {
+				return "CYANWOOL";
+			} else if (arg.equalsIgnoreCase("PURPLEWOOL") || (arg.equalsIgnoreCase("35:10"))) {
+				return "PURPLEWOOL";
+			} else if (arg.equalsIgnoreCase("BLUEWOOL") || (arg.equalsIgnoreCase("35:11"))) {
+				return "BLUEWOOL";
+			} else if (arg.equalsIgnoreCase("BROWNWOOL") || (arg.equalsIgnoreCase("35:12"))) {
+				return "BROWNWOOL";
+			} else if (arg.equalsIgnoreCase("GREENWOOL") || (arg.equalsIgnoreCase("35:13"))) {
+				return "GREENWOOL";
+			} else if (arg.equalsIgnoreCase("REDWOOL") || (arg.equalsIgnoreCase("35:14"))) {
+				return "REDWOOL";
+			} else if (arg.equalsIgnoreCase("BLACKWOOL") || (arg.equalsIgnoreCase("35:15"))) {
+				return "BLACKWOOL";
 			} else if (arg.equalsIgnoreCase("DANDELION") || (arg.equalsIgnoreCase("YELLOWFLOWER")) || (arg.equalsIgnoreCase("37"))) {
 				return "DANDELION";
 			} else if (arg.equalsIgnoreCase("ROSE") || (arg.equalsIgnoreCase("REDFLOWER")) || (arg.equalsIgnoreCase("38"))) {
@@ -92,8 +128,18 @@ public class Item {
 				return "IRONBLOCK";
 			} else if (arg.equalsIgnoreCase("DOUBLESLABS") || (arg.equalsIgnoreCase("DOUBLESLAB")) ||  (arg.equalsIgnoreCase("DOUBLESTEP")) || (arg.equalsIgnoreCase("43"))) {
 				return "DOUBLESLABS";
-			} else if (arg.equalsIgnoreCase("STONESLAB") || (arg.equalsIgnoreCase("STONESLABS")) || (arg.equalsIgnoreCase("44"))) {
+			} else if (arg.equalsIgnoreCase("STONESLAB") || (arg.equalsIgnoreCase("SLAB")) || (arg.equalsIgnoreCase("SLABS")) || (arg.equalsIgnoreCase("STONESLABS")) || (arg.equalsIgnoreCase("44"))) {
 				return "SLABS";
+			} else if (arg.equalsIgnoreCase("SANDSTONESLAB") || (arg.equalsIgnoreCase("SANDSTONESLABS")) || (arg.equalsIgnoreCase("SANDSLABS")) || (arg.equalsIgnoreCase("SANDSLAB")) || (arg.equalsIgnoreCase("44:1"))) {
+				return "SANDSTONESLABS";
+			} else if (arg.equalsIgnoreCase("PLANKSLABS") || (arg.equalsIgnoreCase("PLANKSLAB")) || (arg.equalsIgnoreCase("WOODSLABS")) || (arg.equalsIgnoreCase("WOODSLAB")) || (arg.equalsIgnoreCase("44:2"))) {
+				return "PLANKSLABS";
+			} else if (arg.equalsIgnoreCase("COBBLESLAB") || (arg.equalsIgnoreCase("COBBLESLABS")) || (arg.equalsIgnoreCase("44:3"))) {
+				return "COBBLESLABS";
+			} else if (arg.equalsIgnoreCase("BRICKSLABS") || (arg.equalsIgnoreCase("BRICKSLAB")) || (arg.equalsIgnoreCase("44:4"))) {
+				return "BRICKSLABS";
+			} else if (arg.equalsIgnoreCase("STONEBRICKSLAB") || (arg.equalsIgnoreCase("STONEBRICKSLABS")) || (arg.equalsIgnoreCase("STONEBRICKSSLABS")) || (arg.equalsIgnoreCase("STONEBRICKSSLAB")) || (arg.equalsIgnoreCase("44:5"))) {
+				return "STONEBRICKSLABS";
 			} else if (arg.equalsIgnoreCase("BRICKBLOCK") || (arg.equalsIgnoreCase("45"))) {
 				return "BRICKBLOCK";
 			} else if (arg.equalsIgnoreCase("TNT") || (arg.equalsIgnoreCase("47"))) {
@@ -180,8 +226,10 @@ public class Item {
 				return "BOW";
 			} else if (arg.equalsIgnoreCase("ARROW") || (arg.equalsIgnoreCase("ARROWS")) || (arg.equalsIgnoreCase("262"))) {
 				return "ARROW";
-			} else if (arg.equalsIgnoreCase("COAL") || (arg.equalsIgnoreCase("263")) || (arg.equalsIgnoreCase("263:0")) || (arg.equalsIgnoreCase("263:1"))) {
+			} else if (arg.equalsIgnoreCase("COAL") || (arg.equalsIgnoreCase("263")) || (arg.equalsIgnoreCase("263:0"))) {
 				return "COAL";
+			} else if (arg.equalsIgnoreCase("CHARCOAL") || (arg.equalsIgnoreCase("263:1"))) {
+				return "CHARCOAL";
 			} else if (arg.equalsIgnoreCase("DIAMOND") || (arg.equalsIgnoreCase("264"))) {
 				return "DIAMOND";
 			} else if (arg.equalsIgnoreCase("IRONINGOT") || (arg.equalsIgnoreCase("IRON")) || (arg.equalsIgnoreCase("265"))) {
@@ -314,6 +362,18 @@ public class Item {
 				return "REDSTONE";
 			} else if (arg.equalsIgnoreCase("BOAT") || (arg.equalsIgnoreCase("333"))) {
 				return "BOAT";
+			} else if (arg.equalsIgnoreCase("GOLDORE") || (arg.equalsIgnoreCase("14"))) {
+				return "GOLDORE";
+			} else if (arg.equalsIgnoreCase("IRONORE") || (arg.equalsIgnoreCase("15"))) {
+				return "IRONORE";
+			} else if (arg.equalsIgnoreCase("COALORE") || (arg.equalsIgnoreCase("16"))) {
+				return "COALORE";
+			} else if (arg.equalsIgnoreCase("LAPISLAZULIORE") || (arg.equalsIgnoreCase("21"))) {
+				return "LAPISLAZULIORE";
+			} else if (arg.equalsIgnoreCase("DIAMONDORE") || (arg.equalsIgnoreCase("56"))) {
+				return "DIAMONDORE";
+			} else if (arg.equalsIgnoreCase("REDSTONEORE") || (arg.equalsIgnoreCase("73"))) {
+				return "REDSTONEORE";
 			} else if (arg.equalsIgnoreCase("LEATHER") || (arg.equalsIgnoreCase("334"))) {
 				return "LEATHER";
 			} else if (arg.equalsIgnoreCase("MILK") || (arg.equalsIgnoreCase("MILKBUCKET")) || (arg.equalsIgnoreCase("BUCKETOFMILK")) || (arg.equalsIgnoreCase("335"))) {
@@ -350,7 +410,37 @@ public class Item {
 				return "COOKEDFISH";
 			} else if (arg.equalsIgnoreCase("INK") || (arg.equalsIgnoreCase("INKSACK")) || (arg.equalsIgnoreCase("351"))) {
 				return "INK";
-			} else if (arg.equalsIgnoreCase("BONE") || (arg.equalsIgnoreCase("352"))) {
+			} else if (arg.equalsIgnoreCase("REDINK") || (arg.equalsIgnoreCase("REDDYE")) || (arg.equalsIgnoreCase("ROSERED")) || (arg.equalsIgnoreCase("351:1"))) {
+				return "REDINK";
+			} else if (arg.equalsIgnoreCase("GREENINK") || (arg.equalsIgnoreCase("GREENDYE")) || (arg.equalsIgnoreCase("CACTUSGREEN")) || (arg.equalsIgnoreCase("351:2"))) {
+				return "GREENINK";
+			}  else if (arg.equalsIgnoreCase("BROWNINK") || (arg.equalsIgnoreCase("BROWNDYE")) || (arg.equalsIgnoreCase("COCOABEANBROWN")) || (arg.equalsIgnoreCase("351:3"))) {
+				return "BROWNINK";
+			}  else if (arg.equalsIgnoreCase("LAPISLAZULI") || (arg.equalsIgnoreCase("LAPIS")) || (arg.equalsIgnoreCase("LAZULI")) || (arg.equalsIgnoreCase("351:4"))) {
+				return "LAPISLAZULI";
+			}  else if (arg.equalsIgnoreCase("PURPLEINK") || (arg.equalsIgnoreCase("PURPLEDYE")) || (arg.equalsIgnoreCase("351:5"))) {
+				return "PURPLEINK";
+			}  else if (arg.equalsIgnoreCase("CYANINK") || (arg.equalsIgnoreCase("CYANDYE")) || (arg.equalsIgnoreCase("351:6"))) {
+				return "CYANINK";
+			}  else if (arg.equalsIgnoreCase("LIGHTGRAYINK") || (arg.equalsIgnoreCase("LIGHTGRAYDYE")) || (arg.equalsIgnoreCase("LIGHTGREYINK")) || (arg.equalsIgnoreCase("LIGHTGREYDYE")) || (arg.equalsIgnoreCase("351:7"))) {
+				return "LIGHTGRAYINK";
+			}  else if (arg.equalsIgnoreCase("GRAYINK") || (arg.equalsIgnoreCase("GRAYDYE")) || (arg.equalsIgnoreCase("GREYINK")) || (arg.equalsIgnoreCase("GREYDYE")) || (arg.equalsIgnoreCase("351:8"))) {
+				return "GRAYINK";
+			}  else if (arg.equalsIgnoreCase("PINKINK") || (arg.equalsIgnoreCase("PINKDYE")) || (arg.equalsIgnoreCase("351:9"))) {
+				return "PINKINK";
+			}  else if (arg.equalsIgnoreCase("LIMEINK") || (arg.equalsIgnoreCase("LIMEDYE")) || (arg.equalsIgnoreCase("351:10"))) {
+				return "LIMEINK";
+			}  else if (arg.equalsIgnoreCase("YELLOWINK") || (arg.equalsIgnoreCase("YELLOWDYE")) || (arg.equalsIgnoreCase("DANDELIONYELLOW")) || (arg.equalsIgnoreCase("351:11"))) {
+				return "YELLOWINK";
+			}  else if (arg.equalsIgnoreCase("LIGHTBLUEINK") || (arg.equalsIgnoreCase("LIGHTBLUEDYE")) || (arg.equalsIgnoreCase("351:12"))) {
+				return "LIGHTBLUEINK";
+			}  else if (arg.equalsIgnoreCase("MAGENTAINK") || (arg.equalsIgnoreCase("MAGENTADYE")) || (arg.equalsIgnoreCase("351:13"))) {
+				return "MAGENTAINK";
+			}  else if (arg.equalsIgnoreCase("ORANGEINK") || (arg.equalsIgnoreCase("ORANGEDYE")) || (arg.equalsIgnoreCase("351:14"))) {
+				return "ORANGEINK";
+			}  else if (arg.equalsIgnoreCase("BONEMEAL") || (arg.equalsIgnoreCase("351:15"))) {
+				return "BONEMEAL";
+			}  else if (arg.equalsIgnoreCase("BONE") || (arg.equalsIgnoreCase("352"))) {
 				return "BONE";
 			} else if (arg.equalsIgnoreCase("SUGAR") || (arg.equalsIgnoreCase("353"))) {
 				return "SUGAR";
@@ -402,6 +492,7 @@ public class Item {
 				return "CAULDRON";
 			}
 			
+			
 			else {
 				return "";
 			}
@@ -447,6 +538,7 @@ public boolean getPrice(Player player, String[] args) {
 		 
 		 if ((args[2].equalsIgnoreCase("all")) && (type1.equals("sell"))){
 				amt = inv.getAmountOf(player, itemID);
+				amt--;
 			} else if ((args[2].equalsIgnoreCase("all")) && (type1.equals("buy"))) {
 				amt = stock;
 			} else {
@@ -478,6 +570,7 @@ public boolean getPrice(Player player, String[] args) {
 	if (type.equalsIgnoreCase("sale") || type.equalsIgnoreCase("sell")) {
 		total = 0;
 		double newPrice = 0;
+		
 		
 		for (int x = 0; x < amt; x++) {
 			if (price == floor) {
@@ -834,6 +927,7 @@ public static String[] getAllInfo(String item) {
 	return info;
 	
 }
+
 
 public static int getMaxDur(String itemName) {
 	int maxDur = 0;

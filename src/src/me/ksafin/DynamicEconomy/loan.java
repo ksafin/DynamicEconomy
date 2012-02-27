@@ -4,10 +4,12 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -314,7 +316,15 @@ public class loan implements Runnable {
 			dynamicInterest(false);
 		}
 		
-		Set<String> loansSet = loansFileConfig.getConfigurationSection("loans").getKeys(false);
+		ConfigurationSection configSection = loansFileConfig.getConfigurationSection("loans");
+		Set<String> loansSet;
+		
+		if (configSection == null) {
+			loansSet = new TreeSet<String>();
+		} else {
+			loansSet = configSection.getKeys(false);
+		}
+		
 		
 		if (loansSet != null) {
 		

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -172,6 +173,9 @@ public class regionUtils {
 		int regionYMax = 0;
 		int regionZMax = 0;
 		
+		//Utility.writeToLog("# of regions: " + sections.length);
+		//Utility.writeToLog("region: " + sections[0]);
+		
 		for (int i = 0; i < sections.length ; i++) {
 			String section = sections[i];
 			
@@ -182,6 +186,25 @@ public class regionUtils {
 			regionXMax = regionFileConfig.getInt("regions." + section + ".xMax");
 			regionYMax = regionFileConfig.getInt("regions." + section + ".yMax");
 			regionZMax = regionFileConfig.getInt("regions." + section + ".zMax");
+			
+			/*if (x > regionXMin) {
+				Utility.writeToLog("User X above XMin");
+			}
+			if (x < regionXMax) {
+				Utility.writeToLog("User X below XMax");
+			}
+			if (y > regionYMin) {
+				Utility.writeToLog("User Y above YMin");
+			}
+			if (y < regionYMax) {
+				Utility.writeToLog("User Y below YMax");
+			}
+			if (z > regionZMin) {
+				Utility.writeToLog("User Z above ZMin");
+			}
+			if (z < regionZMin) {
+				Utility.writeToLog("User Z below ZMax");
+			}*/
 			
 			if (((x > regionXMin) && (x < regionXMax)) && ((y > regionYMin) && (y < regionYMax)) && ((z > regionZMin) && (z < regionZMax))) {
 				return true;
@@ -270,13 +293,13 @@ public class regionUtils {
 			if (dir.equalsIgnoreCase("up")) {
 				if (yMax.equals("1")) {
 					coord1[1] = coord1[1] + amt;
-					if (coord1[1] > 128) {
-						coord1[1] = 128;
+					if (coord1[1] > Bukkit.getServer().getWorlds().get(0).getMaxHeight()) {
+						coord1[1] = Bukkit.getServer().getWorlds().get(0).getMaxHeight();
 					}
 				} else {
 					coord2[1] = coord2[1] + amt;
-					if (coord2[1] > 128) {
-						coord2[1] = 128;
+					if (coord2[1] > Bukkit.getServer().getWorlds().get(0).getMaxHeight()) {
+						coord2[1] = Bukkit.getServer().getWorlds().get(0).getMaxHeight();
 					}
 				}
 			} else if (dir.equalsIgnoreCase("down")) {
@@ -317,10 +340,10 @@ public class regionUtils {
 				}
 			} else if (dir.equalsIgnoreCase("vert")) {
 				if (yMax.equals("1")) {
-					coord1[1] = 128;
+					coord1[1] = Bukkit.getServer().getWorlds().get(0).getMaxHeight();
 					coord2[1] = 0;
 				} else {
-					coord2[1] = 128;
+					coord2[1] = Bukkit.getServer().getWorlds().get(0).getMaxHeight();
 					coord1[1] = 0;
 				}
 				

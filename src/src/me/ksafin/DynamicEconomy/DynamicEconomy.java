@@ -75,6 +75,10 @@ public class DynamicEconomy extends JavaPlugin {
     public static double dynamicCompressionRate;
     public static String[] bannedSaleItems;
     public static String[] bannedPurchaseItems;
+    public static boolean enableOverTimePriceDecay;
+    public static double overTimePriceDecayPercent;
+    public static long overTimePriceDecayPeriod;
+    public static long overTimePriceDecayPeriodCheck;
     
     public AUCore updater = new AUCore("http://cabin.minecraft.ms/index.html", log, "[DynamicEconomy]");
     
@@ -169,7 +173,9 @@ public class DynamicEconomy extends JavaPlugin {
             File logFile = new File(this.getDataFolder(),"log.txt");
             Utility utils = new Utility(logFile,this);
             
-            if (itemsFile.exists()) {
+            
+            
+            if (itemConfig.contains("STONE")) {
             	log.info("[DynamicEconomy] Items database loaded.");
             } else {
             	try {
@@ -180,10 +186,29 @@ public class DynamicEconomy extends JavaPlugin {
             		e.printStackTrace();
             	}
             		Initialize init = new Initialize(config,configFile);
+            		init.setItemsData(itemConfig, itemsFile);
                 	init.setItems(this);
             }
             
+            if (configFile.exists()) {
+            	log.info("[DynamicEconomy] Core Config loaded.");
+            } else {
+            	try {
+            		config.save(configFile);
+            	} catch (Exception e) {
+            		log.info("[DynamicEconomy] IOException when creating config.yml in Main");
+            		e.printStackTrace();
+            	}
+            	Initialize.setConfigFile(configFile);
+            	Initialize.setConfig(config);
+            }
+            
             if (regionFile.exists()) {
+            	try {
+            		regionConfig.load(regionFile);
+            	} catch (Exception e) {
+            		log.info("[DynamicEconomy] Error loading regions.yml");
+            	}
             	log.info("[DynamicEconomy] Region database loaded.");
             } else {
             	try {
@@ -208,18 +233,7 @@ public class DynamicEconomy extends JavaPlugin {
             	}
             }
             
-            if (configFile.exists()) {
-            	log.info("[DynamicEconomy] Core Config loaded.");
-            } else {
-            	try {
-            		config.save(configFile);
-            	} catch (Exception e) {
-            		log.info("[DynamicEconomy] IOException when creating config.yml in Main");
-            		e.printStackTrace();
-            	}
-            	
-            	Initialize.setConfig(config);
-            }
+            
             
             //this.getServer().getScheduler().scheduleSyncDelayedTask(this, new loan(this));
             
@@ -229,6 +243,11 @@ public class DynamicEconomy extends JavaPlugin {
             
             if (DynamicEconomy.useLoans) {
             	this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new loan(), 300L, loanCheckInterval);
+            }
+            
+            if (DynamicEconomy.enableOverTimePriceDecay) {
+            	long delay = DynamicEconomy.overTimePriceDecayPeriodCheck * 60 * 20;
+            	this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Transaction(itemConfig,itemsFile), 300L, delay);
             }
             
             // End Initialize
@@ -379,6 +398,10 @@ public class DynamicEconomy extends JavaPlugin {
         enableUpdateChecker = config.getBoolean("enable-update-checker",true);
         bannedSaleItems = config.getString("banned-sale-items","").split(",");
         bannedPurchaseItems = config.getString("banned-purchase-items","").split(",");
+        enableOverTimePriceDecay = config.getBoolean("enable-over-time-price-decay",true);
+        overTimePriceDecayPercent = config.getDouble("over-time-price-decay-percent",.1);
+        overTimePriceDecayPeriod = config.getLong("over-time-price-decay-period",1440);
+        overTimePriceDecayPeriodCheck = config.getLong("over-time-price-decay-period-check",15);
         
         
     }
@@ -393,6 +416,7 @@ public class DynamicEconomy extends JavaPlugin {
     		regionConfig.save(regionFile);
     		loansFileConfig.save(loansFile);
     		itemConfig.save(itemsFile);
+    		getServer().getScheduler().cancelTasks(this);
     	} catch (Exception e) {
     		log.info("[DynamicEconomy] Exception when disabling log writer");
     	}

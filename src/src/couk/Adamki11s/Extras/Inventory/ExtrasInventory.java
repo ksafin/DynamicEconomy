@@ -106,10 +106,23 @@ public class ExtrasInventory extends InventoryMethods {
 	@Override
 	public int getAmountOf(Player p, Material m) {
 		ItemStack[] invent = p.getInventory().getContents();
-		int amount = 0;
+		int amount = 1;
 		for(ItemStack i : invent){
 			if(i != null){
 				if(i.getType() == m){
+					amount += i.getAmount();
+				}
+			}
+		}
+		return amount;
+	}
+	
+	public int getAmountOfDataValue(Player p, ItemStack m) {
+		ItemStack[] invent = p.getInventory().getContents();
+		int amount = 1;
+		for(ItemStack i : invent){
+			if(i != null){
+				if ((i.getTypeId() == m.getTypeId()) && (i.getDurability() == m.getDurability()) ){
 					amount += i.getAmount();
 				}
 			}
@@ -120,7 +133,7 @@ public class ExtrasInventory extends InventoryMethods {
 	@Override
 	public int getAmountOf(Player p, int id) {
 		ItemStack[] invent = p.getInventory().getContents();
-		int amount = 0;
+		int amount = 1;
 		for(ItemStack i : invent){
 			if(i != null){
 				if(i.getTypeId() == id){
