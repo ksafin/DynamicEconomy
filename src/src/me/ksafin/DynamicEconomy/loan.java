@@ -65,9 +65,9 @@ public class loan implements Runnable {
 		}
 		
 		
-		color.sendColouredMessage(player, "&2New Loan of &f$" + amount + "&2 created!"); 
-		color.sendColouredMessage(player, "&2You will be charged &f$" + (interest + amount) + "&2 in &f" + DynamicEconomy.paybackTime + "&2 minutes."); 
-		Utility.writeToLog(player.getName() + " has taken a loan for $" + (amount + interest));
+		color.sendColouredMessage(player, "&2New Loan of &f" + DynamicEconomy.currencySymbol + amount + "&2 created!"); 
+		color.sendColouredMessage(player, "&2You will be charged &f" + DynamicEconomy.currencySymbol + (interest + amount) + "&2 in &f" + DynamicEconomy.paybackTime + "&2 minutes."); 
+		Utility.writeToLog(player.getName() + " has taken a loan for " + DynamicEconomy.currencySymbol + (amount + interest));
 		
 		DynamicEconomy.economy.depositPlayer(player.getName(), amount);
 		
@@ -130,16 +130,16 @@ public class loan implements Runnable {
 		int numLoans = loansSet.size();
 		
 		if (numLoans >= DynamicEconomy.maxLoans) {
-			color.sendColouredMessage(player, "&2You have the maximum number of loans allowed.");
+			color.sendColouredMessage(player, Messages.maxLoans);
 			return false;
 		}
 		
 		if (amount > DynamicEconomy.maxLoanAmount) {
-			color.sendColouredMessage(player, "&2The requested loan is too large; Max loan amount is &f$" + DynamicEconomy.maxLoanAmount);
+			color.sendColouredMessage(player, "&2The requested loan is too large; Max loan amount is &f" + DynamicEconomy.currencySymbol + DynamicEconomy.maxLoanAmount);
 			return false;
 		}
 		if (amount < DynamicEconomy.minLoanAmount) {
-			color.sendColouredMessage(player, "&2The requested loan is too small; Min loan amount is &f$" + DynamicEconomy.minLoanAmount);
+			color.sendColouredMessage(player, "&2The requested loan is too small; Min loan amount is &f" + DynamicEconomy.currencySymbol + DynamicEconomy.minLoanAmount);
 			return false;
 		}
 		
@@ -147,11 +147,11 @@ public class loan implements Runnable {
 			if (!(DynamicEconomy.loanAccountName.equals(""))) {
 				double bal = DynamicEconomy.economy.getBalance(DynamicEconomy.loanAccountName);
 				if (amount > bal) {
-					color.sendColouredMessage(player, "&2The Bank does not have enough money to loan you &f$" + amount);
+					color.sendColouredMessage(player, "&2The Bank does not have enough money to loan you &f" + DynamicEconomy.currencySymbol + amount);
 					Utility.writeToLog(stringPlay + " requested a loan, but the bank does not have enough funds.");
 				}
 			} else {
-				color.sendColouredMessage(player, "&2The Bank is not available, contact your server admin");
+				color.sendColouredMessage(player, Messages.loanAccountNotFound);
 				Utility.writeToLog(stringPlay + " requested a loan, and use-loan-account in config.yml is true, but no account is set.");
 				return false;
 			}
@@ -215,9 +215,9 @@ public class loan implements Runnable {
 				
 
 				color.sendColouredMessage(player, "&2Loan " + (x+1));
-				color.sendColouredMessage(player, "&2Original Loan Amount: &f$" + amount);
+				color.sendColouredMessage(player, "&2Original Loan Amount: &f" + amount);
 				color.sendColouredMessage(player, "&2Interest Rate: &f" + (DynamicEconomy.interestRate * 100) + " %");
-				color.sendColouredMessage(player, "&2Total due: &f$" + (interest + amount));
+				color.sendColouredMessage(player, "&2Total due: &f" + DynamicEconomy.currencySymbol + (interest + amount));
 				color.sendColouredMessage(player, "&2Due in approximately &f" + minutes + "&2 minutes and &f" + seconds + "&2 seconds");
 				color.sendColouredMessage(player, "&2---------&fLoan &f" + (x+1) + "&2 of &f" + loansSet.size() + "&2---------");
 			}
@@ -242,9 +242,9 @@ public class loan implements Runnable {
 				
 				color.sendColouredMessage(player, "&2---------&fCurrent Loans&2---------");
 				color.sendColouredMessage(player, "&2Loan " + page);
-				color.sendColouredMessage(player, "&2Original Loan Amount: &f$" + amount);
+				color.sendColouredMessage(player, "&2Original Loan Amount: &f" + DynamicEconomy.currencySymbol + amount);
 				color.sendColouredMessage(player, "&2Interest Rate: &f" + (DynamicEconomy.interestRate * 100) + " %");
-				color.sendColouredMessage(player, "&2Total due: &f$" + (interest + amount));
+				color.sendColouredMessage(player, "&2Total due: &f" + DynamicEconomy.currencySymbol + (interest + amount));
 				color.sendColouredMessage(player, "&2Due in approximately &f" + minutes + "&2 minutes and &f" + seconds + "&2 seconds");
 				color.sendColouredMessage(player, "&2---------&fLoan &f" + page + "&2 of &f" + loansSet.size() + "---------");
 			}
@@ -368,7 +368,7 @@ public class loan implements Runnable {
 					//OfflinePlayer offlinePlayer = DE.getServer().getOfflinePlayer(loans[i]);
 					
 					    Player player = Bukkit.getServer().getPlayer(loans[i]);
-					    color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have been charged &f$" + (amount + interest) + "&2 for your loan.");
+					    color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have been charged &f" + DynamicEconomy.currencySymbol + (amount + interest) + "&2 for your loan.");
 				
 					
 					Utility.writeToLog(loans[i] + " has been charged " + (amount + interest) + " for their loan.");
@@ -418,6 +418,12 @@ public class loan implements Runnable {
 				}
 			*/}
 		}
+	  
+	//  try {
+	//		this.wait(DynamicEconomy.loanCheckInterval);
+	//	} catch (Exception e) {
+	//		e.printStackTrace();
+	//	}
 		
 		
 	}

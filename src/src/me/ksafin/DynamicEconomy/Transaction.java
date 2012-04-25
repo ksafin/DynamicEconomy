@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+import org.bukkit.material.Wool;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -24,6 +26,9 @@ import couk.Adamki11s.Extras.Inventory.ExtrasInventory;
 
 import me.smickles.DynamicMarket.Invoice;
 import net.milkbowl.vault.economy.Economy;
+import net.minecraft.server.EntityPlayer;
+
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 
 public class Transaction implements Runnable {
 	
@@ -76,7 +81,7 @@ public class Transaction implements Runnable {
 			withinRegion = regionUtils.withinRegion(x, y, z);
 			
 			if (withinRegion == false) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You are not within an economy region!");
+				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.notWithinRegion);
 				Utility.writeToLog(stringPlay + " called /buy outside of an economy region.");
 				return false;
 			}
@@ -97,10 +102,10 @@ public class Transaction implements Runnable {
 			double itemCeiling = Double.parseDouble(itemInfo[3]);
 			double itemVelocity = Double.parseDouble(itemInfo[4]);
 			int itemStock = Integer.parseInt(itemInfo[5]);
-			int itemID = Integer.parseInt(itemInfo[6]);
+			long itemID = Long.parseLong(itemInfo[6]);
 			
 		if (itemName.equals("")) {
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2This item does not exist. ");
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.itemDoesntExist);
 			Utility.writeToLog(stringPlay + " attempted to buy the non-existent item '" + itemName + "'");
 
 			return false;
@@ -111,7 +116,7 @@ public class Transaction implements Runnable {
 		for (int x = 0; x < DynamicEconomy.bannedPurchaseItems.length; x++) {
 			bannedItem = Item.getTrueName(DynamicEconomy.bannedPurchaseItems[x]);
 			if (bannedItem.equals(itemName)) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2This item is banned, and not allowed to be purchased in the economy.");
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.bannedItem);
 				Utility.writeToLog(stringPlay + " attempted to buy the banned item: " + bannedItem);
 				return false;
 			}
@@ -128,14 +133,14 @@ public class Transaction implements Runnable {
 			 if (DynamicEconomy.usestock) {
 				purchaseAmount = itemStock;
 			 } else {
-				 color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Stock Disabled, cannot use keyword 'all' ");
+				 color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.cannotBuyAll);
 				 Utility.writeToLog(stringPlay + " attempted to buy 'all' of '" + itemName + "', but stock is disabled.");
 			 }
 			} else {
 				try {
 					purchaseAmount = Integer.parseInt(args[1]);
 				} catch (Exception e) {
-					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You entered the command arguments in the wrong order, or your amount was invalid. Try again. ");
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.invalidCommandArgs);
 					Utility.writeToLog(stringPlay + " entered an invalid purchase amount, or entered command arguments in the wrong order.");
 					return false;
 				}
@@ -143,8 +148,8 @@ public class Transaction implements Runnable {
 			}
 		}
 		
-		if (purchaseAmount < 0) {
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Cannot buy a negative amount!");
+		if (purchaseAmount <= 0) {
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.negativeBuyAmount);
 			 Utility.writeToLog(stringPlay + " attempted to buy " + purchaseAmount + " of '" + itemName + "', but this amount is invalid.");
 			 return false;
 		}
@@ -160,19 +165,49 @@ public class Transaction implements Runnable {
 		double totalCost = 0;
 		double oldPrice = itemPrice;
 		
-		for (int x = 0; x < purchaseAmount; x++) {
-			totalCost += itemPrice;	
-			if (itemPrice == itemCeiling) {
-				itemPrice = itemCeiling;
-			} else {
-				itemPrice = itemPrice + itemVelocity;
-				if (itemPrice > itemCeiling) {
+		if (DynamicEconomy.usePercentVelocity) {
+			//totalCost = itemPrice * purchaseAmount;
+			//itemPrice = itemPrice + (itemPrice * itemVelocity);
+		/*	for (int x = 0; x < purchaseAmount; x++) {
+				totalCost += itemPrice;	
+				if (itemPrice == itemCeiling) {
 					itemPrice = itemCeiling;
+				} else {
+					itemPrice = itemPrice + (itemPrice * itemVelocity);
+					if (itemPrice > itemCeiling) {
+						itemPrice = itemCeiling;
+					}
 				}
+				
+				//System.out.println(x + ": Price - $" + itemPrice +", totalCost - " + totalCost);
+			} */
+			
+			itemPrice = itemPrice / (Math.pow((1 - itemVelocity), purchaseAmount));
+			
+			if (itemPrice > itemCeiling) {
+				itemPrice = itemCeiling;
+			}
+			if (itemPrice < itemFloor) {
+				itemPrice = itemFloor;
 			}
 			
-			//System.out.println(x + ": Price - $" + itemPrice +", totalCost - " + totalCost);
-		} 
+		} else {
+			for (int x = 0; x < purchaseAmount; x++) {
+				totalCost += itemPrice;	
+				if (itemPrice == itemCeiling) {
+					itemPrice = itemCeiling;
+				} else {
+					itemPrice = itemPrice + itemVelocity;
+					if (itemPrice > itemCeiling) {
+						itemPrice = itemCeiling;
+					}
+				}
+				
+				//System.out.println(x + ": Price - $" + itemPrice +", totalCost - " + totalCost);
+			} 
+		}
+		
+		
 		
 			
 		double tax = DynamicEconomy.purchasetax * totalCost;
@@ -183,7 +218,7 @@ public class Transaction implements Runnable {
 				economy.depositPlayer(DynamicEconomy.taxAccount, tax);
 			} catch (Exception e) {
 				log.info("Tax-Account " + DynamicEconomy.taxAccount + " not found.");
-				Utility.writeToLog("Attempted to deposit tax of $" + tax + " to account " + DynamicEconomy.taxAccount + " but account not found.");
+				Utility.writeToLog("Attempted to deposit tax of " + DynamicEconomy.currencySymbol + tax + " to account " + DynamicEconomy.taxAccount + " but account not found.");
 			}
 		}
 		
@@ -191,15 +226,15 @@ public class Transaction implements Runnable {
 		double newPrice = itemPrice;
 		
 		if (balance < totalCost) {
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You do not have enough money to purchase this.");
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Your balance: &f$" + balance + "   &2Your order total: &f$" + totalCost);
-			Utility.writeToLog(stringPlay + " attempted to buy " + purchaseAmount + " of '" + itemName + "' for " + totalCost + " but could not afford it.");
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.notEnoughMoney);
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Your balance: &f" + DynamicEconomy.currencySymbol + decFormat.format(balance) + "   &2Your order total: &f" + DynamicEconomy.currencySymbol + decFormat.format(totalCost));
+			Utility.writeToLog(stringPlay + " attempted to buy " + decFormat.format(purchaseAmount) + " of '" + itemName + "' for " + decFormat.format(totalCost) + " but could not afford it.");
 			return false;
 		} else if (DynamicEconomy.usestock) {
 			if (itemStock < purchaseAmount) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2There is not enough stock of this item.");
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Your request: &f" + purchaseAmount + "   &2Current Stock: &f" + itemStock);
-				Utility.writeToLog(stringPlay + " attempted to buy " + purchaseAmount + " of '" + itemName + "' but there was only " + itemStock + " remaining");
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.notEnoughStock);
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Your request: &f" + decFormat.format(purchaseAmount) + "   &2Current Stock: &f" + itemStock);
+				Utility.writeToLog(stringPlay + " attempted to buy " + decFormat.format(purchaseAmount) + " of '" + itemName + "' but there was only " + itemStock + " remaining");
 				return false;
 			}
 		}
@@ -212,14 +247,16 @@ public class Transaction implements Runnable {
 			
 			
 			itemConfig.set(requestPrice,newPrice);
+			int changeStock = 0;
 			
 			if (DynamicEconomy.usestock) {
 				String requestStock = itemName + ".stock";
 				int newStock = itemStock - purchaseAmount;
+				changeStock = newStock - itemStock;
 				itemConfig.set(requestStock,newStock);
 			}
 			
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Purchase Success!");
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.purchaseSuccess);
 			Utility.writeToLog(stringPlay + " bought " + purchaseAmount + " of '" + itemName + "' for " + totalCost);
 			
 			
@@ -227,20 +264,22 @@ public class Transaction implements Runnable {
 			oldPrice = Double.valueOf(decFormat.format(oldPrice));
 			double percentTax = DynamicEconomy.purchasetax * 100;			
 			
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&f" + purchaseAmount + " &2" + itemName + "&f @ $" + oldPrice + "&2  + " + percentTax + "% tax = &f$" + totalCost + " &2TOTAL" );
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou bought " + purchaseAmount + " &2of " + itemName + "&f - " + percentTax + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalCost + " &2TOTAL" );
 			
 			newPrice = Double.valueOf(decFormat.format(newPrice));
 			change = Double.valueOf(changeFormat.format(change));
 			
 			if (DynamicEconomy.globalNotify) {
 				for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-					color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f$" + newPrice + "&2 (+" + change + ")");
+					if (!(Utility.isQuiet(p))) {
+						color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (+" + change + ")");
+					}
 				} 
 			} else if (DynamicEconomy.localNotify) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f$" + newPrice + "&2 (+" + change + ")");
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (+" + change + ")");
 			}
 			
-			Utility.writeToLog("[DynamicEconomy] New price of " + itemName + " changed dynamically to " + newPrice + "(+" + change + ")");
+			Utility.writeToLog(DynamicEconomy.prefix + " New price of " + itemName + " changed dynamically to " + newPrice + "(+" + change + ")");
 			
 			itemConfig.set(itemName + ".time", Calendar.getInstance().getTimeInMillis());
 			
@@ -249,14 +288,46 @@ public class Transaction implements Runnable {
 			short dmg = 0;
 			byte data = 0;
 			
-			if (itemID > 1000) {
+			if (itemID > 1000L) {
 				mat = getMat(itemID);
 				dmg = getDmg(itemID);
 				
 				ItemStack items = new ItemStack(mat,purchaseAmount,dmg);
 				player.getInventory().addItem(items);
+			} else if (itemID == 999) {
+				//int totalExp = player.getTotalExperience();
+				//float exp = player.getExp();
+				float totalExp = player.getTotalExperience();
+				//int level = player.getLevel();
+				//int level = player.getLevel();
+				int newExp = (int)(totalExp + purchaseAmount);
+				
+				log.info("Player Total Exp In TRANS: " + player.getTotalExperience());
+				log.info("Player Level In TRANS: " + player.getLevel());
+				log.info("Player Exp In TRANS: " + player.getExp());
+				
+				player.setTotalExperience(0);
+				player.setLevel(0);
+				player.setExp(0);
+				
+				//CraftPlayer cp = (CraftPlayer) player;
+				//EntityPlayer ep = cp.getHandle();
+				//ep.expTotal = totalExp + purchaseAmount;
+				//ep.exp = exp;
+				//ep.expLevel = level;
+				
+				
+				//((CraftPlayer)player).getHandle().h(4);
+				player.giveExp(newExp);
+				//for (int x = 0; x < newExp; x++) {
+				//	player.giveExp(1);
+				//}
+				
+				log.info("Player Total Exp In TRANS: " + player.getTotalExperience());
+				log.info("Player Level In TRANS: " + player.getLevel());
+				log.info("Player Exp In TRANS: " + player.getExp());
 			} else {
-				inv.addToInventory(player, itemID, purchaseAmount);
+				inv.addToInventory(player, (int)itemID, purchaseAmount);
 			}
 			
 			
@@ -269,25 +340,211 @@ public class Transaction implements Runnable {
 				 Utility.writeToLog("[DynamicEconomy] Error saving new item info after /buy execution");
 				 e.printStackTrace();
 			 }
+			 
+			 
+			 dataSigns.checkForUpdates(itemName,changeStock,change);
 			
 			 return true;
 			 
 		}
 	
-	public int getMat(int itemID) {
+	public int getMat(long itemID) {
 		String idStr = String.valueOf(itemID);
 		String[] split = idStr.split("00");
 		int mat = Integer.parseInt(split[0]);
 		return mat;
 	}
 	
-	public short getDmg(int itemID) {
+	public short getDmg(long itemID) {
 		String idStr = String.valueOf(itemID);
 		String[] split = idStr.split("00");
 		short dmg = Short.parseShort(split[1]);
 		return dmg;
 	}
 	
+	public boolean sellInventory(Player player) {
+		
+		Inventory inv = player.getInventory();
+		
+		ItemStack[] contents = inv.getContents();
+		String[] itemInfo = new String[7];
+		
+		double totalSale = 0;
+		String itemName;
+		double itemPrice;
+		double itemFloor;
+		double itemCeiling;
+		double itemVelocity;
+		int itemStock;
+		long itemID;
+		int saleAmount;
+		
+		double percentDur;
+		double maxDur = 0;
+		double playerDur;
+		double indivsale;
+		
+		double percentTax;
+		
+		double tax;
+		
+		double dur;
+		String itemSearchID = "";
+		
+		int changeStock = 0;
+		double oldPrice;
+		double change;
+		
+		
+		for(ItemStack item : contents) {
+			
+			if (item == null) {
+				continue;
+			}
+			
+			dur = item.getDurability();
+			itemID = item.getTypeId();
+			
+			if ((dur == 0) || (((itemID >= 256 ) && (itemID <= 258)) || ((itemID >= 267) && (itemID <= 279)) || ((itemID >= 298) && (itemID <= 317)) || ((itemID >= 283) && (itemID <= 286)) || ((itemID >= 290) && (itemID <= 294)))) {
+				itemSearchID = String.valueOf(item.getTypeId());
+			} else  {
+				itemSearchID = item.getTypeId() + ":" + (int)dur;
+			}
+			
+			
+			itemInfo = Item.getAllInfo(itemSearchID);
+			
+			itemName = itemInfo[0];
+			itemPrice = Double.parseDouble(itemInfo[1]);
+			itemFloor = Double.parseDouble(itemInfo[2]);
+			itemCeiling = Double.parseDouble(itemInfo[3]);
+			itemVelocity = Double.parseDouble(itemInfo[4]);
+			itemStock = Integer.parseInt(itemInfo[5]);
+			itemID = Long.parseLong(itemInfo[6]);
+			saleAmount = item.getAmount();
+			
+			
+			oldPrice = itemPrice;
+			
+			
+			
+			if (((itemID >= 256 ) && (itemID <= 258)) || ((itemID >= 267) && (itemID <= 279)) || ((itemID >= 298) && (itemID <= 317)) || ((itemID >= 283) && (itemID <= 286)) || ((itemID >= 290) && (itemID <= 294))) {
+				itemPrice -= itemVelocity;	
+				
+				playerDur = item.getDurability();
+					
+					String itemMCname = item.getType().toString();
+					maxDur = Item.getMaxDur(itemMCname);
+					
+					playerDur = maxDur - playerDur;
+					percentDur = playerDur / maxDur;
+					
+					totalSale += itemPrice * percentDur;
+			}  else {
+				if (DynamicEconomy.usePercentVelocity) {
+					itemPrice = saleAmount * (Math.pow((1-itemVelocity),saleAmount));
+					
+					if (itemPrice > itemCeiling) {
+						itemPrice = itemCeiling;
+					}
+					if (itemPrice < itemFloor) {
+						itemPrice = itemFloor;
+					}
+					
+					totalSale += itemPrice;
+					
+				} else {
+					for (int x = 0; x < saleAmount; x++) {
+						if (itemPrice == itemFloor) {
+							itemPrice = itemFloor;
+						} else {
+							itemPrice = itemPrice - itemVelocity;
+							if (itemPrice < itemFloor) {
+								itemPrice = itemFloor;
+							}
+						}
+						totalSale += itemPrice;
+						
+					}
+				}
+			} 
+			
+			
+			if (DynamicEconomy.usestock) {
+				String requestStock = itemName + ".stock";
+				int newStock = itemStock + saleAmount;
+				itemConfig.set(requestStock,newStock);
+				changeStock = newStock - itemStock;
+			}
+			
+			change = itemPrice - oldPrice;
+			
+			String requestPrice = itemName + ".price";
+			itemConfig.set(requestPrice,itemPrice);
+			
+			dataSigns.checkForUpdates(itemName,changeStock,change);
+			
+		}
+			
+		tax = totalSale * DynamicEconomy.salestax;
+			
+			if (DynamicEconomy.depositTax == true) {
+				try {
+					economy.depositPlayer(DynamicEconomy.taxAccount, tax);
+				} catch (Exception e) {
+					log.info("Tax-Account " + DynamicEconomy.taxAccount + " not found.");
+					Utility.writeToLog("Attempted to deposit tax of " + DynamicEconomy.currencySymbol + tax + " to account " + DynamicEconomy.taxAccount + " but account not found.");
+				}
+			}
+				
+				economy.depositPlayer(player.getName(), totalSale);
+				
+				
+				
+				
+				
+				
+				
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.saleSuccess);
+				
+				
+					player.updateInventory();
+					totalSale = Double.valueOf(decFormat.format(totalSale));
+					
+					totalSale -= tax;
+					percentTax = DynamicEconomy.salestax * 100;	
+					
+					
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou sold&f your inventory &2 - " + percentTax + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalSale + " &2TOTAL" );
+				
+				
+				Utility.writeToLog(DynamicEconomy.prefix + player.getName() + " sold his entire inventory for " + totalSale);
+				
+				
+				
+				
+				
+				
+				 try {
+					 itemConfig.save(itemsFile);
+				 } catch (Exception e) {
+					 log.info("[DynamicEconomy] Error saving new item info after /sell execution.");
+					 Utility.writeToLog("[DynamicEconomy] Error saving new item info after /sell execution");
+					 e.printStackTrace();
+				 }
+				 
+				 
+				 
+				
+				 
+			
+		
+		
+		inv.clear();
+		
+		
+		return true;
+	}
 
 	
 public boolean sell(Player player, String[] args) {
@@ -299,10 +556,37 @@ public boolean sell(Player player, String[] args) {
 			return false;
 		} 
 		
+		if ((args[0].equalsIgnoreCase("inventory")) && (args.length == 1)) {
+			sellInventory(player);
+			return true;
+		}
+		
 		String[] itemInfo = new String[7];
 		
 		try {
-			itemInfo = Item.getAllInfo(args[0]);
+			if (!((args.length == 1) && (args[0].equals("hand")))) {
+				itemInfo = Item.getAllInfo(args[0]);
+			} else {
+				ItemStack handItem = player.getInventory().getItemInHand();
+				
+				int dur = handItem.getDurability();
+				int id = handItem.getTypeId();
+				
+				log.info(id + ":" + dur);
+				
+				String name = "";
+				
+				if (dur == 0) {
+					name = String.valueOf(id);
+				} else {
+					name = id + ":" + dur;
+				}
+				
+				log.info("Name: " + name);
+				
+				itemInfo = Item.getAllInfo(name);
+				
+			}
 		} catch (Exception e) {
 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You entered the command arguments in the wrong order, or your item name was invalid ");
 			Utility.writeToLog(stringPlay + " entered an invalid item, or entered command arguments in the wrong order");
@@ -314,7 +598,7 @@ public boolean sell(Player player, String[] args) {
 			double itemCeiling = Double.parseDouble(itemInfo[3]);
 			double itemVelocity = Double.parseDouble(itemInfo[4]);
 			int itemStock = Integer.parseInt(itemInfo[5]);
-			int itemID = Integer.parseInt(itemInfo[6]);
+			long itemID = Long.parseLong(itemInfo[6]);
 			
 			String spreadRequest = itemName + ".spread";
 			double itemSpread = itemConfig.getDouble(spreadRequest,itemVelocity);
@@ -328,7 +612,7 @@ public boolean sell(Player player, String[] args) {
 				boolean withinRegion = regionUtils.withinRegion(x, y, z);
 				
 				if (withinRegion == false) {
-					color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You are not within an economy region!");
+					color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.notWithinRegion);
 					Utility.writeToLog(stringPlay + " called /buy outside of an economy region.");
 					return false;
 				}
@@ -337,7 +621,7 @@ public boolean sell(Player player, String[] args) {
 			
 			
 		if (itemName.equals("")) {
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2This item does not exist. ");
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.itemDoesntExist);
 			Utility.writeToLog(stringPlay + " attempted to sell the non-existent item '" + itemName + "'");
 			return false;
 		}
@@ -347,7 +631,7 @@ public boolean sell(Player player, String[] args) {
 		for (int x = 0; x < DynamicEconomy.bannedSaleItems.length; x++) {
 			bannedItem = Item.getTrueName(DynamicEconomy.bannedSaleItems[x]);
 			if (bannedItem.equals(itemName)) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2This item is banned, and not allowed to be sold in the economy.");
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.bannedItem);
 				Utility.writeToLog(stringPlay + " attempted to sell the banned item: " + bannedItem);
 				return false;
 			}
@@ -356,27 +640,58 @@ public boolean sell(Player player, String[] args) {
 		
 		int saleAmount = 0;
 		boolean isAll = false;
+		
+
+
+		int mat = 0;
+		short dmg = 0;
+		byte data = 0;
+		ItemStack saleItem;
+		int userAmount = 0;
 			
 		
 		if (args.length == 1) {
-			saleAmount = DynamicEconomy.defaultAmount;
+			if (args[0].equals("hand")) {
+				saleAmount = player.getInventory().getItemInHand().getAmount();
+				
+				if (saleAmount == 0) {
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You have no item in your hand.");
+					Utility.writeToLog(stringPlay + " called /sell hand, but had no item in hand.");
+					return false;
+				}
+				
+			} else {
+				saleAmount = DynamicEconomy.defaultAmount;
+			}
 		} else if (args.length == 2) {
 			if (args[1].equalsIgnoreCase("all")){
-				saleAmount = inv.getAmountOf(player, itemID);
+				//saleAmount = inv.getAmountOf(player, itemID);
+				if (itemID > 1000L) {
+					mat = getMat(itemID);
+					dmg = getDmg(itemID);
+					
+					saleItem = new ItemStack(mat,saleAmount,dmg);
+					saleAmount = inv.getAmountOfDataValue(player,saleItem);
+				} else if (itemID == 999 ){
+					saleAmount = player.getTotalExperience();
+				} else {
+					saleAmount = inv.getAmountOf(player,(int)itemID);
+				}
+				
 				isAll = true;
 			} else {
 				try {
 					saleAmount = Integer.parseInt(args[1]);
 				} catch (Exception e) {
-					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You entered the command arguments in the wrong order, or your amount was invalid. Try again. ");
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.invalidCommandArgs);
 					Utility.writeToLog(stringPlay + " entered an invalid purchase amount, or entered command arguments in the wrong order.");
 					return false;
 				}
 			}
 		}
 		
-		if (saleAmount < 0) {
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Cannot sell a negative amount!");
+		if (saleAmount <= 0) {
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.negativeSellAmount);
 			 Utility.writeToLog(stringPlay + " attempted to sell " + saleAmount + " of '" + itemName + "', but this amount is invalid.");
 			 return false;
 		}
@@ -391,48 +706,81 @@ public boolean sell(Player player, String[] args) {
 		double totalSale = 0;
 		double oldPrice = itemPrice;
 		
-		if (isAll) {
-			saleAmount--;
+		
+		
+		if (DynamicEconomy.usePercentVelocity) {
+			//totalSale = itemPrice * saleAmount;
+			//itemPrice = itemPrice - (itemPrice * itemVelocity);
+		/*	for (int x = 0; x < saleAmount; x++) {
+				if (itemPrice == itemFloor) {
+					itemPrice = itemFloor;
+				} else {
+					itemPrice = itemPrice - (itemVelocity * itemPrice);
+					if (itemPrice < itemFloor) {
+						itemPrice = itemFloor;
+					}
+				}
+				totalSale += itemPrice;
+				
+			} */
+			itemPrice = saleAmount * (Math.pow((1-itemVelocity),saleAmount));
+			
+			if (itemPrice > itemCeiling) {
+				itemPrice = itemCeiling;
+			}
+			if (itemPrice < itemFloor) {
+				itemPrice = itemFloor;
+			}
+			
+		} else {
+			for (int x = 0; x < saleAmount; x++) {
+				if (itemPrice == itemFloor) {
+					itemPrice = itemFloor;
+				} else {
+					itemPrice = itemPrice - itemVelocity;
+					if (itemPrice < itemFloor) {
+						itemPrice = itemFloor;
+					}
+				}
+				totalSale += itemPrice;
+				
+			}
 		}
 		
-		for (int x = 0; x < saleAmount; x++) {
-			if (itemPrice == itemFloor) {
-				itemPrice = itemFloor;
-			} else {
-				itemPrice = itemPrice - itemVelocity;
-				if (itemPrice < itemFloor) {
-					itemPrice = itemFloor;
-				}
-			}
-			totalSale += itemPrice;
-			
-		}		
+				
 		
-
-		int mat = 0;
-		short dmg = 0;
-		byte data = 0;
 		
 		double newPrice = itemPrice;
 		
 		
 		//int playerItemAmount = inv.getAmountOf(player, itemID);
-		ItemStack saleItem;
-		int userAmount = 0;
 		
-		if (itemID > 1000) {
+		if (args[0].equalsIgnoreCase("hand")) {
+			userAmount = player.getInventory().getItemInHand().getAmount();
+		} else if (itemID > 1000L) {
 			mat = getMat(itemID);
 			dmg = getDmg(itemID);
 			
 			saleItem = new ItemStack(mat,saleAmount,dmg);
 			userAmount = inv.getAmountOfDataValue(player,saleItem);
+		} else if (itemID == 999 ){
+				userAmount = player.getTotalExperience();
 		} else {
-			userAmount = inv.getAmountOf(player,itemID);
+			userAmount = inv.getAmountOf(player,(int)itemID);
 		}
 		
 		//boolean containsItem = player.getInventory().contains(saleItem);
 		
-		if ((saleAmount >= userAmount) && !(isAll)) {
+		if (isAll) {
+			//saleAmount = userAmount - 1;
+			if (saleAmount <= 0) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You have no &f" + itemName);
+				Utility.writeToLog(stringPlay + " attempted to sell all of their " + itemName + ", but had none.");
+				return false;
+			}
+		}
+		
+		if ((saleAmount > userAmount) && !(isAll)) {
 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You do not have &f" + saleAmount + " " + itemName);
 			Utility.writeToLog(stringPlay + " attempted to sell " + saleAmount + " of " + itemName + ", but didn't have that many.");
 			return false;
@@ -446,7 +794,7 @@ public boolean sell(Player player, String[] args) {
 				economy.depositPlayer(DynamicEconomy.taxAccount, tax);
 			} catch (Exception e) {
 				log.info("Tax-Account " + DynamicEconomy.taxAccount + " not found.");
-				Utility.writeToLog("Attempted to deposit tax of $" + tax + " to account " + DynamicEconomy.taxAccount + " but account not found.");
+				Utility.writeToLog("Attempted to deposit tax of " + DynamicEconomy.currencySymbol + tax + " to account " + DynamicEconomy.taxAccount + " but account not found.");
 			}
 		}
 			
@@ -459,15 +807,18 @@ public boolean sell(Player player, String[] args) {
 			
 			itemConfig.set(requestPrice,newPrice);
 			
+			int changeStock = 0;
+			
 			if (DynamicEconomy.usestock) {
 				String requestStock = itemName + ".stock";
 				int newStock = itemStock + saleAmount;
 				itemConfig.set(requestStock,newStock);
+				changeStock = newStock - itemStock;
 			}
 			
 			
 			
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Sale Success!");
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.saleSuccess);
 			
 			
 			
@@ -476,17 +827,19 @@ public boolean sell(Player player, String[] args) {
 			double playerDur;
 			double indivsale;
 			
+			double percentTax;
+			
 			
 			if (((itemID >= 256 ) && (itemID <= 258)) || ((itemID >= 267) && (itemID <= 279)) || ((itemID >= 298) && (itemID <= 317)) || ((itemID >= 283) && (itemID <= 286)) || ((itemID >= 290) && (itemID <= 294))) {
 				totalSale = 0;
 				
 				for (int x = 0; x < saleAmount; x++) {
 					
-					ItemStack itemStack = new ItemStack(itemID);
+					ItemStack itemStack = new ItemStack((int)itemID);
 					String itemMCname = itemStack.getType().toString();
 					maxDur = Item.getMaxDur(itemMCname);
 					
-					int slot = player.getInventory().first(itemID);
+					int slot = player.getInventory().first((int)itemID);
 					ItemStack playerItem = player.getInventory().getItem(slot);
 					playerDur = playerItem.getDurability();
 					
@@ -505,47 +858,61 @@ public boolean sell(Player player, String[] args) {
 					percentDur = Double.valueOf(decFormat.format(percentDur));
 					indivsale = Double.valueOf(decFormat.format(indivsale));
 					
-					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&f1 &2" + itemName + "&f with " + percentDur + "% &2durability = &2$" + indivsale);
+					
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&f1 &2" + itemName + "&f with " + percentDur + "% &2durability = &2"+ DynamicEconomy.currencySymbol + indivsale);
+					//color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou sold &2" + saleAmount + "&f of &2" + itemName + "&f - " + percentTax + "&2% tax = &f$" + totalSale + " &2TOTAL" );
 					Utility.writeToLog(stringPlay + " sold a '" + itemName + "' at " + percentDur + "% durability for " + indivsale);
 				}
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2TOTAL SALE: &f$" + totalSale );
+				percentTax = DynamicEconomy.salestax * 100;
+				tax = DynamicEconomy.salestax * totalSale;
+				totalSale -= tax;
+				totalSale = Double.valueOf(decFormat.format(totalSale));
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2TOTAL SALE (with " + percentTax + "% tax): &f" + DynamicEconomy.currencySymbol + totalSale );
 				
 			} else {
 				
 				
 				ItemStack i;
+				Material material;
 				
-				if (itemID > 1000) {
-					if (itemID == 17001) {
-						mat = 17;
-						dmg = 2;
-					} else if (itemID == 17002) {
-						mat = 17;
-						dmg  = 1;
-					} else if (itemID == 17003) {
-						mat = 17;
-						dmg  = 3;
-					}
+				if (args[0].equalsIgnoreCase("hand")) {
+					i = player.getInventory().getItemInHand();
+					player.getInventory().removeItem(i);
+				} else if (itemID > 1000L) {
+					mat = getMat(itemID);
+					dmg = getDmg(itemID);
 					
 					i = new ItemStack(mat,saleAmount,dmg);
+					player.getInventory().removeItem(i);
+				} else if (itemID == 999) {
+					float exp = player.getTotalExperience();
+					int newExp = (int)(exp - saleAmount);
+					
+					player.setTotalExperience(0);
+					player.setLevel(0);
+					player.setExp(0);
+					player.giveExp(newExp);
 				} else {
-					i = new ItemStack(itemID,saleAmount);
+					material = Material.getMaterial((int)itemID);
+					i = new ItemStack(material,saleAmount);
+					player.getInventory().removeItem(i);
 				}
 				
 				//ItemStack i = new ItemStack(itemID,saleAmount);
 				//Material mat = Material.getMaterial(itemID);
 				//removeInventoryItems(player.getInventory(),mat,saleAmount);
-				player.getInventory().removeItem(i);
+				
+				
 				
 				//player.getInventory().removeItem(i);
 				player.updateInventory();
 				totalSale = Double.valueOf(decFormat.format(totalSale));
 				oldPrice = Double.valueOf(decFormat.format(oldPrice));
 				newPrice = Double.valueOf(decFormat.format(newPrice));
-				double percentTax = DynamicEconomy.salestax * 100;	
+				percentTax = DynamicEconomy.salestax * 100;	
 				
 				
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&f" + saleAmount + " &2" + itemName + "&f @ $" + newPrice + "&2 - " + percentTax + "% tax = &f$" + totalSale + " &2TOTAL" );
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou sold &2" + saleAmount + "&f of &2" + itemName + "&f - " + percentTax + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalSale + " &2TOTAL" );
 				Utility.writeToLog(stringPlay + " succesfully sold " + saleAmount + " of '" + itemName + "' for " + totalSale);
 			}
 			
@@ -556,13 +923,15 @@ public boolean sell(Player player, String[] args) {
 			
 			if (DynamicEconomy.globalNotify) {
 				for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-					color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f$" + newPrice + "&2 (" + change + ")");
-				} 
+					if (!(Utility.isQuiet(p))) {
+						color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (" + change + ")");
+					}
+					} 
 			} else if (DynamicEconomy.localNotify) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f$" + newPrice + "&2 (" + change + ")");
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (" + change + ")");
 			}
 			
-			Utility.writeToLog("[DynamicEconomy] New price of " + itemName + " changed dynamically to " + newPrice + "(" + change + ")");
+			Utility.writeToLog(DynamicEconomy.prefix + " New price of " + itemName + " changed dynamically to " + newPrice + "(" + change + ")");
 			
 			
 			//inv.removeFromInventory(player, itemID, saleAmount);
@@ -578,8 +947,11 @@ public boolean sell(Player player, String[] args) {
 				 Utility.writeToLog("[DynamicEconomy] Error saving new item info after /sell execution");
 				 e.printStackTrace();
 			 }
+			 
+			 
+			 
 			
-		
+			 dataSigns.checkForUpdates(itemName,changeStock,change);
 		
 		return true;
 		
@@ -622,9 +994,10 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
  			
  			Item.saveItemFile();
  			
- 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Stock succesfully added.");
+ 			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.stockAdded);
  			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Previous Stock: &f" + currentStock + "&2 | New Stock: &f" + newStock);
  		    Utility.writeToLog(stringPlay + " added " + addStock + " stock of " + item + " for a new stock total of " + newStock);
+ 		   dataSigns.checkForUpdates(item, (newStock - currentStock), 0);
  			
  		}
  		
@@ -651,9 +1024,10 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
  			
  			Item.saveItemFile();
  			
- 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Stock succesfully added.");
+ 			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.stockRemoved);
  			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Previous Stock: &f" + currentStock + "&2 | New Stock: &f" + newStock);
  			Utility.writeToLog(stringPlay + " removed " + removeStock + " stock of " + item + " for a new stock total of " + newStock);
+ 			dataSigns.checkForUpdates(item, (newStock - currentStock), 0);
  			
  		}
  		
@@ -738,8 +1112,10 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
 				
 				if (DynamicEconomy.globalNotify) {
 					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-						price = Double.valueOf(decFormat.format(price));
-						color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + items[x] + "&2 is &f$" + price + "&2 ( -" + (DynamicEconomy.overTimePriceDecayPercent * 100 ) + "% )");
+						if (!(Utility.isQuiet(p))) {
+							price = Double.valueOf(decFormat.format(price));
+							color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + items[x] + "&2 is &f" + DynamicEconomy.currencySymbol + price + "&2 ( -" + (DynamicEconomy.overTimePriceDecayPercent * 100 ) + "% )");
+						}
 					} 
 				}
 				itemConfig.set(items[x] + ".time",Calendar.getInstance().getTimeInMillis());
@@ -752,6 +1128,13 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
 				
 			}
 		}
+		
+		
+		//try {
+			//this.wait(DynamicEconomy.overTimePriceDecayPeriodCheck * 60 * 20);
+		//} catch (Exception e) {
+		//	e.printStackTrace();
+		//}
 		
 	}
 	

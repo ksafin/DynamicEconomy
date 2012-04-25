@@ -36,7 +36,7 @@ public class regionUtils {
 			Object selectionsObject = DynamicEconomy.selectedCorners.get(name);
 		
 			if (selectionsObject == null) {
-				color.sendColouredMessage(player, "&2No region selected!");
+				color.sendColouredMessage(player, Messages.noRegionSelected);
 				return false;
 			}
 		
@@ -44,12 +44,12 @@ public class regionUtils {
 			
 			
 			if ((selections[0] == null) || (selections[1] == null)) {
-				color.sendColouredMessage(player, "&2No region selected!");
+				color.sendColouredMessage(player, Messages.noRegionSelected);
 				return false;
 			}
 			
 			if ((selections[0].isEmpty()) || (selections[1].isEmpty())) {
-				color.sendColouredMessage(player, "&2No region selected!");
+				color.sendColouredMessage(player, Messages.noRegionSelected);
 				return false;
 			}
 		
@@ -242,12 +242,12 @@ public class regionUtils {
 			
 			
 			if ((selectionsArr[0] == null) || (selectionsArr[1] == null)) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noRegionSelected);
 				return false;
 			}
 			
 			if ((selectionsArr[0].isEmpty()) || (selectionsArr[1].isEmpty())) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noRegionSelected);
 				return false;
 			}
 		
@@ -356,7 +356,7 @@ public class regionUtils {
 			
 			DynamicEconomy.selectedCorners.put(stringPlay, coordsArray);
 			
-			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Region expanded!");
+			color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.regionExpanded);
 			return true;
 			
 		}
@@ -389,12 +389,12 @@ public class regionUtils {
 			
 			
 			if ((selectionsArr[0] == null) || (selectionsArr[1] == null)) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noRegionSelected);
 				return false;
 			}
 			
 			if ((selectionsArr[0].isEmpty()) || (selectionsArr[1].isEmpty())) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noRegionSelected);
 				return false;
 			}
 		
@@ -494,7 +494,7 @@ public class regionUtils {
 			
 			DynamicEconomy.selectedCorners.put(stringPlay, coordsArray);
 			
-			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Region expanded!");
+			color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.regionContracted);
 			return true;
 			
 		}
@@ -520,12 +520,12 @@ public class regionUtils {
 			
 			
 			if ((selectionsArr[0] == null) || (selectionsArr[1] == null)) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noRegionSelected);
 				return false;
 			}
 			
 			if ((selectionsArr[0].isEmpty()) || (selectionsArr[1].isEmpty())) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2No region selected!");
+				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noRegionSelected);
 				return false;
 			}
 			

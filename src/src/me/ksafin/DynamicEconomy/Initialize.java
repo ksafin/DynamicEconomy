@@ -1,8 +1,10 @@
 package me.ksafin.DynamicEconomy;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -54,6 +56,15 @@ public class Initialize {
 	    config.set("over-time-price-decay-percent",.1);
 	    config.set("over-time-price-decay-period",1440);
 	    config.set("over-time-price-decay-period-check",60);
+	    config.set("use-percent-velocity",false);
+	    config.set("dynecon-world","world");
+	    config.set("currency-symbol","$");
+	    config.set("enable-random-events",true);
+	    config.set("random-event-interval",10);
+	    config.set("random-event-chance",.1);
+	    config.set("sign-tagline-color","&a");
+	    config.set("sign-info-color","&f");
+	    config.set("sign-invalid-color","&c");
 	    
 		
 		try {
@@ -99,6 +110,8 @@ public class Initialize {
 		conf.set("COBBLESTONE.stock",50);
 		conf.set("COBBLESTONE.spread", .01);
 		conf.set("COBBLESTONE.time",0);
+		
+		// BEGIN ALL PLANKS
 
 		conf.set("PLANK.velocity", .01);
 		conf.set("PLANK.id", 5);
@@ -109,7 +122,39 @@ public class Initialize {
 		conf.set("PLANK.stock",50);
 		conf.set("PLANK.spread", .01);
 		conf.set("PLANK.time",0);
+		
+		conf.set("PINEPLANK.velocity", .01);
+		conf.set("PINEPLANK.id", 5001);
+		conf.set("PINEPLANK.price", .2);
+		conf.set("PINEPLANK.floor", .01);
+		conf.set("PINEPLANK.ceiling", .4);
+		conf.set("PINEPLANK.description", "Processed wood");
+		conf.set("PINEPLANK.stock",50);
+		conf.set("PINEPLANK.spread", .01);
+		conf.set("PINEPLANK.time",0);
+		
+		conf.set("BIRCHPLANK.velocity", .01);
+		conf.set("BIRCHPLANK.id", 5002);
+		conf.set("BIRCHPLANK.price", .2);
+		conf.set("BIRCHPLANK.floor", .01);
+		conf.set("BIRCHPLANK.ceiling", .4);
+		conf.set("BIRCHPLANK.description", "Processed wood");
+		conf.set("BIRCHPLANK.stock",50);
+		conf.set("BIRCHPLANK.spread", .01);
+		conf.set("BIRCHPLANK.time",0);
+		
+		conf.set("JUNGLEPLANK.velocity", .01);
+		conf.set("JUNGLEPLANK.id", 5003);
+		conf.set("JUNGLEPLANK.price", .2);
+		conf.set("JUNGLEPLANK.floor", .01);
+		conf.set("JUNGLEPLANK.ceiling", .4);
+		conf.set("JUNGLEPLANK.description", "Processed wood");
+		conf.set("JUNGLEPLANK.stock",50);
+		conf.set("JUNGLEPLANK.spread", .01);
+		conf.set("JUNGLEPLANK.time",0);
 
+		// BEGIN ALL SAPLINGS
+		
 		conf.set("SAPLING.velocity", .01);
 		conf.set("SAPLING.id", 6);
 		conf.set("SAPLING.price", .2);
@@ -119,6 +164,38 @@ public class Initialize {
 		conf.set("SAPLING.stock",50);
 		conf.set("SAPLING.spread", .01);
 		conf.set("SAPLING.time",0);
+		
+		conf.set("BIRCHSAPLING.velocity", .01);
+		conf.set("BIRCHSAPLING.id", 6001);
+		conf.set("BIRCHSAPLING.price", .2);
+		conf.set("BIRCHSAPLING.floor", .01);
+		conf.set("BIRCHSAPLING.ceiling", .45);
+		conf.set("BIRCHSAPLING.description", "A small plant");
+		conf.set("BIRCHSAPLING.stock",50);
+		conf.set("BIRCHSAPLING.spread", .01);
+		conf.set("BIRCHSAPLING.time",0);
+		
+		conf.set("PINESAPLING.velocity", .01);
+		conf.set("PINESAPLING.id", 6002);
+		conf.set("PINESAPLING.price", .2);
+		conf.set("PINESAPLING.floor", .01);
+		conf.set("PINESAPLING.ceiling", .45);
+		conf.set("PINESAPLING.description", "A small plant");
+		conf.set("PINESAPLING.stock",50);
+		conf.set("PINESAPLING.spread", .01);
+		conf.set("PINESAPLING.time",0);
+		
+		conf.set("JUNGLESAPLING.velocity", .01);
+		conf.set("JUNGLESAPLING.id", 6003);
+		conf.set("JUNGLESAPLING.price", .2);
+		conf.set("JUNGLESAPLING.floor", .01);
+		conf.set("JUNGLESAPLING.ceiling", .45);
+		conf.set("JUNGLESAPLING.description", "A small plant");
+		conf.set("JUNGLESAPLING.stock",50);
+		conf.set("JUNGLESAPLING.spread", .01);
+		conf.set("JUNGLESAPLING.time",0);
+		
+		// END SAPLINGS
 
 		conf.set("SAND.velocity", .001);
 		conf.set("SAND.id", 12);
@@ -181,7 +258,7 @@ public class Initialize {
 		conf.set("WOOD.time",0);
 		
 		conf.set("BIRCHWOOD.velocity", .05);
-		conf.set("BIRCHWOOD.id", 17001);
+		conf.set("BIRCHWOOD.id", 17002);
 		conf.set("BIRCHWOOD.price", .8);
 		conf.set("BIRCHWOOD.floor", .1);
 		conf.set("BIRCHWOOD.ceiling", 1);
@@ -191,7 +268,7 @@ public class Initialize {
 		conf.set("BIRCHWOOD.time",0);
 		
 		conf.set("PINEWOOD.velocity", .05);
-		conf.set("PINEWOOD.id", 17002);
+		conf.set("PINEWOOD.id", 17001);
 		conf.set("PINEWOOD.price", .8);
 		conf.set("PINEWOOD.floor", .1);
 		conf.set("PINEWOOD.ceiling", 1);
@@ -239,6 +316,8 @@ public class Initialize {
 		conf.set("DISPENSER.stock",50);
 		conf.set("DISPENSER.spread", .15);
 		conf.set("DISPENSER.time",0);
+		
+		// BEGIN SANDSTONE
 
 		conf.set("SANDSTONE.velocity", .01);
 		conf.set("SANDSTONE.id", 24);
@@ -249,6 +328,26 @@ public class Initialize {
 		conf.set("SANDSTONE.stock",50);
 		conf.set("SANDSTONE.spread", .01);
 		conf.set("SANDSTONE.time",0);
+		
+		conf.set("HIEROGLYPHICSANDSTONE.velocity", .01);
+		conf.set("HIEROGLYPHICSANDSTONE.id", 24001);
+		conf.set("HIEROGLYPHICSANDSTONE.price", .15);
+		conf.set("HIEROGLYPHICSANDSTONE.floor", .1);
+		conf.set("HIEROGLYPHICSANDSTONE.ceiling", .5);
+		conf.set("HIEROGLYPHICSANDSTONE.description", "Looks like sand, feels like stone!");
+		conf.set("HIEROGLYPHICSANDSTONE.stock",50);
+		conf.set("HIEROGLYPHICSANDSTONE.spread", .01);
+		conf.set("HIEROGLYPHICSANDSTONE.time",0);
+		
+		conf.set("SMOOTHSANDSTONE.velocity", .01);
+		conf.set("SMOOTHSANDSTONE.id", 24002);
+		conf.set("SMOOTHSANDSTONE.price", .15);
+		conf.set("SMOOTHSANDSTONE.floor", .1);
+		conf.set("SMOOTHSANDSTONE.ceiling", .5);
+		conf.set("SMOOTHSANDSTONE.description", "Looks like sand, feels like stone!");
+		conf.set("SMOOTHSANDSTONE.stock",50);
+		conf.set("SMOOTHSANDSTONE.spread", .01);
+		conf.set("SMOOTHSANDSTONE.time",0);
 
 		conf.set("NOTEBLOCK.velocity", .08);
 		conf.set("NOTEBLOCK.id", 25);
@@ -949,7 +1048,7 @@ public class Initialize {
 		conf.set("NETHERBRICK.time",0);
 
 		conf.set("NETHERBRICKFENCE.velocity", .11);
-		conf.set("NETHERBRICKFENCE.id", 1113);
+		conf.set("NETHERBRICKFENCE.id", 113);
 		conf.set("NETHERBRICKFENCE.price", 8);
 		conf.set("NETHERBRICKFENCE.floor", 2);
 		conf.set("NETHERBRICKFENCE.ceiling", 12);
@@ -1339,7 +1438,7 @@ public class Initialize {
 		conf.set("FEATHER.time",0);
 
 		conf.set("GUNPOWDER.velocity", .32);
-		conf.set("GUNPOWDER.id", 189);
+		conf.set("GUNPOWDER.id", 289);
 		conf.set("GUNPOWDER.price", 20);
 		conf.set("GUNPOWDER.floor", 10);
 		conf.set("GUNPOWDER.ceiling", 40);
@@ -2301,7 +2400,627 @@ public class Initialize {
 		conf.set("SPIDEREYE.stock",50);
 		conf.set("SPIDEREYE.spread", .9);
 		conf.set("SPIDEREYE.time",0);
+		
+		conf.set("EXPERIENCE.velocity", .001);
+		conf.set("EXPERIENCE.id", 999);
+		conf.set("EXPERIENCE.price", 1);
+		conf.set("EXPERIENCE.floor", .01);
+		conf.set("EXPERIENCE.ceiling", 50);
+		conf.set("EXPERIENCE.description", "Orbs of wisdom!");
+		conf.set("EXPERIENCE.stock",100000);
+		conf.set("EXPERIENCE.spread", .9);
+		conf.set("EXPERIENCE.time",0);
+		
+		// BEGIN POSTIONS
+		
+		conf.set("MUNDANEPOTION.velocity", .2);
+		conf.set("MUNDANEPOTION.id", 373008192);
+		conf.set("MUNDANEPOTION.price", 5);
+		conf.set("MUNDANEPOTION.floor", 1);
+		conf.set("MUNDANEPOTION.ceiling", 30);
+		conf.set("MUNDANEPOTION.description", "Base potion of Weakness and Splash Mundane potion");
+		conf.set("MUNDANEPOTION.stock",50);
+		conf.set("MUNDANEPOTION.spread", .9);
+		conf.set("MUNDANEPOTION.time",0);
+		
+		conf.set("WATERBOTTLE.velocity", .2);
+		conf.set("WATERBOTTLE.id", 373000);
+		conf.set("WATERBOTTLE.price", 5);
+		conf.set("WATERBOTTLE.floor", 1);
+		conf.set("WATERBOTTLE.ceiling", 30);
+		conf.set("WATERBOTTLE.description", "Starting point for every recipe.. Nice h20");
+		conf.set("WATERBOTTLE.stock",50);
+		conf.set("WATERBOTTLE.spread", .9);
+		conf.set("WATERBOTTLE.time",0);
+		
+		conf.set("MUNDANEPOTIONEXTENDED.velocity", .2);
+		conf.set("MUNDANEPOTIONEXTENDED.id", 3730064);
+		conf.set("MUNDANEPOTIONEXTENDED.price", 5);
+		conf.set("MUNDANEPOTIONEXTENDED.floor", 1);
+		conf.set("MUNDANEPOTIONEXTENDED.ceiling", 30);
+		conf.set("MUNDANEPOTIONEXTENDED.description", "Base for potion of weakness (extended)");
+		conf.set("MUNDANEPOTIONEXTENDED.stock",50);
+		conf.set("MUNDANEPOTIONEXTENDED.spread", .9);
+		conf.set("MUNDANEPOTIONEXTENDED.time",0);
+		
+		conf.set("THICKPOTION.velocity", .2);
+		conf.set("THICKPOTION.id", 3730064);
+		conf.set("THICKPOTION.price", 5);
+		conf.set("THICKPOTION.floor", 1);
+		conf.set("THICKPOTION.ceiling", 30);
+		conf.set("THICKPOTION.description", "Base for potion of weakness");
+		conf.set("THICKPOTION.stock",50);
+		conf.set("THICKPOTION.spread", .9);
+		conf.set("THICKPOTION.time",0);
+		
+		conf.set("POTIONOFREGENERATION.velocity", .2);
+		conf.set("POTIONOFREGENERATION.id", 373008193);
+		conf.set("POTIONOFREGENERATION.price", 5);
+		conf.set("POTIONOFREGENERATION.floor", 1);
+		conf.set("POTIONOFREGENERATION.ceiling", 30);
+		conf.set("POTIONOFREGENERATION.description", "Restores 23 hearts of health over 0:45");
+		conf.set("POTIONOFREGENERATION.stock",50);
+		conf.set("POTIONOFREGENERATION.spread", .9);
+		conf.set("POTIONOFREGENERATION.time",0);
+		
+		conf.set("POTIONOFREGENERATIONEXTENDED.velocity", .2);
+		conf.set("POTIONOFREGENERATIONEXTENDED.id", 373008257);
+		conf.set("POTIONOFREGENERATIONEXTENDED.price", 5);
+		conf.set("POTIONOFREGENERATIONEXTENDED.floor", 1);
+		conf.set("POTIONOFREGENERATIONEXTENDED.ceiling", 30);
+		conf.set("POTIONOFREGENERATIONEXTENDED.description", "Restores 54 hearts of health over 2:00");
+		conf.set("POTIONOFREGENERATIONEXTENDED.stock",50);
+		conf.set("POTIONOFREGENERATIONEXTENDED.spread", .9);
+		conf.set("POTIONOFREGENERATIONEXTENDED.time",0);
 
+		conf.set("POTIONOFSWIFTNESS.velocity", .2);
+		conf.set("POTIONOFSWIFTNESS.id", 373008194);
+		conf.set("POTIONOFSWIFTNESS.price", 5);
+		conf.set("POTIONOFSWIFTNESS.floor", 1);
+		conf.set("POTIONOFSWIFTNESS.ceiling", 30);
+		conf.set("POTIONOFSWIFTNESS.description", "Increases a players movement, sprinting speed, jumping length, and FOV, for 3:00");
+		conf.set("POTIONOFSWIFTNESS.stock",50);
+		conf.set("POTIONOFSWIFTNESS.spread", .9);
+		conf.set("POTIONOFSWIFTNESS.time",0);
+		
+		conf.set("POTIONOFSWIFTNESSEXTENDED.velocity", .2);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.id", 373008258);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.price", 5);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.floor", 1);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.ceiling", 30);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.description", "Increases a players movement, sprinting speed, jumping length, and FOV, for 8:00");
+		conf.set("POTIONOFSWIFTNESSEXTENDED.stock",50);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.spread", .9);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.time",0);
+
+		conf.set("POTIONOFFIRERESISTANCE.velocity", .2);
+		conf.set("POTIONOFFIRERESISTANCE.id", 373008195);
+		conf.set("POTIONOFFIRERESISTANCE.price", 5);
+		conf.set("POTIONOFFIRERESISTANCE.floor", 1);
+		conf.set("POTIONOFFIRERESISTANCE.ceiling", 30);
+		conf.set("POTIONOFFIRERESISTANCE.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 3:00");
+		conf.set("POTIONOFFIRERESISTANCE.stock",50);
+		conf.set("POTIONOFFIRERESISTANCE.spread", .9);
+		conf.set("POTIONOFFIRERESISTANCE.time",0);
+		
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.velocity", .2);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.id", 373008259);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.price", 5);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.floor", 1);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.ceiling", 30);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 8:00");
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.stock",50);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.spread", .9);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.time",0);
+
+		conf.set("POTIONOFPOISON.velocity", .2);
+		conf.set("POTIONOFPOISON.id", 373008196);
+		conf.set("POTIONOFPOISON.price", 5);
+		conf.set("POTIONOFPOISON.floor", 1);
+		conf.set("POTIONOFPOISON.ceiling", 30);
+		conf.set("POTIONOFPOISON.description", "Poisons the player for 0:45, reducing the health to 1 heart at most.");
+		conf.set("POTIONOFPOISON.stock",50);
+		conf.set("POTIONOFPOISON.spread", .9);
+		conf.set("POTIONOFPOISON.time",0);
+		
+		conf.set("POTIONOFPOISONEXTENDED.velocity", .2);
+		conf.set("POTIONOFPOISONEXTENDED.id", 373008260);
+		conf.set("POTIONOFPOISONEXTENDED.price", 5);
+		conf.set("POTIONOFPOISONEXTENDED.floor", 1);
+		conf.set("POTIONOFPOISONEXTENDED.ceiling", 30);
+		conf.set("POTIONOFPOISONEXTENDED.description", "Poisons the player for 2:00, reducing the health to 1 heart at most.");
+		conf.set("POTIONOFPOISONEXTENDED.stock",50);
+		conf.set("POTIONOFPOISONEXTENDED.spread", .9);
+		conf.set("POTIONOFPOISONEXTENDED.time",0);
+
+		conf.set("POTIONOFHEALING.velocity", .2);
+		conf.set("POTIONOFHEALING.id", 373008197);
+		conf.set("POTIONOFHEALING.price", 5);
+		conf.set("POTIONOFHEALING.floor", 1);
+		conf.set("POTIONOFHEALING.ceiling", 30);
+		conf.set("POTIONOFHEALING.description", "Restores 3 hearts");
+		conf.set("POTIONOFHEALING.stock",50);
+		conf.set("POTIONOFHEALING.spread", .9);
+		conf.set("POTIONOFHEALING.time",0);
+		
+		conf.set("POTIONOFHEALINGEXTENDED.velocity", .2);
+		conf.set("POTIONOFHEALINGEXTENDED.id", 373008261);
+		conf.set("POTIONOFHEALINGEXTENDED.price", 5);
+		conf.set("POTIONOFHEALINGEXTENDED.floor", 1);
+		conf.set("POTIONOFHEALINGEXTENDED.ceiling", 30);
+		conf.set("POTIONOFHEALINGEXTENDED.description", "Restores 3 hearts");
+		conf.set("POTIONOFHEALINGEXTENDED.stock",50);
+		conf.set("POTIONOFHEALINGEXTENDED.spread", .9);
+		conf.set("POTIONOFHEALINGEXTENDED.time",0);
+
+		conf.set("POTIONOFWEAKNESS.velocity", .2);
+		conf.set("POTIONOFWEAKNESS.id", 373008200);
+		conf.set("POTIONOFWEAKNESS.price", 5);
+		conf.set("POTIONOFWEAKNESS.floor", 1);
+		conf.set("POTIONOFWEAKNESS.ceiling", 30);
+		conf.set("POTIONOFWEAKNESS.description", "Reduces melee damage by one heart for 1:30");
+		conf.set("POTIONOFWEAKNESS.stock",50);
+		conf.set("POTIONOFWEAKNESS.spread", .9);
+		conf.set("POTIONOFWEAKNESS.time",0);
+		
+		conf.set("POTIONOFWEAKNESSEXTENDED.velocity", .2);
+		conf.set("POTIONOFWEAKNESSEXTENDED.id", 373008264);
+		conf.set("POTIONOFWEAKNESSEXTENDED.price", 5);
+		conf.set("POTIONOFWEAKNESSEXTENDED.floor", 1);
+		conf.set("POTIONOFWEAKNESSEXTENDED.ceiling", 30);
+		conf.set("POTIONOFWEAKNESSEXTENDED.description", "Reduces melee damage by one heart for 4:00");
+		conf.set("POTIONOFWEAKNESSEXTENDED.stock",50);
+		conf.set("POTIONOFWEAKNESSEXTENDED.spread", .9);
+		conf.set("POTIONOFWEAKNESSEXTENDED.time",0);
+
+		conf.set("POTIONOFSTRENGTH.velocity", .2);
+		conf.set("POTIONOFSTRENGTH.id", 373008201);
+		conf.set("POTIONOFSTRENGTH.price", 5);
+		conf.set("POTIONOFSTRENGTH.floor", 1);
+		conf.set("POTIONOFSTRENGTH.ceiling", 30);
+		conf.set("POTIONOFSTRENGTH.description", "Increases melee damage by one and a half hearts for 3:00");
+		conf.set("POTIONOFSTRENGTH.stock",50);
+		conf.set("POTIONOFSTRENGTH.spread", .9);
+		conf.set("POTIONOFSTRENGTH.time",0);
+		
+		conf.set("POTIONOFSTRENGTHEXTENDED.velocity", .2);
+		conf.set("POTIONOFSTRENGTHEXTENDED.id", 373008265);
+		conf.set("POTIONOFSTRENGTHEXTENDED.price", 5);
+		conf.set("POTIONOFSTRENGTHEXTENDED.floor", 1);
+		conf.set("POTIONOFSTRENGTHEXTENDED.ceiling", 30);
+		conf.set("POTIONOFSTRENGTHEXTENDED.description", "Increases melee damage by one and a half hearts for 8:00");
+		conf.set("POTIONOFSTRENGTHEXTENDED.stock",50);
+		conf.set("POTIONOFSTRENGTHEXTENDED.spread", .9);
+		conf.set("POTIONOFSTRENGTHEXTENDED.time",0);
+
+		conf.set("POTIONOFSLOWNESS.velocity", .2);
+		conf.set("POTIONOFSLOWNESS.id", 373008202);
+		conf.set("POTIONOFSLOWNESS.price", 5);
+		conf.set("POTIONOFSLOWNESS.floor", 1);
+		conf.set("POTIONOFSLOWNESS.ceiling", 30);
+		conf.set("POTIONOFSLOWNESS.description", "Players movement is slowed to a crouch for 1:30");
+		conf.set("POTIONOFSLOWNESS.stock",50);
+		conf.set("POTIONOFSLOWNESS.spread", .9);
+		conf.set("POTIONOFSLOWNESS.time",0);
+		
+		conf.set("POTIONOFSLOWNESSEXTENDED.velocity", .2);
+		conf.set("POTIONOFSLOWNESSEXTENDED.id", 373008266);
+		conf.set("POTIONOFSLOWNESSEXTENDED.price", 5);
+		conf.set("POTIONOFSLOWNESSEXTENDED.floor", 1);
+		conf.set("POTIONOFSLOWNESSEXTENDED.ceiling", 30);
+		conf.set("POTIONOFSLOWNESSEXTENDED.description", "Players movement is slowed to a crouch for 4:00");
+		conf.set("POTIONOFSLOWNESSEXTENDED.stock",50);
+		conf.set("POTIONOFSLOWNESSEXTENDED.spread", .9);
+		conf.set("POTIONOFSLOWNESSEXTENDED.time",0);
+
+		conf.set("POTIONOFHARMING.velocity", .2);
+		conf.set("POTIONOFHARMING.id", 373008204);
+		conf.set("POTIONOFHARMING.price", 5);
+		conf.set("POTIONOFHARMING.floor", 1);
+		conf.set("POTIONOFHARMING.ceiling", 30);
+		conf.set("POTIONOFHARMING.description", "Inflicts 3 hearts of damage");
+		conf.set("POTIONOFHARMING.stock",50);
+		conf.set("POTIONOFHARMING.spread", .9);
+		conf.set("POTIONOFHARMING.time",0);
+		
+		conf.set("POTIONOFHARMINGEXTENDED.velocity", .2);
+		conf.set("POTIONOFHARMINGEXTENDED.id", 373008268);
+		conf.set("POTIONOFHARMINGEXTENDED.price", 5);
+		conf.set("POTIONOFHARMINGEXTENDED.floor", 1);
+		conf.set("POTIONOFHARMINGEXTENDED.ceiling", 30);
+		conf.set("POTIONOFHARMINGEXTENDED.description", "Inflicts 3 hearts of damage");
+		conf.set("POTIONOFHARMINGEXTENDED.stock",50);
+		conf.set("POTIONOFHARMINGEXTENDED.spread", .9);
+		conf.set("POTIONOFHARMINGEXTENDED.time",0);
+
+		conf.set("AWKWARDPOTION.velocity", .2);
+		conf.set("AWKWARDPOTION.id", 3730016);
+		conf.set("AWKWARDPOTION.price", 5);
+		conf.set("AWKWARDPOTION.floor", 1);
+		conf.set("AWKWARDPOTION.ceiling", 30);
+		conf.set("AWKWARDPOTION.description", "This potion is highly awkward, you should avoid social encounters.");
+		conf.set("AWKWARDPOTION.stock",50);
+		conf.set("AWKWARDPOTION.spread", .9);
+		conf.set("AWKWARDPOTION.time",0);
+
+		// II STRENGHT POTIONS
+		
+		conf.set("POTIONOFREGENERATIONII.velocity", .2);
+		conf.set("POTIONOFREGENERATIONII.id", 373008225);
+		conf.set("POTIONOFREGENERATIONII.price", 5);
+		conf.set("POTIONOFREGENERATIONII.floor", 1);
+		conf.set("POTIONOFREGENERATIONII.ceiling", 30);
+		conf.set("POTIONOFREGENERATIONII.description", "Restores 24 hearts over 0:22 seconds");
+		conf.set("POTIONOFREGENERATIONII.stock",50);
+		conf.set("POTIONOFREGENERATIONII.spread", .9);
+		conf.set("POTIONOFREGENERATIONII.time",0);
+
+		conf.set("POTIONOFSWIFTNESSII.velocity", .2);
+		conf.set("POTIONOFSWIFTNESSII.id", 373008226);
+		conf.set("POTIONOFSWIFTNESSII.price", 5);
+		conf.set("POTIONOFSWIFTNESSII.floor", 1);
+		conf.set("POTIONOFSWIFTNESSII.ceiling", 30);
+		conf.set("POTIONOFSWIFTNESSII.description", "Increases players movement, sprinting speed, jumping length, and FOV for 1:30");
+		conf.set("POTIONOFSWIFTNESSII.stock",50);
+		conf.set("POTIONOFSWIFTNESSII.spread", .9);
+		conf.set("POTIONOFSWIFTNESSII.time",0);
+
+		conf.set("POTIONOFFIRERESISTANCEII.velocity", .2);
+		conf.set("POTIONOFFIRERESISTANCEII.id", 373008227);
+		conf.set("POTIONOFFIRERESISTANCEII.price", 5);
+		conf.set("POTIONOFFIRERESISTANCEII.floor", 1);
+		conf.set("POTIONOFFIRERESISTANCEII.ceiling", 30);
+		conf.set("POTIONOFFIRERESISTANCEII.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 3:00");
+		conf.set("POTIONOFFIRERESISTANCEII.stock",50);
+		conf.set("POTIONOFFIRERESISTANCEII.spread", .9);
+		conf.set("POTIONOFFIRERESISTANCEII.time",0);
+
+		conf.set("POTIONOFPOISONII.velocity", .2);
+		conf.set("POTIONOFPOISONII.id", 373008228);
+		conf.set("POTIONOFPOISONII.price", 5);
+		conf.set("POTIONOFPOISONII.floor", 1);
+		conf.set("POTIONOFPOISONII.ceiling", 30);
+		conf.set("POTIONOFPOISONII.description", "Poisons the player, reducing the health for :22 to half a heart at most.");
+		conf.set("POTIONOFPOISONII.stock",50);
+		conf.set("POTIONOFPOISONII.spread", .9);
+		conf.set("POTIONOFPOISONII.time",0);
+
+		conf.set("POTIONOFHEALINGII.velocity", .2);
+		conf.set("POTIONOFHEALINGII.id", 373008229);
+		conf.set("POTIONOFHEALINGII.price", 5);
+		conf.set("POTIONOFHEALINGII.floor", 1);
+		conf.set("POTIONOFHEALINGII.ceiling", 30);
+		conf.set("POTIONOFHEALINGII.description", "Restores 6 hearts");
+		conf.set("POTIONOFHEALINGII.stock",50);
+		conf.set("POTIONOFHEALINGII.spread", .9);
+		conf.set("POTIONOFHEALINGII.time",0);
+
+		conf.set("POTIONOFWEAKNESSII.velocity", .2);
+		conf.set("POTIONOFWEAKNESSII.id", 373008232);
+		conf.set("POTIONOFWEAKNESSII.price", 5);
+		conf.set("POTIONOFWEAKNESSII.floor", 1);
+		conf.set("POTIONOFWEAKNESSII.ceiling", 30);
+		conf.set("POTIONOFWEAKNESSII.description", "Reduces melee damage by one heart for 1:30");
+		conf.set("POTIONOFWEAKNESSII.stock",50);
+		conf.set("POTIONOFWEAKNESSII.spread", .9);
+		conf.set("POTIONOFWEAKNESSII.time",0);
+
+		conf.set("POTIONOFSTRENGTHII.velocity", .2);
+		conf.set("POTIONOFSTRENGTHII.id", 373008233);
+		conf.set("POTIONOFSTRENGTHII.price", 5);
+		conf.set("POTIONOFSTRENGTHII.floor", 1);
+		conf.set("POTIONOFSTRENGTHII.ceiling", 30);
+		conf.set("POTIONOFSTRENGTHII.description", "Increases melee damage by 3 hearts for 1:30");
+		conf.set("POTIONOFSTRENGTHII.stock",50);
+		conf.set("POTIONOFSTRENGTHII.spread", .9);
+		conf.set("POTIONOFSTRENGTHII.time",0);
+
+		conf.set("POTIONOFSLOWNESSII.velocity", .2);
+		conf.set("POTIONOFSLOWNESSII.id", 373008234);
+		conf.set("POTIONOFSLOWNESSII.price", 5);
+		conf.set("POTIONOFSLOWNESSII.floor", 1);
+		conf.set("POTIONOFSLOWNESSII.ceiling", 30);
+		conf.set("POTIONOFSLOWNESSII.description", "Players movement is slowed to a crouch for 1:30");
+		conf.set("POTIONOFSLOWNESSII.stock",50);
+		conf.set("POTIONOFSLOWNESSII.spread", .9);
+		conf.set("POTIONOFSLOWNESSII.time",0);
+
+		conf.set("POTIONOFHARMINGII.velocity", .2);
+		conf.set("POTIONOFHARMINGII.id", 373008236);
+		conf.set("POTIONOFHARMINGII.price", 5);
+		conf.set("POTIONOFHARMINGII.floor", 1);
+		conf.set("POTIONOFHARMINGII.ceiling", 30);
+		conf.set("POTIONOFHARMINGII.description", "Inflicts 6 hearts of damage");
+		conf.set("POTIONOFHARMINGII.stock",50);
+		conf.set("POTIONOFHARMINGII.spread", .9);
+		conf.set("POTIONOFHARMINGII.time",0);
+		
+		// BEGIN SPLASH POTIONS
+		
+		conf.set("SPLASHMUNDANEPOTION.velocity", .2);
+		conf.set("SPLASHMUNDANEPOTION.id", 3730016384L);
+		conf.set("SPLASHMUNDANEPOTION.price", 5);
+		conf.set("SPLASHMUNDANEPOTION.floor", 1);
+		conf.set("SPLASHMUNDANEPOTION.ceiling", 30);
+		conf.set("SPLASHMUNDANEPOTION.description", "Base potion of Weakness and Splash Mundane potion");
+		conf.set("SPLASHMUNDANEPOTION.stock",50);
+		conf.set("SPLASHMUNDANEPOTION.spread", .9);
+		conf.set("SPLASHMUNDANEPOTION.time",0);
+		
+		conf.set("SPLASHPOTIONOFREGENERATION.velocity", .2);
+		conf.set("SPLASHPOTIONOFREGENERATION.id", 3730016385L);
+		conf.set("SPLASHPOTIONOFREGENERATION.price", 5);
+		conf.set("SPLASHPOTIONOFREGENERATION.floor", 1);
+		conf.set("SPLASHPOTIONOFREGENERATION.ceiling", 30);
+		conf.set("SPLASHPOTIONOFREGENERATION.description", "Restores 19 hearts over 0:33");
+		conf.set("SPLASHPOTIONOFREGENERATION.stock",50);
+		conf.set("SPLASHPOTIONOFREGENERATION.spread", .9);
+		conf.set("SPLASHPOTIONOFREGENERATION.time",0);
+		
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.id", 3730016449L);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.description", "Restores 42.5 hearts over 1:30");
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.time",0);
+
+		conf.set("SPLASHPOTIONOFSWIFTNESS.velocity", .2);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.id", 3730016386L);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.price", 5);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.floor", 1);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.description", "Increases a players movement, sprinting speed, jumping length, and FOV, for 3:00");
+		conf.set("SPLASHPOTIONOFSWIFTNESS.stock",50);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.spread", .9);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.time",0);
+		
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.id", 3730016450L);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.description", "Increases a players movement, sprinting speed, jumping length, and FOV, for 8:00");
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.time",0);
+
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.velocity", .2);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.id", 3730016387L);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.price", 5);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.floor", 1);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.ceiling", 30);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 3:00");
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.stock",50);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.spread", .9);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.time",0);
+		
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.id", 3730016451L);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 8:00");
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.time",0);
+
+		conf.set("SPLASHPOTIONOFPOISON.velocity", .2);
+		conf.set("SPLASHPOTIONOFPOISON.id", 3730016388L);
+		conf.set("SPLASHPOTIONOFPOISON.price", 5);
+		conf.set("SPLASHPOTIONOFPOISON.floor", 1);
+		conf.set("SPLASHPOTIONOFPOISON.ceiling", 30);
+		conf.set("SPLASHPOTIONOFPOISON.description", "Poisons humans, but undead and spiders are immune to this poison");
+		conf.set("SPLASHPOTIONOFPOISON.stock",50);
+		conf.set("SPLASHPOTIONOFPOISON.spread", .9);
+		conf.set("SPLASHPOTIONOFPOISON.time",0);
+		
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.id", 3730016452L);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.description", "Poisons humans, but undead and spiders are immune to this poison");
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.time",0);
+
+		conf.set("SPLASHPOTIONOFHEALING.velocity", .2);
+		conf.set("SPLASHPOTIONOFHEALING.id", 3730016389L);
+		conf.set("SPLASHPOTIONOFHEALING.price", 5);
+		conf.set("SPLASHPOTIONOFHEALING.floor", 1);
+		conf.set("SPLASHPOTIONOFHEALING.ceiling", 30);
+		conf.set("SPLASHPOTIONOFHEALING.description", "Restores health of people, but hurts the undead.");
+		conf.set("SPLASHPOTIONOFHEALING.stock",50);
+		conf.set("SPLASHPOTIONOFHEALING.spread", .9);
+		conf.set("SPLASHPOTIONOFHEALING.time",0);
+		
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.id", 3730016453L);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.description", "Restores health of people, but hurts the undead.");
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.time",0);
+
+		conf.set("SPLASHPOTIONOFWEAKNESS.velocity", .2);
+		conf.set("SPLASHPOTIONOFWEAKNESS.id", 3730016392L);
+		conf.set("SPLASHPOTIONOFWEAKNESS.price", 5);
+		conf.set("SPLASHPOTIONOFWEAKNESS.floor", 1);
+		conf.set("SPLASHPOTIONOFWEAKNESS.ceiling", 30);
+		conf.set("SPLASHPOTIONOFWEAKNESS.description", "Reduces melee damage by one heart for 1:30");
+		conf.set("SPLASHPOTIONOFWEAKNESS.stock",50);
+		conf.set("SPLASHPOTIONOFWEAKNESS.spread", .9);
+		conf.set("SPLASHPOTIONOFWEAKNESS.time",0);
+		
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.id", 3730016456L);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.description", "Reduces melee damage by one heart for 4:00");
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.time",0);
+
+		conf.set("SPLASHPOTIONOFSTRENGTH.velocity", .2);
+		conf.set("SPLASHPOTIONOFSTRENGTH.id", 3730016393L);
+		conf.set("SPLASHPOTIONOFSTRENGTH.price", 5);
+		conf.set("SPLASHPOTIONOFSTRENGTH.floor", 1);
+		conf.set("SPLASHPOTIONOFSTRENGTH.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSTRENGTH.description", "Increases melee damage by one and a half hearts for 3:00");
+		conf.set("SPLASHPOTIONOFSTRENGTH.stock",50);
+		conf.set("SPLASHPOTIONOFSTRENGTH.spread", .9);
+		conf.set("SPLASHPOTIONOFSTRENGTH.time",0);
+		
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.id", 3730016457L);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.description", "Increases melee damage by one and a half hearts for 8:00");
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.time",0);
+
+		conf.set("SPLASHPOTIONOFSLOWNESS.velocity", .2);
+		conf.set("SPLASHPOTIONOFSLOWNESS.id", 3730016394L);
+		conf.set("SPLASHPOTIONOFSLOWNESS.price", 5);
+		conf.set("SPLASHPOTIONOFSLOWNESS.floor", 1);
+		conf.set("SPLASHPOTIONOFSLOWNESS.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSLOWNESS.description", "Players movement is slowed to a crouch for 1:30");
+		conf.set("SPLASHPOTIONOFSLOWNESS.stock",50);
+		conf.set("SPLASHPOTIONOFSLOWNESS.spread", .9);
+		conf.set("SPLASHPOTIONOFSLOWNESS.time",0);
+		
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.id", 3730016458L);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.description", "Players movement is slowed to a crouch for 4:00");
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.time",0);
+
+		conf.set("SPLASHPOTIONOFHARMING.velocity", .2);
+		conf.set("SPLASHPOTIONOFHARMING.id", 3730016396L);
+		conf.set("SPLASHPOTIONOFHARMING.price", 5);
+		conf.set("SPLASHPOTIONOFHARMING.floor", 1);
+		conf.set("SPLASHPOTIONOFHARMING.ceiling", 30);
+		conf.set("SPLASHPOTIONOFHARMING.description", "Hurts humans, but heals the undead");
+		conf.set("SPLASHPOTIONOFHARMING.stock",50);
+		conf.set("SPLASHPOTIONOFHARMING.spread", .9);
+		conf.set("SPLASHPOTIONOFHARMING.time",0);
+		
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.velocity", .2);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.id", 3730016460L);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.price", 5);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.floor", 1);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.ceiling", 30);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.description", "Hurts humans, but heals the undead");
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.stock",50);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.spread", .9);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.time",0);
+
+		// II STRENGHTH SPLASH POTIONS
+		
+		conf.set("SPLASHPOTIONOFREGENERATIONII.velocity", .2);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.id", 3730016417L);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.price", 5);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.floor", 1);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.description", "Restores 19.5 hearts over 0:16");
+		conf.set("SPLASHPOTIONOFREGENERATIONII.stock",50);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.spread", .9);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.time",0);
+
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.velocity", .2);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.id", 3730016418L);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.price", 5);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.floor", 1);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.description", "Increases players movement, sprinting speed, jumping length, and FOV for 1:30");
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.stock",50);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.spread", .9);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.time",0);
+
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.velocity", .2);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.id", 3730016419L);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.price", 5);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.floor", 1);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 3:00");
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.stock",50);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.spread", .9);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.time",0);
+
+		conf.set("SPLASHPOTIONOFPOISONII.velocity", .2);
+		conf.set("SPLASHPOTIONOFPOISONII.id", 3730016420L);
+		conf.set("SPLASHPOTIONOFPOISONII.price", 5);
+		conf.set("SPLASHPOTIONOFPOISONII.floor", 1);
+		conf.set("SPLASHPOTIONOFPOISONII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFPOISONII.description", "Poisons humans, but undead and spiders are immune to this poison");
+		conf.set("SPLASHPOTIONOFPOISONII.stock",50);
+		conf.set("SPLASHPOTIONOFPOISONII.spread", .9);
+		conf.set("SPLASHPOTIONOFPOISONII.time",0);
+
+		conf.set("SPLASHPOTIONOFHEALINGII.velocity", .2);
+		conf.set("SPLASHPOTIONOFHEALINGII.id", 3730016421L);
+		conf.set("SPLASHPOTIONOFHEALINGII.price", 5);
+		conf.set("SPLASHPOTIONOFHEALINGII.floor", 1);
+		conf.set("SPLASHPOTIONOFHEALINGII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFHEALINGII.description", "Restores 6 hearts");
+		conf.set("SPLASHPOTIONOFHEALINGII.stock",50);
+		conf.set("SPLASHPOTIONOFHEALINGII.spread", .9);
+		conf.set("SPLASHPOTIONOFHEALINGII.time",0);
+
+		conf.set("SPLASHPOTIONOFWEAKNESSII.velocity", .2);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.id", 3730016424L);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.price", 5);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.floor", 1);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.description", "Reduces melee damage by one heart for 1:30");
+		conf.set("SPLASHPOTIONOFWEAKNESSII.stock",50);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.spread", .9);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.time",0);
+
+		conf.set("SPLASHPOTIONOFSTRENGTHII.velocity", .2);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.id", 3730016425L);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.price", 5);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.floor", 1);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.description", "Increases melee damage by 3 hearts for 1:30");
+		conf.set("SPLASHPOTIONOFSTRENGTHII.stock",50);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.spread", .9);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.time",0);
+
+		conf.set("SPLASHPOTIONOFSLOWNESSII.velocity", .2);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.id", 3730016426L);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.price", 5);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.floor", 1);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.description", "Players movement is slowed to a crouch for 1:30");
+		conf.set("SPLASHPOTIONOFSLOWNESSII.stock",50);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.spread", .9);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.time",0);
+
+		conf.set("SPLASHPOTIONOFHARMINGII.velocity", .2);
+		conf.set("SPLASHPOTIONOFHARMINGII.id", 3730016428L);
+		conf.set("SPLASHPOTIONOFHARMINGII.price", 5);
+		conf.set("SPLASHPOTIONOFHARMINGII.floor", 1);
+		conf.set("SPLASHPOTIONOFHARMINGII.ceiling", 30);
+		conf.set("SPLASHPOTIONOFHARMINGII.description", "Hurts humans, but heals the undead");
+		conf.set("SPLASHPOTIONOFHARMINGII.stock",50);
+		conf.set("SPLASHPOTIONOFHARMINGII.spread", .9);
+		conf.set("SPLASHPOTIONOFHARMINGII.time",0);
+
+
+		
 		
 		
 
@@ -2331,6 +3050,82 @@ public class Initialize {
 	
 	public static void setConfigFile(File confFile) {
 		configFile = confFile;
+	}
+	
+	public static void initMessages() {
+		FileConfiguration config = DynamicEconomy.messagesConfig;
+		
+		config.set("no-permission", "&2You do not have permission to use this command.");
+		config.set("invalid-command-args","&2You entered the command arguments in the wrong order, or your amount was invalid. Try again. ");
+		config.set("wrong-world","&2This world does not have access to this command.");
+		config.set("below-min-y","&2You are too deep underground to access the economy!");
+		config.set("above-max-y","&2You are too high up to access the economy!");
+		config.set("loans-disabled","&2The Bank is not available for loans at this time.");
+		config.set("stock-on","&2Stock is turned on.");
+		config.set("stock-off","&2Stock is turned off.");
+		config.set("boundaries-on","&2Boundaries are turned on.");
+		config.set("boundaries-off","&2Boundaries are turned off.");
+		config.set("item-doesnt-exist","&2This item does not exist. ");
+		config.set("item-has-no-durability","&2This item has no durability.");
+		config.set("no-armor-equipped","&2You do not have any armor equipped");
+		config.set("no-helmet-equipped","&2You do not have a &fhelmet &2equipped");
+		config.set("no-chestplate-equipped","&2You do not have a &fchestplate &2equipped");
+		config.set("no-leggings-equipped","&2You do not have &fleggings &2equipped");
+		config.set("no-boots-equipped","&2You do not have &fboots &2equipped");
+		config.set("banned-item","&2This item is banned, and not allowed to be traded in the economy.");
+		config.set("cannot-buy-all","&2Stock Disabled, cannot use keyword 'all' ");
+		config.set("negative-buy-amount","&2This amount is invalid!");
+		config.set("negative-sell-amount","&2This amount is invalid!");
+		config.set("not-enough-money","&2You do not have enough money to purchase this.");
+		config.set("not-enough-stock","&2There is not enough stock of this item.");
+		config.set("purchase-success","&2Purchase Success!");
+	    config.set("not-within-region","&2You are not within an economy region!");
+	    config.set("sale-success","&2Sale Success!");
+	    config.set("stock-added","&2Stock succesfully added.");
+	    config.set("stock-removed","&2Stock succesfully removed.");
+	    config.set("no-region-selected","&2No region selected!");
+	    config.set("region-expanded","&2Region expanded!");
+	    config.set("region-contracted","&2Region contracted!");
+	    config.set("max-loans","&2You have the maximum number of loans allowed.");
+	    config.set("loan-account-not-found","&2The Bank is not available, contact your server admin");
+	    try {
+	    	 config.save(DynamicEconomy.messagesFile);
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	   
+		
+	}
+	
+	public static void initRandomEvents() {
+		FileConfiguration config = DynamicEconomy.randomEventConfig;
+		
+		config.createSection("events.event1");
+		ConfigurationSection section = config.getConfigurationSection("events.event1");
+		
+		section.set("Description", "&2A forest-fire sparks, and the entire forest burns to ashes! The supply of wood is decreased.");
+		section.set("Item","17");
+		section.set("Type","Stock");
+		section.set("Change","-");
+		section.set("Percent",false);
+		section.set("Amount",40);
+		
+		config.createSection("events.event2");
+		ConfigurationSection section2 = config.getConfigurationSection("events.event2");
+		
+		section2.set("Description", "&2Chickens are reproducing like crazy! The supply of raw chicken skyrockets!");
+		section2.set("Item","rawchicken");
+		section2.set("Type","Price");
+		section2.set("Change","-");
+		section2.set("Percent",true);
+		section2.set("Amount",.5);
+		
+		try {
+			config.save(DynamicEconomy.randomEventFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	

@@ -7,6 +7,8 @@ import couk.Adamki11s.AutoUpdater.*;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.*;
+import net.milkbowl.vault.regions.Regions;
+import net.minecraft.server.RegionFileCache;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -14,6 +16,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -79,23 +82,44 @@ public class DynamicEconomy extends JavaPlugin {
     public static double overTimePriceDecayPercent;
     public static long overTimePriceDecayPeriod;
     public static long overTimePriceDecayPeriodCheck;
+    public static boolean usePercentVelocity;
+    public static String[] dyneconWorld;
+    public static String currencySymbol;
+    public static boolean enableRandomEvents;
+    public static int randomEventInterval;
+    public static double randomEventChance;
+    public static String signTaglineColor;
+    public static String signInfoColor;
+    public static String signInvalidColor;
     
-    public AUCore updater = new AUCore("http://cabin.minecraft.ms/index.html", log, "[DynamicEconomy]");
+    public AUCore updater = new AUCore("http://exampop.com/update.html", log, "[DynamicEconomy]");
     
-    File regionFile;
+    static File regionFile;
     
     static DynamicEconomy plugin;
     
     public static HashMap selectedCorners = new HashMap();
     
     public static File configFile;
-    FileConfiguration regionConfig;
+    static FileConfiguration regionConfig;
     
     public static File loansFile;
-    FileConfiguration loansFileConfig;
+    static FileConfiguration loansFileConfig;
     
     public static File itemsFile;
-    FileConfiguration itemConfig;
+    static FileConfiguration itemConfig;
+    
+    public static File messagesFile;
+    public static FileConfiguration messagesConfig;
+    
+    public static File randomEventFile;
+    public static FileConfiguration randomEventConfig;
+    
+    public static File signsFile;
+    public static FileConfiguration signsConfig;
+    
+    public static File usersFile;
+    public static FileConfiguration usersConfig;
 
     static Logger log = Logger.getLogger("Minecraft");
     
@@ -114,7 +138,7 @@ public class DynamicEconomy extends JavaPlugin {
             
             name = pdf.getName();
             version = pdf.getVersion();
-            ArrayList<String> author = pdf.getAuthors();
+            List<String> author = pdf.getAuthors();
             
         
             log.info(name +" v" + version + " by " + author.get(0) + " enabled!");
@@ -122,16 +146,18 @@ public class DynamicEconomy extends JavaPlugin {
             boolean economyIsSet = setupEconomy();
             boolean permissionIsSet = setupPermissions();
             
-             if (economyIsSet) {
-            	 log.info("[DynamicEconomy] Vault Economy hooked");
-             } else {
-            	 log.info("[DynamicEconomy] Vault Economy not hooked");
-             }
+             
              
              if (permissionIsSet) {
             	 log.info("[DynamicEconomy] Vault Permissions hooked");
              } else {
             	 log.info("[DynamicEconomy] Vault Permissions not hooked");
+             }
+             
+             if (economyIsSet) {
+            	 log.info("[DynamicEconomy] Vault Economy hooked");
+             } else {
+            	 log.info("[DynamicEconomy] Vault Economy not hooked");
              }
              
             playerListener.setPermission(permission);
@@ -165,6 +191,19 @@ public class DynamicEconomy extends JavaPlugin {
             
             configFile = new File(this.getDataFolder(),"config.yml");
             config = YamlConfiguration.loadConfiguration(configFile);
+            
+            messagesFile = new File(this.getDataFolder(),"messages.yml");
+            messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+            
+            randomEventFile = new File(this.getDataFolder(),"randomevents.yml");
+            randomEventConfig = YamlConfiguration.loadConfiguration(randomEventFile);
+            
+            File signsDir = new File(this.getDataFolder(),"signs");
+            signsFile = new File(signsDir,"signs.yml");
+            signsConfig = YamlConfiguration.loadConfiguration(signsFile);
+            
+            usersFile = new File(this.getDataFolder(),"users");
+            usersConfig = YamlConfiguration.loadConfiguration(usersFile);
             
             regionConfig.createSection("regions");
             
@@ -203,6 +242,18 @@ public class DynamicEconomy extends JavaPlugin {
             	Initialize.setConfig(config);
             }
             
+            if (signsFile.exists()) {
+            	log.info("[DynamicEconomy] Signs File Loaded.");
+            } else {
+            	try {
+            		signsDir.mkdir();
+            		signsConfig.save(signsFile);
+            	} catch (Exception e) {
+            		log.info("[DynamicEconomy] IOException when creating signsFile in Main");
+            		e.printStackTrace();
+            	}
+            }
+            
             if (regionFile.exists()) {
             	try {
             		regionConfig.load(regionFile);
@@ -233,6 +284,44 @@ public class DynamicEconomy extends JavaPlugin {
             	}
             }
             
+            if (messagesFile.exists()) {
+            	log.info("[DynamicEconomy] Messages loaded.");
+            } else {
+            	try {
+                   	messagesConfig.save(messagesFile);
+                   	messagesConfig.load(messagesFile);
+                   	Initialize.initMessages();
+                } catch (Exception e) {
+            		log.info("[DynamicEconomy] IOException when creating messages.yml in Main");
+            		e.printStackTrace();
+            	}
+            }
+            
+            if (randomEventFile.exists()) {
+            	log.info("[DynamicEconomy] Random events loaded.");
+            } else {
+            	try {
+                   	randomEventConfig.save(randomEventFile);
+                   	randomEventConfig.load(randomEventFile);
+                   	Initialize.initRandomEvents();
+                } catch (Exception e) {
+            		log.info("[DynamicEconomy] IOException when creating randomevents.yml in Main");
+            		e.printStackTrace();
+            	}
+            }
+            
+            if (usersFile.exists()) {
+            	log.info("[DynamicEconomy] User Settings loaded.");
+            } else {
+            	try {
+                   	usersConfig.save(usersFile);
+                   	usersConfig.load(usersFile);
+                } catch (Exception e) {
+            		log.info("[DynamicEconomy] IOException when creating users.yml in Main");
+            		e.printStackTrace();
+            	}
+            }
+            
             
             
             //this.getServer().getScheduler().scheduleSyncDelayedTask(this, new loan(this));
@@ -242,12 +331,17 @@ public class DynamicEconomy extends JavaPlugin {
             relConfig();
             
             if (DynamicEconomy.useLoans) {
-            	this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new loan(), 300L, loanCheckInterval);
+            	this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new loan(), 300L, loanCheckInterval);
             }
             
             if (DynamicEconomy.enableOverTimePriceDecay) {
             	long delay = DynamicEconomy.overTimePriceDecayPeriodCheck * 60 * 20;
-            	this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Transaction(itemConfig,itemsFile), 300L, delay);
+            	this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Transaction(itemConfig,itemsFile), 300L, delay);
+            }
+            
+            if (DynamicEconomy.enableRandomEvents) {
+            	long delay = DynamicEconomy.randomEventInterval * 60 * 20;
+            	this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new RandomEvent(), 300L, delay);
             }
             
             // End Initialize
@@ -296,6 +390,10 @@ public class DynamicEconomy extends JavaPlugin {
             getCommand("loan").setExecutor(commandExec);
             getCommand("curinterest").setExecutor(commandExec);
             getCommand("curloans").setExecutor(commandExec);
+            getCommand("curworld").setExecutor(commandExec);
+            getCommand("banitem").setExecutor(commandExec);
+            getCommand("unbanitem").setExecutor(commandExec);
+            getCommand("dequiet").setExecutor(commandExec);
             
             if (altCommands) {
             	getCommand("debuy").setExecutor(commandExec);
@@ -307,8 +405,7 @@ public class DynamicEconomy extends JavaPlugin {
                 getCommand("price").setExecutor(commandExec);
             }
             
-            pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
-            pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.High, this);
+            pm.registerEvents(playerListener, this);
             
             
             
@@ -346,6 +443,11 @@ public class DynamicEconomy extends JavaPlugin {
     	
     	try { 	
         	config.load(configFile);
+        	messagesConfig.load(messagesFile);
+        	itemConfig.load(itemsFile);
+        	regionConfig.load(regionFile);
+        	signsConfig.load(signsFile);
+        	usersConfig.load(usersFile);
         } catch (Exception e) {
         	log.info("[DynamicEconomy] Error loading config.yml in reloadConfigValues() ");
         	log.info(e.toString());
@@ -402,6 +504,17 @@ public class DynamicEconomy extends JavaPlugin {
         overTimePriceDecayPercent = config.getDouble("over-time-price-decay-percent",.1);
         overTimePriceDecayPeriod = config.getLong("over-time-price-decay-period",1440);
         overTimePriceDecayPeriodCheck = config.getLong("over-time-price-decay-period-check",15);
+        usePercentVelocity = config.getBoolean("use-percent-velocity",false);
+        dyneconWorld = config.getString("dynecon-world","world").split(",");
+        currencySymbol = config.getString("currency-symbol","$");
+        enableRandomEvents = config.getBoolean("enable-random-events",true);
+        randomEventInterval = config.getInt("random-event-interval",10);
+        randomEventChance = config.getDouble("random-event-chance",.1);
+        signTaglineColor = config.getString("sign-tagline-color","&2");
+        signInfoColor = config.getString("sign-info-color","&f");
+        signInvalidColor = config.getString("sign-invalid-color","&c");
+        
+        Messages.getMessages();
         
         
     }
@@ -416,6 +529,8 @@ public class DynamicEconomy extends JavaPlugin {
     		regionConfig.save(regionFile);
     		loansFileConfig.save(loansFile);
     		itemConfig.save(itemsFile);
+    		signsConfig.save(signsFile);
+    		usersConfig.save(usersFile);
     		getServer().getScheduler().cancelTasks(this);
     	} catch (Exception e) {
     		log.info("[DynamicEconomy] Exception when disabling log writer");

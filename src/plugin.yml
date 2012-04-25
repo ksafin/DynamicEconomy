@@ -1,6 +1,6 @@
 name: DynamicEconomy
 main: me.ksafin.DynamicEconomy.DynamicEconomy
-version: .7.7
+version: .8.5
 
 description: This plugin allows users to buy and sell items at dynamically generated prices.
 author: kSafin (Kirill Safin)
@@ -145,6 +145,22 @@ commands:
      description: Tells user their current loans, and info of these loans.
      permission: dynamiceconomy.loan
      usage: /curloans (loan #)
+   curworld:
+     description: Tells user their current world
+     permission: dynamiceconomy.curworld
+     usage: /curworld
+   banitem:
+     description: Bans the given item from either sale/purchase
+     permission: dynamiceconomy.banitem
+     usage: /banitem [item] [sale|purchase]
+   unbanitem:
+     description: Unbans the given item from either sale/purchase
+     permission: dynamiceconomy.unbanitem
+     usage: /unbanitem [Item] [sale|purchase]
+   dequiet:
+     description: Disables global price notifications for a user
+     permission: dynamiceconomy.dequiet
+     usage: /dequiet
 
 permissions:
   dynamiceconomy.*:
@@ -176,6 +192,10 @@ permissions:
       dynamiceconomy.removeshopregion: true
       dynamiceconomy.loan: true
       dynamiceconomy.curinterest: true
+      dynamiceconomy.curworld: true
+      dynamiceconomy.banitem: true
+      dynamiceconomy.unbanitem: true
+      dynamiceconomy.dequiet: true
   dynamiceconomy.customer:
     description: Gives access to all basic user settings of dynamiceconomy
     children:
@@ -205,10 +225,14 @@ permissions:
       dynamiceconomy.removeshopregion: false
       dynamiceconomy.loan: true
       dynamiceconomy.curinterest: true
+      dynamiceconomy.curworld: true
+      dynamiceconomy.banitem: false
+      dynamiceconomy.unbanitem: false
+      dynamiceconomy.dequiet: true
       
   dynamiceconomy.price:
     description: Allows user to find price of an Item
-    default: true
+    default: false
   dynamiceconomy.setprice:
     description: Allows user to set the price of an Item
     default: false
@@ -232,19 +256,19 @@ permissions:
     default: false
   dynamiceconomy.dynamiceconomy:
     description: Allows user to access the help page for the plugin
-    default: true
+    default: false
   dynamiceconomy.buy:
     description: Allows user to buy items.
-    default: true
+    default: false
   dynamiceconomy.sell:
     description: Allows user to sell items.
-    default: true
+    default: false
   dynamiceconomy.isstock:
     description: Allows user to access config for stock
-    default: true
+    default: false
   dynamiceconomy.isboundary:
     description: Allows user to access config for boundaries
-    default: true
+    default: false
   dynamiceconomy.addstock:
     description: Allows user to add stock for an item
     default: false
@@ -259,7 +283,7 @@ permissions:
     default: false
   dynamiceconomy.curtaxes:
     description: Allows players to find out current sales and purchase taxes
-    default: true
+    default: false
   dynamiceconomy.settax:
     description: Allows player to set sales and purchase taxes
     default: false
@@ -274,8 +298,20 @@ permissions:
     default: false
   dynamiceconomy.loan:
     description: Lets users get loans, and find info on their current loans
-    default: true
+    default: false
   dynamiceconomy.curinterest:
     description: Lets users find out current loan interest rate
-    default: true
+    default: false
+  dynamiceconomy.curworld:
+    description: Tells users their current world
+    default: false
+  dynamiceconomy.banitem:
+    description: Bans the given item from either sale/purchase
+    default: false
+  dynamiceconomy.unbanitem:
+    description: Unbans the given item from either sale/purchase
+    default: false
+  dynamiceconomy.dequiet:
+    description: Disables global price notifications for a user
+    default: false
     
