@@ -1,6 +1,6 @@
 name: DynamicEconomy
 main: me.ksafin.DynamicEconomy.DynamicEconomy
-version: .8.5
+version: .8.51
 
 description: This plugin allows users to buy and sell items at dynamically generated prices.
 author: kSafin (Kirill Safin)
@@ -161,6 +161,10 @@ commands:
      description: Disables global price notifications for a user
      permission: dynamiceconomy.dequiet
      usage: /dequiet
+   togglewand:
+     description: Toggles region selection wand to off/on
+     permission: dynamieconomy.selectregion
+     usage: /togglewand
 
 permissions:
   dynamiceconomy.*:

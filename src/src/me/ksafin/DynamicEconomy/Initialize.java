@@ -65,6 +65,7 @@ public class Initialize {
 	    config.set("sign-tagline-color","&a");
 	    config.set("sign-info-color","&f");
 	    config.set("sign-invalid-color","&c");
+	    config.set("wand-enabled", true);
 	    
 		
 		try {
@@ -90,6 +91,16 @@ public class Initialize {
 		conf.set("STONE.stock",50);
 		conf.set("STONE.spread", .01);
 		conf.set("STONE.time",0);
+		
+		conf.set("GRASS.velocity", .01);
+		conf.set("GRASS.id", 2);
+		conf.set("GRASS.price", .5);
+		conf.set("GRASS.floor", .01);
+		conf.set("GRASS.ceiling", 1);
+		conf.set("GRASS.description", "Grassy Green!");
+		conf.set("GRASS.stock",50);
+		conf.set("GRASS.spread", .01);
+		conf.set("GRASS.time",0);
 
 		conf.set("DIRT.velocity", .001);
 		conf.set("DIRT.id", 3);
@@ -152,6 +163,48 @@ public class Initialize {
 		conf.set("JUNGLEPLANK.stock",50);
 		conf.set("JUNGLEPLANK.spread", .01);
 		conf.set("JUNGLEPLANK.time",0);
+		
+		// BEGIN ALL PLANK SLABS
+		
+		conf.set("OAKSLAB.velocity", .01);
+		conf.set("OAKSLAB.id", 126);
+		conf.set("OAKSLAB.price", .2);
+		conf.set("OAKSLAB.floor", .01);
+		conf.set("OAKSLAB.ceiling", .4);
+		conf.set("OAKSLAB.description", "Processed wood");
+		conf.set("OAKSLAB.stock",50);
+		conf.set("OAKSLAB.spread", .01);
+		conf.set("OAKSLAB.time",0);
+		
+		conf.set("PINESLAB.velocity", .01);
+		conf.set("PINESLAB.id", 126001);
+		conf.set("PINESLAB.price", .2);
+		conf.set("PINESLAB.floor", .01);
+		conf.set("PINESLAB.ceiling", .4);
+		conf.set("PINESLAB.description", "Processed wood");
+		conf.set("PINESLAB.stock",50);
+		conf.set("PINESLAB.spread", .01);
+		conf.set("PINESLAB.time",0);
+		
+		conf.set("BIRCHSLAB.velocity", .01);
+		conf.set("BIRCHSLAB.id", 126002);
+		conf.set("BIRCHSLAB.price", .2);
+		conf.set("BIRCHSLAB.floor", .01);
+		conf.set("BIRCHSLAB.ceiling", .4);
+		conf.set("BIRCHSLAB.description", "Processed wood");
+		conf.set("BIRCHSLAB.stock",50);
+		conf.set("BIRCHSLAB.spread", .01);
+		conf.set("BIRCHSLAB.time",0);
+		
+		conf.set("JUNGLESLAB.velocity", .01);
+		conf.set("JUNGLESLAB.id", 126003);
+		conf.set("JUNGLESLAB.price", .2);
+		conf.set("JUNGLESLAB.floor", .01);
+		conf.set("JUNGLESLAB.ceiling", .4);
+		conf.set("JUNGLESLAB.description", "Processed wood");
+		conf.set("JUNGLESLAB.stock",50);
+		conf.set("JUNGLESLAB.spread", .01);
+		conf.set("JUNGLESLABK.time",0);
 
 		// BEGIN ALL SAPLINGS
 		
@@ -196,6 +249,56 @@ public class Initialize {
 		conf.set("JUNGLESAPLING.time",0);
 		
 		// END SAPLINGS
+		
+		conf.set("BEDROCK.velocity", .04);
+		conf.set("BEDROCK.id", 7);
+		conf.set("BEDROCK.price", 20);
+		conf.set("BEDROCK.floor", 1);
+		conf.set("BEDROCK.ceiling", 30);
+		conf.set("BEDROCK.description", "An unbreakable block that is found at the bottom of the world.");
+		conf.set("BEDROCK.stock",50);
+		conf.set("BEDROCK.spread", .01);
+		conf.set("BEDROCK.time",0);
+		
+		conf.set("WATER.velocity", .04);
+		conf.set("WATER.id", 8);
+		conf.set("WATER.price", 20);
+		conf.set("WATER.floor", 1);
+		conf.set("WATER.ceiling", 30);
+		conf.set("WATER.description", "Liquid H20");
+		conf.set("WATER.stock",50);
+		conf.set("WATER.spread", .01);
+		conf.set("WATER.time",0);
+		
+		conf.set("STILLWATER.velocity", .04);
+		conf.set("STILLWATER.id", 9);
+		conf.set("STILLWATER.price", 20);
+		conf.set("STILLWATER.floor", 1);
+		conf.set("STILLWATER.ceiling", 30);
+		conf.set("STILLWATER.description", "Liquid H20");
+		conf.set("STILLWATER.stock",50);
+		conf.set("STILLWATER.spread", .01);
+		conf.set("STILLWATER.time",0);
+		
+		conf.set("LAVA.velocity", .04);
+		conf.set("LAVA.id", 10);
+		conf.set("LAVA.price", 20);
+		conf.set("LAVA.floor", 1);
+		conf.set("LAVA.ceiling", 30);
+		conf.set("LAVA.description", "Molten Volcano stuff!");
+		conf.set("LAVA.stock",50);
+		conf.set("LAVA.spread", .01);
+		conf.set("LAVA.time",0);
+		
+		conf.set("STILLLAVA.velocity", .04);
+		conf.set("STILLLAVA.id", 11);
+		conf.set("STILLLAVA.price", 20);
+		conf.set("STILLLAVA.floor", 1);
+		conf.set("STILLLAVA.ceiling", 30);
+		conf.set("STILLLAVA.description", "Molten Volcano stuff!");
+		conf.set("STILLLAVA.stock",50);
+		conf.set("STILLLAVA.spread", .01);
+		conf.set("STILLLAVA.time",0);
 
 		conf.set("SAND.velocity", .001);
 		conf.set("SAND.id", 12);
@@ -286,6 +389,16 @@ public class Initialize {
 		conf.set("JUNGLEWOOD.stock",50);
 		conf.set("JUNGLEWOOD.spread", .05);
 		conf.set("JUNGLEWOOD.time",0);
+		
+		conf.set("SPONGE.velocity", .05);
+		conf.set("SPONGE.id", 19);
+		conf.set("SPONGE.price", 20);
+		conf.set("SPONGE.floor", 1);
+		conf.set("SPONGE.ceiling", 30);
+		conf.set("SPONGE.description", "Soaks up water like nothing else!");
+		conf.set("SPONGE.stock",50);
+		conf.set("SPONGE.spread", .05);
+		conf.set("SPONGE.time",0);
 
 		conf.set("GLASS.velocity", .02);
 		conf.set("GLASS.id", 20);
@@ -306,6 +419,16 @@ public class Initialize {
 		conf.set("LAPISLAZULIORE.stock",50);
 		conf.set("LAPISLAZULIORE.spread", .8);
 		conf.set("LAPISLAZULIORE.time",0);
+		
+		conf.set("LAPISLAZULIBLOCK.velocity", .9);
+		conf.set("LAPISLAZULIBLOCK.id", 22);
+		conf.set("LAPISLAZULIBLOCK.price", 25);
+		conf.set("LAPISLAZULIBLOCK.floor", 10);
+		conf.set("LAPISLAZULIBLOCK.ceiling", 50);
+		conf.set("LAPISLAZULIBLOCK.description", "Prettiest ore in the world");
+		conf.set("LAPISLAZULIBLOCK.stock",50);
+		conf.set("LAPISLAZULIBLOCK.spread", .8);
+		conf.set("LAPISLAZULIBLOCK.time",0);
 		
 		conf.set("DISPENSER.velocity", .15);
 		conf.set("DISPENSER.id", 23);
@@ -398,6 +521,46 @@ public class Initialize {
 		conf.set("STICKYPISTON.stock",50);
 		conf.set("STICKYPISTON.spread", .8);
 		conf.set("STICKYPISTON.time",0);
+		
+		conf.set("WEB.velocity", .03);
+		conf.set("WEB.id", 30);
+		conf.set("WEB.price", 20);
+		conf.set("WEB.floor", 10);
+		conf.set("WEB.ceiling", 30);
+		conf.set("WEB.description", "A spiders sweet home.");
+		conf.set("WEB.stock",50);
+		conf.set("WEB.spread", .8);
+		conf.set("WEB.time",0);
+		
+		conf.set("DEADSHRUB.velocity", .05);
+		conf.set("DEADSHRUB.id", 31);
+		conf.set("DEADSHRUB.price", 1);
+		conf.set("DEADSHRUB.floor", .1);
+		conf.set("DEADSHRUB.ceiling", 2);
+		conf.set("DEADSHRUB.description", "Tall Grass in dead shrub form");
+		conf.set("DEADSHRUB.stock",50);
+		conf.set("DEADSHRUB.spread", .05);
+		conf.set("DEADSHRUB.time",0);
+		
+		conf.set("TALLGRASS.velocity", .05);
+		conf.set("TALLGRASS.id", 31001);
+		conf.set("TALLGRASS.price", 1);
+		conf.set("TALLGRASS.floor", .1);
+		conf.set("TALLGRASS.ceiling", 2);
+		conf.set("TALLGRASS.description", "Tall Grass");
+		conf.set("TALLGRASS.stock",50);
+		conf.set("TALLGRASS.spread", .05);
+		conf.set("TALLGRASS.time",0);
+		
+		conf.set("FERN.velocity", .05);
+		conf.set("FERN.id", 31002);
+		conf.set("FERN.price", 1);
+		conf.set("FERN.floor", .1);
+		conf.set("FERN.ceiling", 2);
+		conf.set("FERN.description", "Tall Grass in Fern form!");
+		conf.set("FERN.stock",50);
+		conf.set("FERN.spread", .05);
+		conf.set("FERN.time",0);
 
 		conf.set("PISTON.velocity", .75);
 		conf.set("PISTON.id", 33);
@@ -767,12 +930,32 @@ public class Initialize {
 		conf.set("TORCH.spread", .01);
 		conf.set("TORCH.time",0);
 		
+		conf.set("FIRE.velocity", .06);
+		conf.set("FIRE.id", 51);
+		conf.set("FIRE.price", 5);
+		conf.set("FIRE.floor", .01);
+		conf.set("FIRE.ceiling", 10);
+		conf.set("FIRE.description", "YOU CAVE. ME MAN. CAVEMAN MAKE FIRE!");
+		conf.set("FIRE.stock",50);
+		conf.set("FIRE.spread", .01);
+		conf.set("FIRE.time",0);
+		
+		conf.set("MOBSPAWNER.velocity", .06);
+		conf.set("MOBSPAWNER.id", 52);
+		conf.set("MOBSPAWNER.price", 5);
+		conf.set("MOBSPAWNER.floor", .01);
+		conf.set("MOBSPAWNER.ceiling", 10);
+		conf.set("MOBSPAWNER.description", "It.. makes monsters? Why would you want this?");
+		conf.set("MOBSPAWNER.stock",50);
+		conf.set("MOBSPAWNER.spread", .01);
+		conf.set("MOBSPAWNER.time",0);
+		
 		conf.set("WOODENSTAIRS.velocity", .2);
 		conf.set("WOODENSTAIRS.id", 53);
 		conf.set("WOODENSTAIRS.price", 3);
 		conf.set("WOODENSTAIRS.floor", 1.2);
 		conf.set("WOODENSTAIRS.ceiling", 4.9);
-		conf.set("WOODENSTAIRS.description", "Get up high with wooden stairs!");
+		conf.set("WOODENSTAIRS.description", "set up high with wooden stairs!");
 		conf.set("WOODENSTAIRS.stock",50);
 		conf.set("WOODENSTAIRS.spread", .2);
 		conf.set("WOODENSTAIRS.time",0);
@@ -826,6 +1009,16 @@ public class Initialize {
 		conf.set("FURNACE.stock",50);
 		conf.set("FURNACE.spread", .09);
 		conf.set("FURNACE.time",0);
+		
+		conf.set("BURNINGFURNACE.velocity", .09);
+		conf.set("BURNINGFURNACE.id", 62);
+		conf.set("BURNINGFURNACE.price", 2.5);
+		conf.set("BURNINGFURNACE.floor", 1.5);
+		conf.set("BURNINGFURNACE.ceiling", 2.5);
+		conf.set("BURNINGFURNACE.description", "Use it to burn all your stuff up or cook your food!");
+		conf.set("BURNINGFURNACE.stock",50);
+		conf.set("BURNINGFURNACE.spread", .09);
+		conf.set("BURNINGFURNACE.time",0);
 
 		conf.set("LADDER.velocity", .001);
 		conf.set("LADDER.id", 65);
@@ -896,6 +1089,16 @@ public class Initialize {
 		conf.set("REDSTONEORE.stock",50);
 		conf.set("REDSTONEORE.spread", .01);
 		conf.set("REDSTONEORE.time",0);
+		
+		conf.set("GLOWINGREDSTONEORE.velocity", .6);
+		conf.set("GLOWINGREDSTONEORE.id", 74);
+		conf.set("GLOWINGREDSTONEORE.price", 8);
+		conf.set("GLOWINGREDSTONEORE.floor", 2);
+		conf.set("GLOWINGREDSTONEORE.ceiling", 16);
+		conf.set("GLOWINGREDSTONEORE.description", "Conducts power!");
+		conf.set("GLOWINGREDSTONEORE.stock",50);
+		conf.set("GLOWINGREDSTONEORE.spread", .01);
+		conf.set("GLOWINGREDSTONEORE.time",0);
 
 		conf.set("BUTTON.velocity", .06);
 		conf.set("BUTTON.id", 77);
@@ -906,6 +1109,16 @@ public class Initialize {
 		conf.set("BUTTON.stock",50);
 		conf.set("BUTTON.spread", .06);
 		conf.set("BUTTON.time",0);
+		
+		conf.set("ICE.velocity", .06);
+		conf.set("ICE.id", 79);
+		conf.set("ICE.price", 2);
+		conf.set("ICE.floor", 1);
+		conf.set("ICE.ceiling", 2.4);
+		conf.set("ICE.description", "Melts near hot stuff.");
+		conf.set("ICE.stock",50);
+		conf.set("ICE.spread", .06);
+		conf.set("ICE.time",0);
 
 		conf.set("CACTUS.velocity", .3);
 		conf.set("CACTUS.id", 81);
@@ -916,6 +1129,16 @@ public class Initialize {
 		conf.set("CACTUS.stock",50);
 		conf.set("CACTUS.spread", .3);
 		conf.set("CACTUS.time",0);
+		
+		conf.set("CLAYBLOCK.velocity", .3);
+		conf.set("CLAYBLOCK.id", 82);
+		conf.set("CLAYBLOCK.price", 4);
+		conf.set("CLAYBLOCK.floor", 2);
+		conf.set("CLAYBLOCK.ceiling", 6);
+		conf.set("CLAYBLOCK.description", "Soft and mushy, like clay!");
+		conf.set("CLAYBLOCK.stock",50);
+		conf.set("CLAYBLOCK.spread", .3);
+		conf.set("CLAYBLOCK.time",0);
 
 		conf.set("JUKEBOX.velocity", 1.8);
 		conf.set("JUKEBOX.id", 84);
@@ -996,6 +1219,36 @@ public class Initialize {
 		conf.set("STONEBRICKS.stock",50);
 		conf.set("STONEBRICKS.spread", .9);
 		conf.set("STONEBRICKS.time",0);
+		
+		conf.set("MOSSYSTONEBRICKS.velocity", .9);
+		conf.set("MOSSYSTONEBRICKS.id", 98001);
+		conf.set("MOSSYSTONEBRICKS.price", 8);
+		conf.set("MOSSYSTONEBRICKS.floor", 4);
+		conf.set("MOSSYSTONEBRICKS.ceiling", 16);
+		conf.set("MOSSYSTONEBRICKS.description", "Fancy Stronghold stone, moss edition!");
+		conf.set("MOSSYSTONEBRICKS.stock",50);
+		conf.set("MOSSYSTONEBRICKS.spread", .9);
+		conf.set("MOSSYSTONEBRICKS.time",0);
+		
+		conf.set("CRACKEDSTONEBRICKS.velocity", .9);
+		conf.set("CRACKEDSTONEBRICKS.id", 98002);
+		conf.set("CRACKEDSTONEBRICKS.price", 8);
+		conf.set("CRACKEDSTONEBRICKS.floor", 4);
+		conf.set("CRACKEDSTONEBRICKS.ceiling", 16);
+		conf.set("CRACKEDSTONEBRICKS.description", "Fancy Stronghold stone, cracked edition!");
+		conf.set("CRACKEDSTONEBRICKS.stock",50);
+		conf.set("CRACKEDSTONEBRICKS.spread", .9);
+		conf.set("CRACKEDSTONEBRICKS.time",0);
+		
+		conf.set("CIRCLESTONEBRICKS.velocity", .9);
+		conf.set("CIRCLESTONEBRICKS.id", 98003);
+		conf.set("CIRCLESTONEBRICKS.price", 8);
+		conf.set("CIRCLESTONEBRICKS.floor", 4);
+		conf.set("CIRCLESTONEBRICKS.ceiling", 16);
+		conf.set("CIRCLESTONEBRICKS.description", "Fancy Stronghold stone, circle edition!");
+		conf.set("CIRCLESTONEBRICKS.stock",50);
+		conf.set("CIRCLESTONEBRICKS.spread", .9);
+		conf.set("CIRCLESTONEBRICKS.time",0);
 
 		conf.set("IRONBARS.velocity", .11);
 		conf.set("IRONBARS.id", 101);
@@ -1016,6 +1269,26 @@ public class Initialize {
 		conf.set("GLASSPANE.stock",50);
 		conf.set("GLASSPANE.spread", .005);
 		conf.set("GLASSPANE.time",0);
+		
+		conf.set("VINES.velocity", .005);
+		conf.set("VINES.id", 106);
+		conf.set("VINES.price", .14);
+		conf.set("VINES.floor", .08);
+		conf.set("VINES.ceiling", .2);
+		conf.set("VINES.description", "Seems like a vineyard kinda vine.");
+		conf.set("VINES.stock",50);
+		conf.set("VINES.spread", .005);
+		conf.set("VINES.time",0);
+		
+		conf.set("FENCEGATE.velocity", .005);
+		conf.set("FENCEGATE.id", 107);
+		conf.set("FENCEGATE.price", .14);
+		conf.set("FENCEGATE.floor", .08);
+		conf.set("FENCEGATE.ceiling", .2);
+		conf.set("FENCEGATE.description", "Essential for any fence!");
+		conf.set("FENCEGATE.stock",50);
+		conf.set("FENCEGATE.spread", .005);
+		conf.set("FENCEGATE.time",0);
 
 		conf.set("BRICKSTAIRS.velocity", .09);
 		conf.set("BRICKSTAIRS.id", 108);
@@ -1036,6 +1309,26 @@ public class Initialize {
 		conf.set("STONEBRICKSTAIRS.stock",50);
 		conf.set("STONEBRICKSTAIRS.spread", .06);
 		conf.set("STONEBRICKSTAIRS.time",0);
+		
+		conf.set("MYCELIUM.velocity", .06);
+		conf.set("MYCELIUM.id", 110);
+		conf.set("MYCELIUM.price", 12);
+		conf.set("MYCELIUM.floor", 6);
+		conf.set("MYCELIUM.ceiling", 18);
+		conf.set("MYCELIUM.description", "Found in swamps.");
+		conf.set("MYCELIUM.stock",50);
+		conf.set("MYCELIUM.spread", .06);
+		conf.set("MYCELIUM.time",0);
+		
+		conf.set("LILYPAD.velocity", .06);
+		conf.set("LILYPAD.id", 111);
+		conf.set("LILYPAD.price", 12);
+		conf.set("LILYPAD.floor", 6);
+		conf.set("LILYPAD.ceiling", 18);
+		conf.set("LILYPAD.description", "Frogs love em, you will too!");
+		conf.set("LILYPAD.stock",50);
+		conf.set("LILYPAD.spread", .06);
+		conf.set("LILYPAD.time",0);
 
 		conf.set("NETHERBRICK.velocity", .07);
 		conf.set("NETHERBRICK.id", 112);
@@ -1076,6 +1369,46 @@ public class Initialize {
 		conf.set("ENCHANTMENTTABLE.stock",50);
 		conf.set("ENCHANTMENTTABLE.spread", 1.5);
 		conf.set("ENCHANTMENTTABLE.time",0);
+		
+		conf.set("ENDSTONE.velocity", .3);
+		conf.set("ENDSTONE.id", 121);
+		conf.set("ENDSTONE.price", 50);
+		conf.set("ENDSTONE.floor", 20);
+		conf.set("ENDSTONE.ceiling", 80);
+		conf.set("ENDSTONE.description", "Straight from The End!");
+		conf.set("ENDSTONE.stock",50);
+		conf.set("ENDSTONE.spread", 1.5);
+		conf.set("ENDSTONE.time",0);
+		
+		conf.set("DRAGONEGG.velocity", .3);
+		conf.set("DRAGONEGG.id", 122);
+		conf.set("DRAGONEGG.price", 50);
+		conf.set("DRAGONEGG.floor", 20);
+		conf.set("DRAGONEGG.ceiling", 80);
+		conf.set("DRAGONEGG.description", "The hatchling for a dragon.");
+		conf.set("DRAGONEGG.stock",50);
+		conf.set("DRAGONEGG.spread", 1.5);
+		conf.set("DRAGONEGG.time",0);
+		
+		conf.set("REDSTONELAMP.velocity", .09);
+		conf.set("REDSTONELAMP.id", 123);
+		conf.set("REDSTONELAMP.price", 20);
+		conf.set("REDSTONELAMP.floor", 2);
+		conf.set("REDSTONELAMP.ceiling", 50);
+		conf.set("REDSTONELAMP.description", "Finally, a lamp with a simple lightswitch!");
+		conf.set("REDSTONELAMP.stock",50);
+		conf.set("REDSTONELAMP.spread", 1.5);
+		conf.set("REDSTONELAMP.time",0);
+		
+		conf.set("SANDSTONESTAIRS.velocity", .02);
+		conf.set("SANDSTONESTAIRS.id", 128);
+		conf.set("SANDSTONESTAIRS.price", .5);
+		conf.set("SANDSTONESTAIRS.floor", .1);
+		conf.set("SANDSTONESTAIRS.ceiling", 3);
+		conf.set("SANDSTONESTAIRS.description", "Stairs of sand?");
+		conf.set("SANDSTONESTAIRS.stock",50);
+		conf.set("SANDSTONESTAIRS.spread", .01);
+		conf.set("SANDSTONESTAIRS.time",0);
 
 		conf.set("BREWINGSTAND.velocity", .45);
 		conf.set("BREWINGSTAND.id", 379);
@@ -1566,6 +1899,46 @@ public class Initialize {
 		conf.set("LEATHERBOOTS.stock",50);
 		conf.set("LEATHERBOOTS.spread", 1);
 		conf.set("LEATHERBOOTS.time",0);
+		
+		conf.set("CHAINMAILHELMET.velocity", 1);
+		conf.set("CHAINMAILHELMET.id", 302);
+		conf.set("CHAINMAILHELMET.price", 20);
+		conf.set("CHAINMAILHELMET.floor", 10);
+		conf.set("CHAINMAILHELMET.ceiling", 30);
+		conf.set("CHAINMAILHELMET.description", "Legendary chainmail armor");
+		conf.set("CHAINMAILHELMET.stock",50);
+		conf.set("CHAINMAILHELMET.spread", 1);
+		conf.set("CHAINMAILHELMET.time",0);
+		
+		conf.set("CHAINMAILCHESTPLATE.velocity", 1);
+		conf.set("CHAINMAILCHESTPLATE.id", 303);
+		conf.set("CHAINMAILCHESTPLATE.price", 20);
+		conf.set("CHAINMAILCHESTPLATE.floor", 10);
+		conf.set("CHAINMAILCHESTPLATE.ceiling", 30);
+		conf.set("CHAINMAILCHESTPLATE.description", "Legendary chainmail armor");
+		conf.set("CHAINMAILCHESTPLATE.stock",50);
+		conf.set("CHAINMAILCHESTPLATE.spread", 1);
+		conf.set("CHAINMAILCHESTPLATE.time",0);
+		
+		conf.set("CHAINMAILLEGGINGS.velocity", 1);
+		conf.set("CHAINMAILLEGGINGS.id", 304);
+		conf.set("CHAINMAILLEGGINGS.price", 20);
+		conf.set("CHAINMAILLEGGINGS.floor", 10);
+		conf.set("CHAINMAILLEGGINGS.ceiling", 30);
+		conf.set("CHAINMAILLEGGINGS.description", "Legendary chainmail armor");
+		conf.set("CHAINMAILLEGGINGS.stock",50);
+		conf.set("CHAINMAILLEGGINGS.spread", 1);
+		conf.set("CHAINMAILLEGGINGS.time",0);
+		
+		conf.set("CHAINMAILBOOTS.velocity", 1);
+		conf.set("CHAINMAILBOOTS.id", 305);
+		conf.set("CHAINMAILBOOTS.price", 20);
+		conf.set("CHAINMAILBOOTS.floor", 10);
+		conf.set("CHAINMAILBOOTS.ceiling", 30);
+		conf.set("CHAINMAILBOOTS.description", "Legendary chainmail armor");
+		conf.set("CHAINMAILBOOTS.stock",50);
+		conf.set("CHAINMAILBOOTS.spread", 1);
+		conf.set("CHAINMAILBOOTS.time",0);
 
 		conf.set("IRONHELMET.velocity", 2.6);
 		conf.set("IRONHELMET.id", 306);
@@ -1836,6 +2209,16 @@ public class Initialize {
 		conf.set("REDSTONE.stock",50);
 		conf.set("REDSTONE.spread", .01);
 		conf.set("REDSTONE.time",0);
+		
+		conf.set("SNOWBALL.velocity", .01);
+		conf.set("SNOWBALL.id", 332);
+		conf.set("SNOWBALL.price", 1);
+		conf.set("SNOWBALL.floor", .1);
+		conf.set("SNOWBALL.ceiling", 10);
+		conf.set("SNOWBALL.description", "Conducts power!");
+		conf.set("SNOWBALL.stock",50);
+		conf.set("SNOWBALL.spread", .01);
+		conf.set("SNOWBALL.time",0);
 
 		conf.set("BOAT.velocity", .6);
 		conf.set("BOAT.id", 333);
@@ -2361,15 +2744,15 @@ public class Initialize {
 		conf.set("GHASTTEAR.spread", 6.1);
 		conf.set("GHASTTEAR.time",0);
 
-		conf.set("GOLDNUGGET.velocity", .9);
-		conf.set("GOLDNUGGET.id", 371);
-		conf.set("GOLDNUGGET.price", 33.33);
-		conf.set("GOLDNUGGET.floor", 15);
-		conf.set("GOLDNUGGET.ceiling", 60);
-		conf.set("GOLDNUGGET.description", "A small piece of gold!");
-		conf.set("GOLDNUGGET.stock",50);
-		conf.set("GOLDNUGGET.spread", .9);
-		conf.set("GOLDNUGGET.time",0);
+		conf.set("GOLDNUGset.velocity", .9);
+		conf.set("GOLDNUGset.id", 371);
+		conf.set("GOLDNUGset.price", 33.33);
+		conf.set("GOLDNUGset.floor", 15);
+		conf.set("GOLDNUGset.ceiling", 60);
+		conf.set("GOLDNUGset.description", "A small piece of gold!");
+		conf.set("GOLDNUGset.stock",50);
+		conf.set("GOLDNUGset.spread", .9);
+		conf.set("GOLDNUGset.time",0);
 
 		conf.set("NETHERWART.velocity", 3.7);
 		conf.set("NETHERWART.id", 372);
@@ -3018,6 +3401,118 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFHARMINGII.stock",50);
 		conf.set("SPLASHPOTIONOFHARMINGII.spread", .9);
 		conf.set("SPLASHPOTIONOFHARMINGII.time",0);
+		
+		// MUSIC CDS START
+		
+		conf.set("MUSICDISK13.velocity", 80);
+		conf.set("MUSICDISK13.id", 2256);
+		conf.set("MUSICDISK13.price", 2000);
+		conf.set("MUSICDISK13.floor", 1600);
+		conf.set("MUSICDISK13.ceiling", 8000);
+		conf.set("MUSICDISK13.description", "A CD with the Song '13' on it");
+		conf.set("MUSICDISK13.stock",50);
+		conf.set("MUSICDISK13.spread", .9);
+		conf.set("MUSICDISK13.time",0);
+		
+		conf.set("MUSICDISKCAT.velocity", 80);
+		conf.set("MUSICDISKCAT.id", 2257);
+		conf.set("MUSICDISKCAT.price", 2000);
+		conf.set("MUSICDISKCAT.floor", 1600);
+		conf.set("MUSICDISKCAT.ceiling", 8000);
+		conf.set("MUSICDISKCAT.description", "A CD with the Song 'Cat' on it");
+		conf.set("MUSICDISKCAT.stock",50);
+		conf.set("MUSICDISKCAT.spread", .9);
+		conf.set("MUSICDISKCAT.time",0);
+		
+		conf.set("MUSICDISKBLOCKS.velocity", 80);
+		conf.set("MUSICDISKBLOCKS.id", 2258);
+		conf.set("MUSICDISKBLOCKS.price", 2000);
+		conf.set("MUSICDISKBLOCKS.floor", 1600);
+		conf.set("MUSICDISKBLOCKS.ceiling", 8000);
+		conf.set("MUSICDISKBLOCKS.description", "A CD with the Song 'Blocks' on it");
+		conf.set("MUSICDISKBLOCKS.stock",50);
+		conf.set("MUSICDISKBLOCKS.spread", .9);
+		conf.set("MUSICDISKBLOCKS.time",0);
+		
+		conf.set("MUSICDISKCHIRP.velocity", 80);
+		conf.set("MUSICDISKCHIRP.id", 2259);
+		conf.set("MUSICDISKCHIRP.price", 2000);
+		conf.set("MUSICDISKCHIRP.floor", 1600);
+		conf.set("MUSICDISKCHIRP.ceiling", 8000);
+		conf.set("MUSICDISKCHIRP.description", "A CD with the Song 'Chirp' on it");
+		conf.set("MUSICDISKCHIRP.stock",50);
+		conf.set("MUSICDISKCHIRP.spread", .9);
+		conf.set("MUSICDISKCHIRP.time",0);
+		
+		conf.set("MUSICDISKFAR.velocity", 80);
+		conf.set("MUSICDISKFAR.id", 2260);
+		conf.set("MUSICDISKFAR.price", 2000);
+		conf.set("MUSICDISKFAR.floor", 1600);
+		conf.set("MUSICDISKFAR.ceiling", 8000);
+		conf.set("MUSICDISKFAR.description", "A CD with the Song 'Far' on it");
+		conf.set("MUSICDISKFAR.stock",50);
+		conf.set("MUSICDISKFAR.spread", .9);
+		conf.set("MUSICDISKFAR.time",0);
+		
+		conf.set("MUSICDISKMALL.velocity", 80);
+		conf.set("MUSICDISKMALL.id", 2261);
+		conf.set("MUSICDISKMALL.price", 2000);
+		conf.set("MUSICDISKMALL.floor", 1600);
+		conf.set("MUSICDISKMALL.ceiling", 8000);
+		conf.set("MUSICDISKMALL.description", "A CD with the Song 'Mall' on it");
+		conf.set("MUSICDISKMALL.stock",50);
+		conf.set("MUSICDISKMALL.spread", .9);
+		conf.set("MUSICDISKMALL.time",0);
+		
+		conf.set("MUSICDISKMELLOHI.velocity", 80);
+		conf.set("MUSICDISKMELLOHI.id", 2262);
+		conf.set("MUSICDISKMELLOHI.price", 2000);
+		conf.set("MUSICDISKMELLOHI.floor", 1600);
+		conf.set("MUSICDISKMELLOHI.ceiling", 8000);
+		conf.set("MUSICDISKMELLOHI.description", "A CD with the Song 'Mellohi' on it");
+		conf.set("MUSICDISKMELLOHI.stock",50);
+		conf.set("MUSICDISKMELLOHI.spread", .9);
+		conf.set("MUSICDISKMELLOHI.time",0);
+		
+		conf.set("MUSICDISKSTAL.velocity", 80);
+		conf.set("MUSICDISKSTAL.id", 2263);
+		conf.set("MUSICDISKSTAL.price", 2000);
+		conf.set("MUSICDISKSTAL.floor", 1600);
+		conf.set("MUSICDISKSTAL.ceiling", 8000);
+		conf.set("MUSICDISKSTAL.description", "A CD with the Song 'Stal' on it");
+		conf.set("MUSICDISKSTAL.stock",50);
+		conf.set("MUSICDISKSTAL.spread", .9);
+		conf.set("MUSICDISKSTAL.time",0);
+		
+		conf.set("MUSICDISKSTRAD.velocity", 80);
+		conf.set("MUSICDISKSTRAD.id", 2264);
+		conf.set("MUSICDISKSTRAD.price", 2000);
+		conf.set("MUSICDISKSTRAD.floor", 1600);
+		conf.set("MUSICDISKSTRAD.ceiling", 8000);
+		conf.set("MUSICDISKSTRAD.description", "A CD with the Song 'Strad' on it");
+		conf.set("MUSICDISKSTRAD.stock",50);
+		conf.set("MUSICDISKSTRAD.spread", .9);
+		conf.set("MUSICDISKSTRAD.time",0);
+		
+		conf.set("MUSICDISKWARD.velocity", 80);
+		conf.set("MUSICDISKWARD.id", 2265);
+		conf.set("MUSICDISKWARD.price", 2000);
+		conf.set("MUSICDISKWARD.floor", 1600);
+		conf.set("MUSICDISKWARD.ceiling", 8000);
+		conf.set("MUSICDISKWARD.description", "A CD with the Song 'Ward' on it");
+		conf.set("MUSICDISKWARD.stock",50);
+		conf.set("MUSICDISKWARD.spread", .9);
+		conf.set("MUSICDISKWARD.time",0);
+		
+		conf.set("MUSICDISK11.velocity", 80);
+		conf.set("MUSICDISK11.id", 2266);
+		conf.set("MUSICDISK11.price", 2000);
+		conf.set("MUSICDISK11.floor", 1600);
+		conf.set("MUSICDISK11.ceiling", 8000);
+		conf.set("MUSICDISK11.description", "A CD with the Song '11' on it");
+		conf.set("MUSICDISK11.stock",50);
+		conf.set("MUSICDISK11.spread", .9);
+		conf.set("MUSICDISK11.time",0);
 
 
 		

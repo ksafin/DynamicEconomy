@@ -1,34 +1,29 @@
 package me.ksafin.DynamicEconomy;
 
 import java.io.File;
-import java.math.BigDecimal;
+
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Wool;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.Bukkit;
 
 import couk.Adamki11s.Extras.Colour.ExtrasColour;
 import couk.Adamki11s.Extras.Inventory.ExtrasInventory;
 
-import me.smickles.DynamicMarket.Invoice;
 import net.milkbowl.vault.economy.Economy;
-import net.minecraft.server.EntityPlayer;
 
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 
 public class Transaction implements Runnable {
 	
@@ -44,8 +39,12 @@ public class Transaction implements Runnable {
 	
     File confFile;
     
-	public static DecimalFormat decFormat = new DecimalFormat("#.##");
-	public static DecimalFormat changeFormat = new DecimalFormat("#.#####");
+    static NumberFormat f = NumberFormat.getNumberInstance(Locale.US);
+    
+	public static DecimalFormat decFormat = (DecimalFormat)f;
+	public static DecimalFormat changeFormat = (DecimalFormat)f;
+	
+	
 
 	
 	public Transaction(Economy eco, FileConfiguration conf, FileConfiguration confMain, File iFile, File cf) {
@@ -181,14 +180,16 @@ public class Transaction implements Runnable {
 				
 				//System.out.println(x + ": Price - $" + itemPrice +", totalCost - " + totalCost);
 			} */
+			for (int x = 0; x < purchaseAmount; x++) {
+				totalCost += itemPrice;
+				itemPrice = itemPrice / (Math.pow((1 - itemVelocity), purchaseAmount));
 			
-			itemPrice = itemPrice / (Math.pow((1 - itemVelocity), purchaseAmount));
-			
-			if (itemPrice > itemCeiling) {
+				if (itemPrice > itemCeiling) {
 				itemPrice = itemCeiling;
-			}
-			if (itemPrice < itemFloor) {
+				}
+				if (itemPrice < itemFloor) {
 				itemPrice = itemFloor;
+				}
 			}
 			
 		} else {
@@ -224,6 +225,8 @@ public class Transaction implements Runnable {
 		
 		
 		double newPrice = itemPrice;
+		
+		decFormat.applyPattern("#.##");
 		
 		if (balance < totalCost) {
 			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.notEnoughMoney);
@@ -266,21 +269,25 @@ public class Transaction implements Runnable {
 			
 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou bought " + purchaseAmount + " &2of " + itemName + "&f - " + percentTax + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalCost + " &2TOTAL" );
 			
+			changeFormat.applyPattern("#.#####");
+			
 			newPrice = Double.valueOf(decFormat.format(newPrice));
 			change = Double.valueOf(changeFormat.format(change));
 			
-			if (DynamicEconomy.globalNotify) {
+			
+			if (oldPrice != newPrice) { 
+				if (DynamicEconomy.globalNotify) {
 				for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 					if (!(Utility.isQuiet(p))) {
 						color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (+" + change + ")");
 					}
 				} 
-			} else if (DynamicEconomy.localNotify) {
+				} else if (DynamicEconomy.localNotify) {
 				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (+" + change + ")");
+				}
+			
+				Utility.writeToLog(DynamicEconomy.prefix + " New price of " + itemName + " changed dynamically to " + newPrice + "(+" + change + ")");
 			}
-			
-			Utility.writeToLog(DynamicEconomy.prefix + " New price of " + itemName + " changed dynamically to " + newPrice + "(+" + change + ")");
-			
 			itemConfig.set(itemName + ".time", Calendar.getInstance().getTimeInMillis());
 			
 			
@@ -288,7 +295,7 @@ public class Transaction implements Runnable {
 			short dmg = 0;
 			byte data = 0;
 			
-			if (itemID > 1000L) {
+			if (itemID > 3000L) {
 				mat = getMat(itemID);
 				dmg = getDmg(itemID);
 				
@@ -364,6 +371,8 @@ public class Transaction implements Runnable {
 	
 	public boolean sellInventory(Player player) {
 		
+		decFormat.setGroupingUsed(false);
+		
 		Inventory inv = player.getInventory();
 		
 		ItemStack[] contents = inv.getContents();
@@ -395,12 +404,18 @@ public class Transaction implements Runnable {
 		double oldPrice;
 		double change;
 		
+		ArrayList<String> banned = new ArrayList<String>();
+		
+		for (int x = 0; x < DynamicEconomy.bannedSaleItems.length; x++) {
+			banned.add(DynamicEconomy.bannedSaleItems[x]);
+		}
 		
 		for(ItemStack item : contents) {
 			
 			if (item == null) {
 				continue;
 			}
+			
 			
 			dur = item.getDurability();
 			itemID = item.getTypeId();
@@ -426,7 +441,9 @@ public class Transaction implements Runnable {
 			
 			oldPrice = itemPrice;
 			
-			
+			if (banned.contains(itemName)) {
+				continue;
+			}
 			
 			if (((itemID >= 256 ) && (itemID <= 258)) || ((itemID >= 267) && (itemID <= 279)) || ((itemID >= 298) && (itemID <= 317)) || ((itemID >= 283) && (itemID <= 286)) || ((itemID >= 290) && (itemID <= 294))) {
 				itemPrice -= itemVelocity;	
@@ -442,17 +459,18 @@ public class Transaction implements Runnable {
 					totalSale += itemPrice * percentDur;
 			}  else {
 				if (DynamicEconomy.usePercentVelocity) {
-					itemPrice = saleAmount * (Math.pow((1-itemVelocity),saleAmount));
+					for (int x = 0; x < saleAmount; x++) {
+						itemPrice = itemPrice * (Math.pow((1-itemVelocity),saleAmount));
 					
-					if (itemPrice > itemCeiling) {
-						itemPrice = itemCeiling;
+						if (itemPrice > itemCeiling) {
+							itemPrice = itemCeiling;
+						}
+						if (itemPrice < itemFloor) {
+							itemPrice = itemFloor;
+						}
+					
+						totalSale += itemPrice;
 					}
-					if (itemPrice < itemFloor) {
-						itemPrice = itemFloor;
-					}
-					
-					totalSale += itemPrice;
-					
 				} else {
 					for (int x = 0; x < saleAmount; x++) {
 						if (itemPrice == itemFloor) {
@@ -483,6 +501,8 @@ public class Transaction implements Runnable {
 			itemConfig.set(requestPrice,itemPrice);
 			
 			dataSigns.checkForUpdates(itemName,changeStock,change);
+			
+			inv.removeItem(item);
 			
 		}
 			
@@ -532,17 +552,8 @@ public class Transaction implements Runnable {
 					 Utility.writeToLog("[DynamicEconomy] Error saving new item info after /sell execution");
 					 e.printStackTrace();
 				 }
-				 
-				 
-				 
-				
-				 
 			
-		
-		
-		inv.clear();
-		
-		
+		player.updateInventory();
 		return true;
 	}
 
@@ -666,7 +677,7 @@ public boolean sell(Player player, String[] args) {
 		} else if (args.length == 2) {
 			if (args[1].equalsIgnoreCase("all")){
 				//saleAmount = inv.getAmountOf(player, itemID);
-				if (itemID > 1000L) {
+				if (itemID > 3000L) {
 					mat = getMat(itemID);
 					dmg = getDmg(itemID);
 					
@@ -709,29 +720,18 @@ public boolean sell(Player player, String[] args) {
 		
 		
 		if (DynamicEconomy.usePercentVelocity) {
-			//totalSale = itemPrice * saleAmount;
-			//itemPrice = itemPrice - (itemPrice * itemVelocity);
-		/*	for (int x = 0; x < saleAmount; x++) {
-				if (itemPrice == itemFloor) {
-					itemPrice = itemFloor;
-				} else {
-					itemPrice = itemPrice - (itemVelocity * itemPrice);
-					if (itemPrice < itemFloor) {
-						itemPrice = itemFloor;
-					}
+			for (int x = 0; x < saleAmount; x++) {
+				itemPrice = itemPrice * (Math.pow((1-itemVelocity),saleAmount));
+			
+				if (itemPrice > itemCeiling) {
+					itemPrice = itemCeiling;
 				}
+				if (itemPrice < itemFloor) {
+					itemPrice = itemFloor;
+				}
+			
 				totalSale += itemPrice;
-				
-			} */
-			itemPrice = saleAmount * (Math.pow((1-itemVelocity),saleAmount));
-			
-			if (itemPrice > itemCeiling) {
-				itemPrice = itemCeiling;
 			}
-			if (itemPrice < itemFloor) {
-				itemPrice = itemFloor;
-			}
-			
 		} else {
 			for (int x = 0; x < saleAmount; x++) {
 				if (itemPrice == itemFloor) {
@@ -757,7 +757,7 @@ public boolean sell(Player player, String[] args) {
 		
 		if (args[0].equalsIgnoreCase("hand")) {
 			userAmount = player.getInventory().getItemInHand().getAmount();
-		} else if (itemID > 1000L) {
+		} else if (itemID > 3000L) {
 			mat = getMat(itemID);
 			dmg = getDmg(itemID);
 			
@@ -829,6 +829,7 @@ public boolean sell(Player player, String[] args) {
 			
 			double percentTax;
 			
+			decFormat.applyPattern("#.##");
 			
 			if (((itemID >= 256 ) && (itemID <= 258)) || ((itemID >= 267) && (itemID <= 279)) || ((itemID >= 298) && (itemID <= 317)) || ((itemID >= 283) && (itemID <= 286)) || ((itemID >= 290) && (itemID <= 294))) {
 				totalSale = 0;
@@ -878,7 +879,7 @@ public boolean sell(Player player, String[] args) {
 				if (args[0].equalsIgnoreCase("hand")) {
 					i = player.getInventory().getItemInHand();
 					player.getInventory().removeItem(i);
-				} else if (itemID > 1000L) {
+				} else if (itemID > 3000L) {
 					mat = getMat(itemID);
 					dmg = getDmg(itemID);
 					
@@ -916,23 +917,24 @@ public boolean sell(Player player, String[] args) {
 				Utility.writeToLog(stringPlay + " succesfully sold " + saleAmount + " of '" + itemName + "' for " + totalSale);
 			}
 			
-			
+			changeFormat.applyPattern("#.#####");
 			
 			newPrice = Double.valueOf(decFormat.format(newPrice));
 			change = Double.valueOf(changeFormat.format(change));
 			
-			if (DynamicEconomy.globalNotify) {
-				for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-					if (!(Utility.isQuiet(p))) {
-						color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (" + change + ")");
-					}
+			if (oldPrice != newPrice) { 
+				if (DynamicEconomy.globalNotify) {
+					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+						if (!(Utility.isQuiet(p))) {
+							color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (" + change + ")");
+						}
 					} 
-			} else if (DynamicEconomy.localNotify) {
+				} else if (DynamicEconomy.localNotify) {
 				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2New Price of &f" + itemName + "&2 is &f" + DynamicEconomy.currencySymbol + newPrice + "&2 (" + change + ")");
+				}
+			
+				Utility.writeToLog(DynamicEconomy.prefix + " New price of " + itemName + " changed dynamically to " + newPrice + "(" + change + ")");
 			}
-			
-			Utility.writeToLog(DynamicEconomy.prefix + " New price of " + itemName + " changed dynamically to " + newPrice + "(" + change + ")");
-			
 			
 			//inv.removeFromInventory(player, itemID, saleAmount);
 			
@@ -1107,8 +1109,11 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
 			
 			if ((difference >= period) && (time != 0)) {
 				price = itemConfig.getDouble(items[x] + ".price");
+				double oldPrice = price;
 				price = price - (price * DynamicEconomy.overTimePriceDecayPercent);
 				itemConfig.set(items[x] + ".price",price);
+				
+				decFormat.applyPattern("#.##");
 				
 				if (DynamicEconomy.globalNotify) {
 					for (Player p : Bukkit.getServer().getOnlinePlayers()) {

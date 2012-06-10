@@ -1,6 +1,9 @@
 package me.ksafin.DynamicEconomy;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -15,7 +18,9 @@ import org.bukkit.block.Sign;
 
 public class dataSigns {
 	
-	static DecimalFormat format = new DecimalFormat("#.##");
+	static NumberFormat f = NumberFormat.getNumberInstance(Locale.US);
+    public static DecimalFormat format = (DecimalFormat)f;
+	
 
 	public dataSigns(final SignChangeEvent event) {
 		String[] lines = event.getLines();
@@ -133,11 +138,21 @@ public class dataSigns {
 		
 		String request;
 		String itemName;
-		String signType;
 		
 		for (int x = 0; x < signs.length; x ++) {
 			request = signs[x] + ".ITEM";
 			itemName = conf.getString(request);
+			
+			if (itemName == null) {
+				conf.set(signs[x],null);
+				try {
+					conf.save(DynamicEconomy.signsFile);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				Utility.writeToLog("DynamicSign no longer found at " + signs[x] + ", entry removed from file");
+				continue;
+			}
 			
 			if (itemName.equalsIgnoreCase(item)) {
 					updateItem(item,signs[x],changeStock,changePrice);
@@ -159,11 +174,21 @@ public class dataSigns {
 		
 		String request;
 		String itemName;
-		String signType;
 		
 		for (int x = 0; x < signs.length; x ++) {
 			request = signs[x] + ".ITEM";
 			itemName = conf.getString(request);
+			
+			if (itemName == null) {
+				conf.set(signs[x],null);
+				try {
+					conf.save(DynamicEconomy.signsFile);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				Utility.writeToLog("DynamicSign no longer found at " + signs[x] + ", entry removed from file");
+				continue;
+			}
 			
 			if (itemName.equalsIgnoreCase(item)) {
 					updateItem(item,signs[x],changeVelocity,changeCeiling,changeFloor);
@@ -193,7 +218,22 @@ public class dataSigns {
 	
 		Location loc = new Location(Bukkit.getServer().getWorld(worldName),x,y,z);
 		Block block = loc.getBlock();
-		Sign sign = (Sign) block.getState();
+		
+		Sign sign;
+		
+		if (block.getState() instanceof Sign) {
+		    sign = (Sign) block.getState();
+		} else {
+			conf.set(signID,null);
+			try {
+				conf.save(DynamicEconomy.signsFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			Utility.writeToLog("DynamicSign no longer found at " + signID + ", entry removed from file");
+			return;
+		}
+		
 		
 		String data = "";
 		

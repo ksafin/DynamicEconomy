@@ -507,6 +507,25 @@ public class regionUtils {
 		return true;
 	}
 	
+	public static boolean toggleWand(Player player, String[] args) {
+		String stringPlay = player.getName();
+		if (args.length != 0) {
+			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wrong Command Usage. &f/togglewand");
+			Utility.writeToLog(stringPlay + " incorrectly called /togglewand");
+			return false;
+		} else {
+			DynamicEconomy.isWandOn = !DynamicEconomy.isWandOn;
+			if (DynamicEconomy.isWandOn) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wand enabled.");
+				Utility.writeToLog(stringPlay + " enabled region selection wand.");
+			} else {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Wand disabled.");
+				Utility.writeToLog(stringPlay + " disabled region selection wand.");
+			}
+			return true;
+		}
+	}
+	
 	public static boolean getCorners (Player player, String[] args) {
 		String stringPlay = player.getName();
 		if (args.length != 0) {

@@ -346,18 +346,26 @@ public class DynamicEconomyCommandExecutor implements org.bukkit.command.Command
           // DYNAMICECONOMYRELOADCONFIG COMMAND
           
           if (cmd.getName().equalsIgnoreCase("dynamiceconomyreloadconfig")) {
-            	if (permission.has(player, "dynamiceconomy.dynamiceconomyreloadconfig")) {
-            		if (isInWorld(player)) {
+        	  boolean hasPerm = true;
+        	  boolean isInWorld = true;
+        	  String name = "Console";
+        	  if (player != null) {
+        		  hasPerm = permission.has(player, "dynamiceconomy.dynamiceconomyreloadconfig");
+        		 if (isInWorld(player) == false) {
+        			 color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                     Utility.writeToLog(player.getName() + " tried to call /dynamiceconomyreloadconfig, but was in the wrong world.");
+        		 }
+        		 name = player.getName();
+        	   }
+        	  
+            	if (hasPerm) {
                 		DynamicEconomy.reloadConfigValues(player,args);
-                		Utility.writeToLog(player.getName() + " reloaded the DynamicEconomy config.yml");
-                    } else {
-                    	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
-                        Utility.writeToLog(player.getName() + " tried to call /dynamiceconomyreloadconfig, but was in the wrong world.");
-                    }
-            	} else {
+                		Utility.writeToLog(name + " reloaded the DynamicEconomy config.yml");
+                } else {
                     color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
                     Utility.writeToLog(player.getName() + " called /dynamiceconomyreloadconfig but did not have permission.");
                 }
+            
             	return true;
             }
           
@@ -715,7 +723,22 @@ public class DynamicEconomyCommandExecutor implements org.bukkit.command.Command
             	return true;
             }
           
-	
+          // TOGGLEWAND COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("togglewand")) {
+          	if (permission.has(player, "dynamiceconomy.selectregion")) {
+          		if (isInWorld(player)) {
+              		regionUtils.toggleWand(player, args);
+                } else {
+                	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                    Utility.writeToLog(player.getName() + " tried to call /togglewand, but was in the wrong world.");
+                }
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                  Utility.writeToLog(player.getName() + " called /togglewand but did not have permission.");
+              }
+          	return true;
+          }
 	
 	
 	return false; 

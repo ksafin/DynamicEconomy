@@ -73,6 +73,7 @@ public class DynamicEconomyPlayerListener implements Listener {
         Player player = event.getPlayer();
         ItemStack inHand = player.getItemInHand();
         org.bukkit.Material item = inHand.getType();
+        if (DynamicEconomy.isWandOn) {
         if (item.equals(org.bukkit.Material.WOOD_SPADE)) {
         	if (DynamicEconomyCommandExecutor.permission.has(player, "dynamiceconomy.selectregion")) {
         		Block block = event.getClickedBlock();
@@ -110,6 +111,7 @@ public class DynamicEconomyPlayerListener implements Listener {
         	}
         		}
         	}
+        }
         }
     }
        

@@ -2,26 +2,23 @@ package me.ksafin.DynamicEconomy;
 
 
 import java.io.File;
+import java.io.IOException;
+
 import couk.Adamki11s.AutoUpdater.*;
 
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.*;
-import net.milkbowl.vault.regions.Regions;
-import net.minecraft.server.RegionFileCache;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -91,6 +88,7 @@ public class DynamicEconomy extends JavaPlugin {
     public static String signTaglineColor;
     public static String signInfoColor;
     public static String signInvalidColor;
+    public static boolean isWandOn = true;
     
     public AUCore updater = new AUCore("http://exampop.com/update.html", log, "[DynamicEconomy]");
     
@@ -218,7 +216,11 @@ public class DynamicEconomy extends JavaPlugin {
             	log.info("[DynamicEconomy] Items database loaded.");
             } else {
             	try {
-                   	itemConfig.save(itemsFile);
+                   	try {
+						itemConfig.save(itemsFile);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
                 } catch (Exception e) {
             		log.info("[DynamicEconomy] IOException when creating Items.yml in Main");
             		log.info(itemsFile.toString());
@@ -394,6 +396,7 @@ public class DynamicEconomy extends JavaPlugin {
             getCommand("banitem").setExecutor(commandExec);
             getCommand("unbanitem").setExecutor(commandExec);
             getCommand("dequiet").setExecutor(commandExec);
+            getCommand("togglewand").setExecutor(commandExec);
             
             if (altCommands) {
             	getCommand("debuy").setExecutor(commandExec);
@@ -531,9 +534,10 @@ public class DynamicEconomy extends JavaPlugin {
     		itemConfig.save(itemsFile);
     		signsConfig.save(signsFile);
     		usersConfig.save(usersFile);
+    		config.save(configFile);
     		getServer().getScheduler().cancelTasks(this);
     	} catch (Exception e) {
-    		log.info("[DynamicEconomy] Exception when disabling log writer");
+    		log.info("[DynamicEconomy] Exception saving configuration files.");
     	}
     	
     }

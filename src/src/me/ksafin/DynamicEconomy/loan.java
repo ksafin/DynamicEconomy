@@ -2,7 +2,9 @@ package me.ksafin.DynamicEconomy;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -29,7 +31,9 @@ public class loan implements Runnable {
 	private Plugin DE;
 	
 	private static Calendar cal = Calendar.getInstance();
-	public static DecimalFormat decFormat = new DecimalFormat("#.####");
+	
+	static NumberFormat f = NumberFormat.getNumberInstance(Locale.US);
+    public static DecimalFormat decFormat = (DecimalFormat)f;
 	
 	private String prefix = "loans.";
 	
@@ -171,6 +175,7 @@ public class loan implements Runnable {
 	}
 	
 	public static void getInterest(Player player, String[] args) {
+		decFormat.applyPattern("#.####");
 		double interest = Double.valueOf(decFormat.format(DynamicEconomy.interestRate)) * 100;
 		
 		color.sendColouredMessage(player, "&2The current Interest Rate is &f" + interest + " %");
@@ -287,6 +292,7 @@ public class loan implements Runnable {
 			
 		}
 		
+		decFormat.applyPattern("#.####");
 		interest = Double.valueOf(decFormat.format(interest));
 		
 		//DynamicEconomy.relConfig();
@@ -368,9 +374,12 @@ public class loan implements Runnable {
 					//OfflinePlayer offlinePlayer = DE.getServer().getOfflinePlayer(loans[i]);
 					
 					    Player player = Bukkit.getServer().getPlayer(loans[i]);
-					    color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have been charged &f" + DynamicEconomy.currencySymbol + (amount + interest) + "&2 for your loan.");
+					    
+					    if (player != null) {
+					    	color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have been charged &f" + DynamicEconomy.currencySymbol + (amount + interest) + "&2 for your loan.");
+					    }
+					    
 				
-					
 					Utility.writeToLog(loans[i] + " has been charged " + (amount + interest) + " for their loan.");
 					loansFileConfig.set(node, null);
 					try {

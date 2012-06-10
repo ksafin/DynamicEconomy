@@ -3,9 +3,11 @@ package me.ksafin.DynamicEconomy;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
@@ -27,7 +29,10 @@ public class Item {
 	private static ExtrasColour color = new ExtrasColour();
 	static Logger log = Logger.getLogger("Minecraft");
 	private static File itemsFile;
-	public static DecimalFormat decFormat = new DecimalFormat("#.##");
+	
+	static NumberFormat f = NumberFormat.getNumberInstance(Locale.US);
+    public static DecimalFormat decFormat = (DecimalFormat)f;
+	
 	private ExtrasInventory inv = new ExtrasInventory();
 	
 	//public static boolean DynamicEconomy.usestock = DynamicEconomy.DynamicEconomy.usestock;
@@ -49,6 +54,8 @@ public class Item {
 		
 			if ((arg.equalsIgnoreCase("STONE")) || (arg.equalsIgnoreCase("SMOOTHSTONE")) || (arg.equalsIgnoreCase("1"))) {
 				return "STONE";
+			} else if (arg.equalsIgnoreCase("GRASS") || (arg.equalsIgnoreCase("2"))) {
+				return "GRASS";
 			} else if (arg.equalsIgnoreCase("DIRT") || (arg.equalsIgnoreCase("3"))) {
 				return "DIRT";
 			} else if ((arg.equalsIgnoreCase("PLANK")) || (arg.equalsIgnoreCase("WOODENPLANK"))  || (arg.equalsIgnoreCase("PLANKS")) || (arg.equalsIgnoreCase("WOODENPLANKS")) || (arg.equalsIgnoreCase("5"))) {
@@ -69,6 +76,16 @@ public class Item {
 				return "PINESAPLING";
 			} else if (arg.equalsIgnoreCase("JUNGLESAPLING") || (arg.equalsIgnoreCase("6:3"))) {
 				return "JUNGLESAPLING";
+			} else if (arg.equalsIgnoreCase("BEDROCK") || (arg.equalsIgnoreCase("7"))) {
+				return "BEDROCK";
+			} else if (arg.equalsIgnoreCase("STILLWATER") || (arg.equalsIgnoreCase("8"))) {
+				return "STILLWATER";
+			} else if (arg.equalsIgnoreCase("WATER") || (arg.equalsIgnoreCase("9"))) {
+				return "WATER";
+			} else if (arg.equalsIgnoreCase("STILLLAVA") || (arg.equalsIgnoreCase("10"))) {
+				return "STILLLAVA";
+			} else if (arg.equalsIgnoreCase("LAVA") || (arg.equalsIgnoreCase("11"))) {
+				return "LAVA";
 			} else if (arg.equalsIgnoreCase("SAND") || (arg.equalsIgnoreCase("12"))) {
 				return "SAND";
 			} else if (arg.equalsIgnoreCase("GRAVEL") || (arg.equalsIgnoreCase("13"))) {
@@ -81,8 +98,12 @@ public class Item {
 				return "PINEWOOD";
 			} else if (arg.equalsIgnoreCase("JUNGLEWOOD") || (arg.equalsIgnoreCase("JUNGLELOG")) || (arg.equalsIgnoreCase("17:3"))) {
 				return "JUNGLEWOOD";
+			} else if (arg.equalsIgnoreCase("SPONGE") || (arg.equalsIgnoreCase("19"))) {
+				return "SPONGE";
 			} else if (arg.equalsIgnoreCase("GLASS") || (arg.equalsIgnoreCase("GLASSBLOCK")) || (arg.equalsIgnoreCase("20"))) {
 				return "GLASS";
+			} else if (arg.equalsIgnoreCase("LAPISLAZULIBLOCK") || (arg.equalsIgnoreCase("22"))) {
+				return "LAPISLAZULIBLOCK";
 			} else if (arg.equalsIgnoreCase("DISPENSER") || (arg.equalsIgnoreCase("23"))) {
 				return "DISPENSER";
 			} else if (arg.equalsIgnoreCase("SANDSTONE") || (arg.equalsIgnoreCase("SANDBRICK")) || (arg.equalsIgnoreCase("24"))) {
@@ -99,7 +120,15 @@ public class Item {
 				return "DETECTORRAIL";
 			} else if (arg.equalsIgnoreCase("STICKYPISTON") || (arg.equalsIgnoreCase("29"))) {
 				return "STICKYPISTON";
-			} else if (arg.equalsIgnoreCase("PISTON") || (arg.equalsIgnoreCase("31"))) {
+			} else if (arg.equalsIgnoreCase("WEB") || (arg.equalsIgnoreCase("SPIDERWEB")) || (arg.equalsIgnoreCase("30"))) {
+				return "WEB";
+			} else if (arg.equalsIgnoreCase("DEADSHRUB") || (arg.equalsIgnoreCase("31:0")) || (arg.equalsIgnoreCase("31"))) {
+				return "DEADSHRUB";
+			} else if (arg.equalsIgnoreCase("TALLGRASS") || (arg.equalsIgnoreCase("31:1"))  || (arg.equalsIgnoreCase("31001"))) {
+				return "TALLGRASS";
+			} else if (arg.equalsIgnoreCase("FERN") || (arg.equalsIgnoreCase("31:2"))  || (arg.equalsIgnoreCase("31002"))) {
+				return "FERN";
+			} else if (arg.equalsIgnoreCase("PISTON") || (arg.equalsIgnoreCase("33"))) {
 				return "PISTON";
 			} else if (arg.equalsIgnoreCase("WOOL") || (arg.equalsIgnoreCase("35"))) {
 				return "WOOL";
@@ -161,9 +190,9 @@ public class Item {
 				return "STONEBRICKSLABS";
 			} else if (arg.equalsIgnoreCase("BRICKBLOCK") || (arg.equalsIgnoreCase("45"))) {
 				return "BRICKBLOCK";
-			} else if (arg.equalsIgnoreCase("TNT") || (arg.equalsIgnoreCase("47"))) {
+			} else if (arg.equalsIgnoreCase("TNT") || (arg.equalsIgnoreCase("48"))) {
 				return "TNT";
-			} else if (arg.equalsIgnoreCase("BOOKSHELF") || (arg.equalsIgnoreCase("48"))) {
+			} else if (arg.equalsIgnoreCase("BOOKSHELF") || (arg.equalsIgnoreCase("47"))) {
 				return "BOOKSHELF";
 			} else if (arg.equalsIgnoreCase("MOSSYCOBBLE") || (arg.equalsIgnoreCase("MOSSCOBBLE")) || (arg.equalsIgnoreCase("MOSSYCOBBLESTONE")) ||  (arg.equalsIgnoreCase("48"))) {
 				return "MOSSYCOBBLE";
@@ -171,6 +200,10 @@ public class Item {
 				return "OBSIDIAN";
 			} else if (arg.equalsIgnoreCase("TORCH") || (arg.equalsIgnoreCase("50"))) {
 				return "TORCH";
+			} else if (arg.equalsIgnoreCase("FIRE") || (arg.equalsIgnoreCase("51"))) {
+				return "FIRE";
+			} else if (arg.equalsIgnoreCase("MOBSPAWNER") || (arg.equalsIgnoreCase("SPAWNER")) || (arg.equalsIgnoreCase("52"))) {
+				return "MOBSPAWNER";
 			} else if (arg.equalsIgnoreCase("WOODENSTAIRS") || (arg.equalsIgnoreCase("WOODSTAIRS")) || (arg.equalsIgnoreCase("PLANKSTAIRS")) || (arg.equalsIgnoreCase("53"))) {
 				return "WOODENSTAIRS";
 			} else if (arg.equalsIgnoreCase("CHEST") || (arg.equalsIgnoreCase("54"))) {
@@ -181,6 +214,8 @@ public class Item {
 				return "CRAFTBENCH";
 			} else if (arg.equalsIgnoreCase("FURNACE") || (arg.equalsIgnoreCase("61"))) {
 				return "FURNACE";
+			}  else if (arg.equalsIgnoreCase("BURNINGFURNACE") || (arg.equalsIgnoreCase("62"))) {
+				return "BURNINGFURNACE";
 			} else if (arg.equalsIgnoreCase("LADDER") || (arg.equalsIgnoreCase("LADDERS")) || (arg.equalsIgnoreCase("65"))) {
 				return "LADDER";
 			} else if (arg.equalsIgnoreCase("RAIL") || (arg.equalsIgnoreCase("RAILS")) || (arg.equalsIgnoreCase("TRACKS")) || (arg.equalsIgnoreCase("66"))) {
@@ -193,10 +228,16 @@ public class Item {
 				return "STONEPLATE";
 			} else if (arg.equalsIgnoreCase("WOODENPLATE") || (arg.equalsIgnoreCase("WOODENPRESSUREPLATE")) || (arg.equalsIgnoreCase("72"))) {
 				return "WOODENPLATE";
+			} else if (arg.equalsIgnoreCase("GLOWINGREDSTONEORE") || (arg.equalsIgnoreCase("GLOWINGREDSTONE")) || (arg.equalsIgnoreCase("74"))) {
+				return "GLOWINGREDSTONEORE";
 			} else if (arg.equalsIgnoreCase("BUTTON") || (arg.equalsIgnoreCase("STONEBUTTON")) || (arg.equalsIgnoreCase("77"))) {
 				return "BUTTON";
+			} else if (arg.equalsIgnoreCase("ICE") || (arg.equalsIgnoreCase("ICEBLOCK")) || (arg.equalsIgnoreCase("79"))) {
+				return "ICE";
 			} else if (arg.equalsIgnoreCase("CACTUS") || (arg.equalsIgnoreCase("CACTI")) || (arg.equalsIgnoreCase("81"))) {
 				return "CACTUS";
+			} else if (arg.equalsIgnoreCase("CLAYBLOCK") || (arg.equalsIgnoreCase("82"))) {
+				return "CLAYBLOCK";
 			} else if (arg.equalsIgnoreCase("JUKEBOX") || (arg.equalsIgnoreCase("84"))) {
 				return "JUKEBOX";
 			} else if (arg.equalsIgnoreCase("FENCE") || (arg.equalsIgnoreCase("85"))) {
@@ -213,14 +254,28 @@ public class Item {
 				return "TRAPDOOR";
 			} else if (arg.equalsIgnoreCase("STONEBRICKS") || (arg.equalsIgnoreCase("STONEBRICK")) || (arg.equalsIgnoreCase("98"))) {
 				return "STONEBRICKS";
+			} else if (arg.equalsIgnoreCase("MOSSYSTONEBRICKS") || (arg.equalsIgnoreCase("MOSSYSTONEBRICK"))|| (arg.equalsIgnoreCase("98001")) || (arg.equalsIgnoreCase("98:1"))) {
+				return "MOSSYSTONEBRICKS";
+			} else if (arg.equalsIgnoreCase("CRACKEDSTONEBRICKS") || (arg.equalsIgnoreCase("CRACKEDSTONEBRICK"))|| (arg.equalsIgnoreCase("98002")) || (arg.equalsIgnoreCase("98:2"))) {
+				return "CRACKEDSTONEBRICKS";
+			} else if (arg.equalsIgnoreCase("CIRCLESTONEBRICKS") || (arg.equalsIgnoreCase("CIRCLESTONEBRICK"))|| (arg.equalsIgnoreCase("98003")) || (arg.equalsIgnoreCase("98:3"))) {
+				return "CIRCLESTONEBRICKS";
 			} else if (arg.equalsIgnoreCase("IRONBARS") || (arg.equalsIgnoreCase("101"))) {
 				return "IRONBARS";
 			} else if (arg.equalsIgnoreCase("GLASSPANE") || (arg.equalsIgnoreCase("102"))) {
 				return "GLASSPANE";
+			} else if (arg.equalsIgnoreCase("VINES") || (arg.equalsIgnoreCase("106"))) {
+				return "VINES";
+			} else if (arg.equalsIgnoreCase("FENCEGATE") || (arg.equalsIgnoreCase("107"))) {
+				return "FENCEGATE";
 			} else if (arg.equalsIgnoreCase("BRICKSTAIRS") || (arg.equalsIgnoreCase("108"))) {
 				return "BRICKSTAIRS";
 			} else if (arg.equalsIgnoreCase("STONEBRICKSTAIRS") || (arg.equalsIgnoreCase("109"))) {
 				return "STONEBRICKSTAIRS";
+			} else if (arg.equalsIgnoreCase("MYCELIUM") || (arg.equalsIgnoreCase("110"))) {
+				return "MYCELIUM";
+			} else if (arg.equalsIgnoreCase("LILYPAD") || (arg.equalsIgnoreCase("LILYPADS")) || (arg.equalsIgnoreCase("111"))) {
+				return "LILYPAD";
 			} else if (arg.equalsIgnoreCase("NETHERBRICK") || (arg.equalsIgnoreCase("NETHERSTONE")) || (arg.equalsIgnoreCase("112"))) {
 				return "NETHERBRICK";
 			} else if (arg.equalsIgnoreCase("NETHERBRICKFENCE") || (arg.equalsIgnoreCase("NETHERSTONEFENCE")) || (arg.equalsIgnoreCase("113"))) {
@@ -229,6 +284,22 @@ public class Item {
 				return "NETHERBRICKSTAIRS";
 			} else if (arg.equalsIgnoreCase("ENCHANTMENTTABLE") || (arg.equalsIgnoreCase("116"))) {
 				return "ENCHANTMENTTABLE";
+			} else if (arg.equalsIgnoreCase("ENDSTONE") || (arg.equalsIgnoreCase("121"))) {
+				return "ENDSTONE";
+			} else if (arg.equalsIgnoreCase("DRAGONEGG") || (arg.equalsIgnoreCase("122"))) {
+				return "DRAGONEGG";
+			} else if (arg.equalsIgnoreCase("REDSTONELAMP") || (arg.equalsIgnoreCase("RSLAMP")) || (arg.equalsIgnoreCase("123"))) {
+				return "REDSTONELAMP";
+			} else if (arg.equalsIgnoreCase("OAKSLAB") || (arg.equalsIgnoreCase("OAKSLABS")) || (arg.equalsIgnoreCase("126"))) {
+				return "OAKSLAB";
+			} else if (arg.equalsIgnoreCase("PINESLAB") || (arg.equalsIgnoreCase("PINESLABS")) || (arg.equalsIgnoreCase("126001")) || (arg.equalsIgnoreCase("126:1"))) {
+				return "PINESLAB";
+			} else if (arg.equalsIgnoreCase("BIRCHSLAB") || (arg.equalsIgnoreCase("BIRCHSLABS")) || (arg.equalsIgnoreCase("126002")) || (arg.equalsIgnoreCase("126:2"))) {
+				return "BIRCHSLAB";
+			} else if (arg.equalsIgnoreCase("JUNGLESLAB") || (arg.equalsIgnoreCase("JUNGLESLABS")) || (arg.equalsIgnoreCase("126003")) || (arg.equalsIgnoreCase("126:3"))) {
+				return "JUNGLESLAB";
+			} else if (arg.equalsIgnoreCase("SANDSTONESTAIRS") || (arg.equalsIgnoreCase("128"))) {
+				return "SANDSTONESTAIRS";
 			} else if (arg.equalsIgnoreCase("IRONSHOVEL") || (arg.equalsIgnoreCase("ISHOVEL")) || (arg.equalsIgnoreCase("256"))) {
 				return "IRONSHOVEL";
 			} else if (arg.equalsIgnoreCase("IRONPICKAXE") || (arg.equalsIgnoreCase("IPICKAXE")) || (arg.equalsIgnoreCase("IPICK")) || (arg.equalsIgnoreCase("IRONPICK")) || (arg.equalsIgnoreCase("257"))) {
@@ -325,6 +396,14 @@ public class Item {
 				return "LEATHERPANTS";
 			} else if (arg.equalsIgnoreCase("LEATHERBOOTS") || (arg.equalsIgnoreCase("301"))) {
 				return "LEATHERBOOTS";
+			} else if (arg.equalsIgnoreCase("CHAINMAILHELMET") || (arg.equalsIgnoreCase("CMHELMET")) || (arg.equalsIgnoreCase("302"))) {
+				return "CHAINMAILHELMET";
+			} else if (arg.equalsIgnoreCase("CHAINMAILCHESTPLATE") || (arg.equalsIgnoreCase("CMCHESTPLATE")) || (arg.equalsIgnoreCase("303"))) {
+				return "CHAINMAILCHESTPLATE";
+			} else if (arg.equalsIgnoreCase("CHAINMAILLEGGINGS") || (arg.equalsIgnoreCase("CMLEGGINGS")) || (arg.equalsIgnoreCase("304"))) {
+				return "CHAINMAILLEGGINGS";
+			} else if (arg.equalsIgnoreCase("CHAINMAILBOOTS") || (arg.equalsIgnoreCase("CMBOOTS")) || (arg.equalsIgnoreCase("305"))) {
+				return "CHAINMAILBOOTS";
 			} else if (arg.equalsIgnoreCase("IRONHELMET") || (arg.equalsIgnoreCase("IHELMET")) || (arg.equalsIgnoreCase("306"))) {
 				return "IRONHELMET";
 			} else if (arg.equalsIgnoreCase("IRONCHESTPLATE") || (arg.equalsIgnoreCase("ICHESTPLATE")) || (arg.equalsIgnoreCase("307"))) {
@@ -379,6 +458,8 @@ public class Item {
 				return "NETHERRACK";
 			} else if (arg.equalsIgnoreCase("REDSTONE") || (arg.equalsIgnoreCase("REDSTONEDUST")) || (arg.equalsIgnoreCase("RS")) || (arg.equalsIgnoreCase("331"))) {
 				return "REDSTONE";
+			} else if (arg.equalsIgnoreCase("SNOWBALL") || (arg.equalsIgnoreCase("332"))) {
+				return "SNOWBALL";
 			} else if (arg.equalsIgnoreCase("BOAT") || (arg.equalsIgnoreCase("333"))) {
 				return "BOAT";
 			} else if (arg.equalsIgnoreCase("GOLDORE") || (arg.equalsIgnoreCase("14"))) {
@@ -631,6 +712,28 @@ public class Item {
 				return "SPLASHPOTIONOFHARMING";
 			} else if ((arg.equalsIgnoreCase("SPLASHMUNDANEPOTION")) || (arg.equalsIgnoreCase("373:16384"))) {
 					return "SPLASHMUNDANEPOTION";
+			} else if (arg.equalsIgnoreCase("MUSICDISK13") || (arg.equalsIgnoreCase("2256"))) {
+				return "MUSICDISK13";
+			} else if (arg.equalsIgnoreCase("MUSICDISKCAT") || (arg.equalsIgnoreCase("2257"))) {
+				return "MUSICDISKCAT";
+			} else if (arg.equalsIgnoreCase("MUSICDISKBLOCKS") || (arg.equalsIgnoreCase("2258"))) {
+				return "MUSICDISKBLOCKS";
+			} else if (arg.equalsIgnoreCase("MUSICDISKCHIRP") || (arg.equalsIgnoreCase("2259"))) {
+				return "MUSICDISKCHIRP";
+			} else if (arg.equalsIgnoreCase("MUSICDISKFAR") || (arg.equalsIgnoreCase("2260"))) {
+				return "MUSICDISKFAR";
+			} else if (arg.equalsIgnoreCase("MUSICDISKMALL") || (arg.equalsIgnoreCase("2261"))) {
+				return "MUSICDISKMALL";
+			} else if (arg.equalsIgnoreCase("MUSICDISKMELLOHI") || (arg.equalsIgnoreCase("2262"))) {
+				return "MUSICDISKMELLOHI";
+			} else if (arg.equalsIgnoreCase("MUSICDISKSTAL") || (arg.equalsIgnoreCase("2263"))) {
+				return "MUSICDISKSTAL";
+			} else if (arg.equalsIgnoreCase("MUSICDISKSTRAD") || (arg.equalsIgnoreCase("2264"))) {
+				return "MUSICDISKSTRAD";
+			} else if (arg.equalsIgnoreCase("MUSICDISKWARD") || (arg.equalsIgnoreCase("2265"))) {
+				return "MUSICDISKWARD";
+			} else if (arg.equalsIgnoreCase("MUSICDISK11") || (arg.equalsIgnoreCase("2266"))) {
+				return "MUSICDISK11";
 			} else {
 				return "";
 			}
@@ -676,6 +779,8 @@ public boolean getPrice(Player player, String[] args) {
 			 color.sendColouredMessage(player, DynamicEconomy.prefix + "&2This item does not exist.");
 			 Utility.writeToLog(stringPlay + " called /price on non-existant item " + args[0]);
 		 }
+		 
+		 decFormat.applyPattern("#.##");
 		 
 		 String reqDesc = item + ".description";
 		 
@@ -742,16 +847,17 @@ public boolean getPrice(Player player, String[] args) {
 		
 		if (DynamicEconomy.usePercentVelocity) {
 			for (int x = 0; x < amt; x++) {
-				if (price == floor) {
-					price = floor;
-				} else {
-					price = price - (velocity * price);
-					if (price < floor) {
-						price = floor;
-					}
+				price = price * (Math.pow((1-velocity),amt));
+			
+				if (price > ceiling) {
+					price = ceiling;
 				}
+				if (price < floor) {
+					price = floor;
+				}
+			
 				total += price;
-			}	
+			}
 		} else {
 			for (int x = 0; x < amt; x++) {
 				if (price == floor) {
@@ -778,16 +884,16 @@ public boolean getPrice(Player player, String[] args) {
 		
 		if (DynamicEconomy.usePercentVelocity) {
 			for (int x = 0; x < amt; x++) {
-				total += price;	
-				if (price == ceiling) {
-					price = ceiling;
-				} else {
-					price = price + (velocity * price);
-					if (price > ceiling) {
-						price = ceiling;
-					}
+				total += price;
+				price = price / (Math.pow((1 - velocity), amt));
+			
+				if (price > ceiling) {
+				price = ceiling;
 				}
-		}
+				if (price < floor) {
+				price = floor;
+				}
+			}
 		} else {
 			for (int x = 0; x < amt; x++) {
 				total += price;	
@@ -853,6 +959,8 @@ public void setPrice(Player player, String[] args) {
 	
 	Double floor = itemConfig.getDouble(reqFloor,0);
 	Double ceiling = itemConfig.getDouble(reqCeiling,0);
+	
+	decFormat.applyPattern("#.##");
 	
 	price = Double.valueOf(decFormat.format(price));
 	floor = Double.valueOf(decFormat.format(floor));
@@ -923,6 +1031,8 @@ public void setFloor(Player player, String[] args) {
 	String priceRequest = item + ".price";
 	Double price = itemConfig.getDouble(priceRequest,0);
 	
+	decFormat.applyPattern("#.##");
+	
 	price = Double.valueOf(decFormat.format(price));
 	floor = Double.valueOf(decFormat.format(floor));
 	
@@ -973,6 +1083,8 @@ if (args.length !=2) {
 	String request = item + ".ceiling";
 	String priceRequest = item + ".price";
 	Double price = itemConfig.getDouble(priceRequest,0);
+	
+	decFormat.applyPattern("#.##");
 	
 	price = Double.valueOf(decFormat.format(price));
 	ceiling = Double.valueOf(decFormat.format(ceiling));
@@ -1028,6 +1140,7 @@ public void getFloor(Player player, String[] args) {
 			Utility.writeToLog(stringPlay + " attempted to get the floor of the non-existent item '" + item + "'");
 		} else { 
 			Double floor = itemConfig.getDouble(request,0);
+			decFormat.applyPattern("#.##");
 			floor = Double.valueOf(decFormat.format(floor));
 			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Price Floor of &f" + item + " &2is &f" + DynamicEconomy.currencySymbol + floor);
 			Utility.writeToLog(stringPlay + " called /getfloor for item '" + item + "'");
@@ -1055,6 +1168,7 @@ public void getCeiling(Player player, String[] args) {
 			Utility.writeToLog(stringPlay + " attempted to get the ceiling of the non-existent item '" + item + "'");
 		} else { 
 			Double ceiling = itemConfig.getDouble(request,0);
+			decFormat.applyPattern("#.##");
 			ceiling = Double.valueOf(decFormat.format(ceiling));
 			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Price Ceiling of &f" + item + "&2 is &f" + DynamicEconomy.currencySymbol + ceiling);
 			Utility.writeToLog(stringPlay + " called /getceiling for item '" + item + "'");
@@ -1077,6 +1191,7 @@ public void getVelocity(Player player, String[] args) {
 			Utility.writeToLog(stringPlay + " attempted to get the velocity of the non-existent item '" + item + "'");
 		} else { 
 			Double velocity = itemConfig.getDouble(request,0);
+			decFormat.applyPattern("#.##");
 			velocity = Double.valueOf(decFormat.format(velocity));
 			color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Velocity of &f" + item + " &2is &f" + velocity);
 			Utility.writeToLog(stringPlay + " called /getvelocity for item '" + item + "'");
@@ -1095,6 +1210,7 @@ public void setVelocity(Player player, String[] args) {
 		Double oldVelocity = itemConfig.getDouble(item + ".velocity",0);
 		Double change = velocity - oldVelocity;
 		
+		decFormat.applyPattern("#.##");
 		velocity = Double.valueOf(decFormat.format(velocity));
 		
 		
@@ -1444,6 +1560,7 @@ int slot = player.getInventory().getHeldItemSlot();
 		percentDur = (double)playerDur / (double)maxDur;
 		percentDur *= 100;
 		percentDur = 100 - percentDur;
+		decFormat.applyPattern("#.##");
 		percentDur = Double.valueOf(decFormat.format(percentDur));
 		
 		color.sendColouredMessage(player, "&2The durability of your item is at &f" + percentDur + "%.&2 You have &f" + usesLeft + "&2 uses left out of a possible &f" + maxDur);
