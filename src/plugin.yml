@@ -1,6 +1,6 @@
 name: DynamicEconomy
 main: me.ksafin.DynamicEconomy.DynamicEconomy
-version: .8.51
+version: .8.7
 
 description: This plugin allows users to buy and sell items at dynamically generated prices.
 author: kSafin (Kirill Safin)
@@ -129,9 +129,13 @@ commands:
      description: Gives user a wooden spade to use as a region wand
      permission: dynamiceconomy.shopregion
      usage: /shopregionwand
-   curregion:
+   curselectedregion:
      description: Tells user currently selected region corners
      permission: dynamiceconomy.shopregion
+     usage: /curselectedregion
+   curregion:
+     description: Gives the user information about the region they are currently in.
+     permission: dynamiceconomy.curregion
      usage: /curregion
    loan:
      description: Lets user request a loan for an amount specified
@@ -165,7 +169,67 @@ commands:
      description: Toggles region selection wand to off/on
      permission: dynamieconomy.selectregion
      usage: /togglewand
-
+   addalias:
+     description: Adds a given alias for a given item
+     permission: dynamieconomy.alias
+     usage: /addalias [Alias] [Item]
+   removealias:
+     description: Removes a given alias
+     permission: dynamieconomy.alias
+     usage: /removealias [Alias]
+   canibuy:
+     description: Checks if user can buy an item.
+     permission: dynamiceconomy.canibuy
+     usage: /canibuy [Item]
+   canisell:
+     description: Checks if user can sell an item.
+     permission: dynamiceconomy.canisell
+     usage: /canisell [Item]
+   creategroup:
+     description: Creates a new Item group in groups.yml
+     permission: dynamiceconomy.groups
+     usage: /creategroup [ItemGroupName]
+   removegroup:
+     description: Removes an item group from groups.yml
+     permission: dynamiceconomy.groups
+     usage: /removegroup [ItemGroupName]
+   addtogroup:
+     description: Adds an item to a particular group
+     permission: dynamiceconomy.groups
+     usage: /addtogroup [ItemGroupName] [Item]
+   removefromgroup:
+     description: Removes an item from a particular group
+     permission: dynamiceconomy.groups
+     usage: /removefromgroup [ItemGroupName] [Item]
+   addgrouptouser:
+     description: Adds a particular group to the list of groups a particular user can access
+     permission: dynamiceconomy.groups
+     usage: /addgrouptouser [User] [ItemGroupName] [Purchase|Sale]
+   removegroupfromuser:
+     description: Removes a particular group from the list of groups a particular user can access
+     permission: dynamiceconomy.groups
+     usage: /removegroupfromuser [User] [ItemGroupName] [Purchase|Sale]
+   viewgroup:
+     description: Shows the items that are in a particular group
+     permission: dynamiceconomy.viewgroup
+     usage: /viewgroup [Group] (Page)
+   addregiongroup:
+     description: Adds a group for sale or purchase for a certain region
+     permission: dynamiceconomy.shopregion
+     usage: /addregiongroup [Region] [Sale|Purchase] [ItemGroupName]
+   removeregiongroup:
+     description: Removes a group from sale or purchase for a certain region
+     permission: dynamiceconomy.shopregion
+     usage: /removeregiongroup [Region] [Sale|Purchase] [ItemGroupName]
+   banregionitem:
+     description: Bans an item from sale or purchase in a specific region
+     permission: dynamiceconomy.shopregion
+     usage: /banregionitem [Region] [Sale|Purchase] [Item]
+   unbanregionitem:
+     description: Unbans an item from sale or purchase in a specific region
+     permission: dynamiceconomy.shopregion
+     usage: /unbanregionitem [Region] [Sale|Purchase] [Item]
+     
 permissions:
   dynamiceconomy.*:
     description: Gives access to all dynamiceconomy commands
@@ -200,6 +264,14 @@ permissions:
       dynamiceconomy.banitem: true
       dynamiceconomy.unbanitem: true
       dynamiceconomy.dequiet: true
+      dynamiceconomy.togglewand: true
+      dynamiceconomy.alias: true
+      dynamiceconomy.canibuy: true
+      dynamiceconomy.canisell: true
+      dynamiceconomy.groups: true
+      dynamiceconomy.viewgroup: true
+      dynamiceconomy.curregion: true
+      
   dynamiceconomy.customer:
     description: Gives access to all basic user settings of dynamiceconomy
     children:
@@ -233,6 +305,13 @@ permissions:
       dynamiceconomy.banitem: false
       dynamiceconomy.unbanitem: false
       dynamiceconomy.dequiet: true
+      dynamiceconomy.togglewand: false
+      dynamiceconomy.alias: false
+      dynamiceconomy.canibuy: true
+      dynamiceconomy.canisell: true
+      dynamiceconomy.groups: false
+      dynamiceconomy.viewgroup: true
+      dynamiceconomy.curregion: true
       
   dynamiceconomy.price:
     description: Allows user to find price of an Item
@@ -318,4 +397,21 @@ permissions:
   dynamiceconomy.dequiet:
     description: Disables global price notifications for a user
     default: false
-    
+  dynamiceconomy.alias:
+    description: Gives ability to add and remove aliases
+    default: false
+  dynamiceconomy.canibuy:
+    description: Gives permission to a user to check if they can buy a particular item
+    default: false
+  dynamiceconomy.canisell:
+    description: Gives permission to a user to check if they can sell a particular item
+    default: false
+  dynamiceconomy.groups:
+    description: Gives permission for user to modify item groups, and make new ones
+    default: false
+  dynamiceconomy.viewgroup:
+    description: Gives permission to view the items in a particular group
+    default: false
+  dynamiceconomy.curregion:
+    description: Gives permission to view information about the current region.
+    default: false

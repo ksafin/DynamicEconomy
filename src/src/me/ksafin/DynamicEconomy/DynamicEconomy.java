@@ -75,10 +75,16 @@ public class DynamicEconomy extends JavaPlugin {
     public static double dynamicCompressionRate;
     public static String[] bannedSaleItems;
     public static String[] bannedPurchaseItems;
+    
     public static boolean enableOverTimePriceDecay;
     public static double overTimePriceDecayPercent;
-    public static long overTimePriceDecayPeriod;
-    public static long overTimePriceDecayPeriodCheck;
+    
+    public static boolean enableOverTimePriceInflation;
+    public static double overTimePriceInflationPercent;
+    
+    public static long overTimePriceChangePeriod;
+    public static long overTimePriceChangePeriodCheck;
+    
     public static boolean usePercentVelocity;
     public static String[] dyneconWorld;
     public static String currencySymbol;
@@ -89,6 +95,8 @@ public class DynamicEconomy extends JavaPlugin {
     public static String signInfoColor;
     public static String signInvalidColor;
     public static boolean isWandOn = true;
+    public static boolean groupControl;
+    public static boolean useRegionFlags;
     
     public AUCore updater = new AUCore("http://exampop.com/update.html", log, "[DynamicEconomy]");
     
@@ -118,6 +126,12 @@ public class DynamicEconomy extends JavaPlugin {
     
     public static File usersFile;
     public static FileConfiguration usersConfig;
+    
+    public static File aliasFile;
+    public static FileConfiguration aliasConfig;
+    
+    public static File groupsFile;
+    public static FileConfiguration groupsConfig;
 
     static Logger log = Logger.getLogger("Minecraft");
     
@@ -200,8 +214,14 @@ public class DynamicEconomy extends JavaPlugin {
             signsFile = new File(signsDir,"signs.yml");
             signsConfig = YamlConfiguration.loadConfiguration(signsFile);
             
-            usersFile = new File(this.getDataFolder(),"users");
+            usersFile = new File(this.getDataFolder(),"users.yml");
             usersConfig = YamlConfiguration.loadConfiguration(usersFile);
+            
+            aliasFile = new File(this.getDataFolder(),"alias.yml");
+            aliasConfig = YamlConfiguration.loadConfiguration(aliasFile);
+            
+            groupsFile = new File(this.getDataFolder(),"groups.yml");
+            groupsConfig = YamlConfiguration.loadConfiguration(groupsFile);
             
             regionConfig.createSection("regions");
             
@@ -228,7 +248,7 @@ public class DynamicEconomy extends JavaPlugin {
             	}
             		Initialize init = new Initialize(config,configFile);
             		init.setItemsData(itemConfig, itemsFile);
-                	init.setItems(this);
+                	init.setItems();
             }
             
             if (configFile.exists()) {
@@ -279,6 +299,7 @@ public class DynamicEconomy extends JavaPlugin {
             	try {
                    	loansFileConfig.save(loansFile);
                    	loansFileConfig.createSection("loans");
+                   	loansFileConfig.createSection("debts");
                 } catch (Exception e) {
             		log.info("[DynamicEconomy] IOException when creating Loans.yml in Main");
             		log.info(loansFile.toString());
@@ -324,6 +345,34 @@ public class DynamicEconomy extends JavaPlugin {
             	}
             }
             
+            if (aliasFile.exists()) {
+            	log.info("[DynamicEconomy] Alias list loaded.");
+            } else {
+            	try {
+                   	aliasConfig.save(aliasFile);
+                   	aliasConfig.load(aliasFile);
+                   	Initialize init = new Initialize(config,configFile);
+            		init.setAliases();
+                } catch (Exception e) {
+            		log.info("[DynamicEconomy] IOException when creating alias.yml in Main");
+            		e.printStackTrace();
+            	}
+            }
+            
+            if (groupsFile.exists()) {
+            	log.info("[DynamicEconomy] Item Groups loaded.");
+            } else {
+            	try {
+                   	groupsConfig.save(groupsFile);
+                   	groupsConfig.load(groupsFile);
+                   	Initialize init = new Initialize(config,configFile);
+            		init.setGroupsExample();
+                } catch (Exception e) {
+            		log.info("[DynamicEconomy] IOException when creating groups.yml in Main");
+            		e.printStackTrace();
+            	}
+            }
+            
             
             
             //this.getServer().getScheduler().scheduleSyncDelayedTask(this, new loan(this));
@@ -334,16 +383,19 @@ public class DynamicEconomy extends JavaPlugin {
             
             if (DynamicEconomy.useLoans) {
             	this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new loan(), 300L, loanCheckInterval);
+            	log.info("[DynamicEconomy] Loan Thread Spawned with delay of " + loanCheckInterval + " ticks");
             }
             
-            if (DynamicEconomy.enableOverTimePriceDecay) {
-            	long delay = DynamicEconomy.overTimePriceDecayPeriodCheck * 60 * 20;
+            if ((DynamicEconomy.enableOverTimePriceDecay) || (DynamicEconomy.enableOverTimePriceInflation)) {
+            	long delay = DynamicEconomy.overTimePriceChangePeriodCheck * 60 * 20;
             	this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Transaction(itemConfig,itemsFile), 300L, delay);
+            	log.info("[DynamicEconomy] Price Change Thread Spawned with delay of " + delay + " ticks");
             }
             
             if (DynamicEconomy.enableRandomEvents) {
             	long delay = DynamicEconomy.randomEventInterval * 60 * 20;
             	this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new RandomEvent(), 300L, delay);
+            	log.info("[DynamicEconomy] Random Events Thread Spawned with delay of " + delay + " ticks");
             }
             
             // End Initialize
@@ -388,6 +440,7 @@ public class DynamicEconomy extends JavaPlugin {
             getCommand("expandreg").setExecutor(commandExec);
             getCommand("contractreg").setExecutor(commandExec);
             getCommand("shopregionwand").setExecutor(commandExec);
+            getCommand("curselectedregion").setExecutor(commandExec);
             getCommand("curregion").setExecutor(commandExec);
             getCommand("loan").setExecutor(commandExec);
             getCommand("curinterest").setExecutor(commandExec);
@@ -397,6 +450,24 @@ public class DynamicEconomy extends JavaPlugin {
             getCommand("unbanitem").setExecutor(commandExec);
             getCommand("dequiet").setExecutor(commandExec);
             getCommand("togglewand").setExecutor(commandExec);
+            getCommand("addalias").setExecutor(commandExec);
+            getCommand("removealias").setExecutor(commandExec);
+            
+            getCommand("creategroup").setExecutor(commandExec);
+            getCommand("addtogroup").setExecutor(commandExec);
+            getCommand("removefromgroup").setExecutor(commandExec);
+            getCommand("removegroup").setExecutor(commandExec);
+            getCommand("canibuy").setExecutor(commandExec);
+            getCommand("canisell").setExecutor(commandExec);
+            getCommand("addgrouptouser").setExecutor(commandExec);
+            getCommand("removegroupfromuser").setExecutor(commandExec);
+            getCommand("viewgroup").setExecutor(commandExec);
+            
+            getCommand("addregiongroup").setExecutor(commandExec);
+            getCommand("removeregiongroup").setExecutor(commandExec);
+            getCommand("banregionitem").setExecutor(commandExec); 
+            getCommand("unbanregionitem").setExecutor(commandExec); 
+            
             
             if (altCommands) {
             	getCommand("debuy").setExecutor(commandExec);
@@ -451,6 +522,8 @@ public class DynamicEconomy extends JavaPlugin {
         	regionConfig.load(regionFile);
         	signsConfig.load(signsFile);
         	usersConfig.load(usersFile);
+        	aliasConfig.load(aliasFile);
+        	groupsConfig.load(groupsFile);
         } catch (Exception e) {
         	log.info("[DynamicEconomy] Error loading config.yml in reloadConfigValues() ");
         	log.info(e.toString());
@@ -503,10 +576,16 @@ public class DynamicEconomy extends JavaPlugin {
         enableUpdateChecker = config.getBoolean("enable-update-checker",true);
         bannedSaleItems = config.getString("banned-sale-items","").split(",");
         bannedPurchaseItems = config.getString("banned-purchase-items","").split(",");
+        
         enableOverTimePriceDecay = config.getBoolean("enable-over-time-price-decay",true);
         overTimePriceDecayPercent = config.getDouble("over-time-price-decay-percent",.1);
-        overTimePriceDecayPeriod = config.getLong("over-time-price-decay-period",1440);
-        overTimePriceDecayPeriodCheck = config.getLong("over-time-price-decay-period-check",15);
+        
+        enableOverTimePriceInflation = config.getBoolean("enable-over-time-price-inflation",true);
+        overTimePriceInflationPercent = config.getDouble("over-time-price-inflation-percent",.1);
+       
+        overTimePriceChangePeriod = config.getLong("over-time-price-change-period",1440);
+        overTimePriceChangePeriodCheck = config.getLong("over-time-price-change-period-check",15);
+        
         usePercentVelocity = config.getBoolean("use-percent-velocity",false);
         dyneconWorld = config.getString("dynecon-world","world").split(",");
         currencySymbol = config.getString("currency-symbol","$");
@@ -516,9 +595,11 @@ public class DynamicEconomy extends JavaPlugin {
         signTaglineColor = config.getString("sign-tagline-color","&2");
         signInfoColor = config.getString("sign-info-color","&f");
         signInvalidColor = config.getString("sign-invalid-color","&c");
+        groupControl = config.getBoolean("group-control",false);
+        useRegionFlags = config.getBoolean("use-region-flags",true);
         
         Messages.getMessages();
-        
+        dataSigns.updateTaxSigns();
         
     }
         
@@ -535,6 +616,8 @@ public class DynamicEconomy extends JavaPlugin {
     		signsConfig.save(signsFile);
     		usersConfig.save(usersFile);
     		config.save(configFile);
+    		aliasConfig.save(aliasFile);
+    		groupsConfig.save(groupsFile);
     		getServer().getScheduler().cancelTasks(this);
     	} catch (Exception e) {
     		log.info("[DynamicEconomy] Exception saving configuration files.");

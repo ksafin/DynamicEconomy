@@ -580,7 +580,7 @@ public class DynamicEconomyCommandExecutor implements org.bukkit.command.Command
           
           // SHOP CURREGION COMMAND
           
-          if (cmd.getName().equalsIgnoreCase("curregion")) {
+          if (cmd.getName().equalsIgnoreCase("curselectedregion")) {
             	if (permission.has(player, "dynamiceconomy.shopregion")) {
             		if (isInWorld(player)) {
                 		regionUtils.getCorners(player, args);
@@ -739,6 +739,278 @@ public class DynamicEconomyCommandExecutor implements org.bukkit.command.Command
               }
           	return true;
           }
+          
+          // ADDALIAS COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("addalias")) {
+            	if (permission.has(player, "dynamiceconomy.alias")) {
+            		if (isInWorld(player)) {
+                		Item.addAlias(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /addalias, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /addalias but did not have permission.");
+                }
+            	return true;
+            }
+          
+          // REMOVEALIAS COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("removealias")) {
+          	if (permission.has(player, "dynamiceconomy.alias")) {
+          		if (isInWorld(player)) {
+              		Item.removeAlias(player, args);
+                } else {
+                	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                    Utility.writeToLog(player.getName() + " tried to call /removealias, but was in the wrong world.");
+                }
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                  Utility.writeToLog(player.getName() + " called /removealias but did not have permission.");
+              }
+          	return true;
+          }
+          
+          // CANIBUY COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("canibuy")) {
+            	if (permission.has(player, "dynamiceconomy.canibuy")) {
+            		if (isInWorld(player)) {
+                		Item.canIBuy(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /canibuy, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /canibuy but did not have permission.");
+                }
+            	return true;
+            }
+          
+          // CANISELL COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("canisell")) {
+          	if (permission.has(player, "dynamiceconomy.canisell")) {
+          		if (isInWorld(player)) {
+              		Item.canISell(player, args);
+                } else {
+                	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                    Utility.writeToLog(player.getName() + " tried to call /canisell, but was in the wrong world.");
+                }
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                  Utility.writeToLog(player.getName() + " called /canisell but did not have permission.");
+              }
+          	return true;
+          }
+          
+          // CREATEGROUP COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("creategroup")) {
+            	if (permission.has(player, "dynamiceconomy.groups")) {
+            		if (isInWorld(player)) {
+                		Item.addItemGroup(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /creategroup, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /creategroup but did not have permission.");
+                }
+            	return true;
+            }
+          
+          // REMOVEGROUP COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("removegroup")) {
+          	if (permission.has(player, "dynamiceconomy.groups")) {
+          		if (isInWorld(player)) {
+              		Item.removeItemGroup(player, args);
+                } else {
+                	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                    Utility.writeToLog(player.getName() + " tried to call /removegroup, but was in the wrong world.");
+                }
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                  Utility.writeToLog(player.getName() + " called /removegroup but did not have permission.");
+              }
+          	return true;
+          }
+          
+          // ADDTOGROUP COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("addtogroup")) {
+            	if (permission.has(player, "dynamiceconomy.groups")) {
+            		if (isInWorld(player)) {
+                		Item.addItemToGroup(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /addtogroup, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /addtogroup but did not have permission.");
+                }
+            	return true;
+            }
+          
+          // REMOVEFROMGROUP COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("removefromgroup")) {
+          	if (permission.has(player, "dynamiceconomy.groups")) {
+          		if (isInWorld(player)) {
+              		Item.removeItemFromGroup(player, args);
+                } else {
+                	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                    Utility.writeToLog(player.getName() + " tried to call /removefromgroup, but was in the wrong world.");
+                }
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                  Utility.writeToLog(player.getName() + " called /removefromgroup but did not have permission.");
+              }
+          	return true;
+          }
+          
+          // ADDGROUPTOUSER COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("addgrouptouser")) {
+            	if (permission.has(player, "dynamiceconomy.groups")) {
+            		if (isInWorld(player)) {
+                		Item.addGroupToUser(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /addgrouptouser, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /addgrouptouser but did not have permission.");
+                }
+            	return true;
+            }
+          
+          // REMOVEGROUPFROMUSER COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("removegroupfromuser")) {
+          	if (permission.has(player, "dynamiceconomy.groups")) {
+          		if (isInWorld(player)) {
+              		Item.removeGroupFromUser(player, args);
+                } else {
+                	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                    Utility.writeToLog(player.getName() + " tried to call /removegroupfromuser, but was in the wrong world.");
+                }
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                  Utility.writeToLog(player.getName() + " called /removegroupfromuser but did not have permission.");
+              }
+          	return true;
+          }
+          
+          // VIEWGROUP COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("viewgroup")) {
+            	if (permission.has(player, "dynamiceconomy.viewgroup")) {
+            		if (isInWorld(player)) {
+                		Item.viewGroup(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /viewgroup, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /viewgroup but did not have permission.");
+                }
+            	return true;
+            }
+          
+          // CURREGION COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("curregion")) {
+          	if (permission.has(player, "dynamiceconomy.curregion")) {
+          		if (isInWorld(player)) {
+              		regionUtils.curRegion(player, args);
+                } else {
+                	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                    Utility.writeToLog(player.getName() + " tried to call /curregion, but was in the wrong world.");
+                }
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                  Utility.writeToLog(player.getName() + " called /curregion but did not have permission.");
+              }
+          	return true;
+          }
+          
+          // ADDREGIONGROUP COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("addregiongroup")) {
+            	if (permission.has(player, "dynamiceconomy.shopregion")) {
+            		if (isInWorld(player)) {
+                		regionUtils.addItemGroup(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /addregiongroup, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /addregiongroup but did not have permission.");
+                }
+            	return true;
+            }
+
+          // ADDREGIONGROUP COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("removeregiongroup")) {
+            	if (permission.has(player, "dynamiceconomy.shopregion")) {
+            		if (isInWorld(player)) {
+                		regionUtils.removeItemGroup(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /removeregiongroup, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /removeregiongroup but did not have permission.");
+                }
+            	return true;
+            }
+          
+          // BANREGIONITEM COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("banregionitem")) {
+          	if (permission.has(player, "dynamiceconomy.shopregion")) {
+          		if (isInWorld(player)) {
+              		regionUtils.banRegionItem(player, args);
+                } else {
+                	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                    Utility.writeToLog(player.getName() + " tried to call /banregionitem, but was in the wrong world.");
+                }
+          	} else {
+                  color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                  Utility.writeToLog(player.getName() + " called /banregionitem but did not have permission.");
+              }
+          	return true;
+          }
+          
+          // UNBANREGIONITEM COMMAND
+          
+          if (cmd.getName().equalsIgnoreCase("unbanregionitem")) {
+            	if (permission.has(player, "dynamiceconomy.shopregion")) {
+            		if (isInWorld(player)) {
+                		regionUtils.unbanRegionItem(player, args);
+                  } else {
+                  	color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.wrongWorld);
+                      Utility.writeToLog(player.getName() + " tried to call /unbanregionitem, but was in the wrong world.");
+                  }
+            	} else {
+                    color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.noPermission);
+                    Utility.writeToLog(player.getName() + " called /unbanregionitem but did not have permission.");
+                }
+            	return true;
+            }
 	
 	
 	return false; 

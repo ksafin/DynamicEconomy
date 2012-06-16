@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.logging.Logger;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -159,6 +160,18 @@ public class Utility {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String listToString(List<String> list) {
+		String stringList = "";
+		for (int x = 0; x < list.size(); x++) {
+			stringList += list.get(x) + ",";
+		}
+		if (stringList.length() != 0) {
+			stringList = stringList.substring(0,stringList.length()-1);
+		}
+		
+		return stringList;
 	}
 	
 	public static String getColor(String color) {

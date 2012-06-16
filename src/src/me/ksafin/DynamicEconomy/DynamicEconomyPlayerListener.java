@@ -1,6 +1,8 @@
 package me.ksafin.DynamicEconomy;
 
 
+import java.awt.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -65,6 +67,24 @@ public class DynamicEconomyPlayerListener implements Listener {
     		 }
     	}
     }
+    if (DynamicEconomy.usersConfig.contains(event.getPlayer().getName() + ".PURCHASEGROUPS") == false) {
+    	ArrayList<String> list = new ArrayList<String>();
+    	list.add("*");
+    	ArrayList<String> list2 = new ArrayList<String>();
+    	list2.add("*");
+    	DynamicEconomy.usersConfig.set(event.getPlayer().getName() + ".PURCHASEGROUPS", list);
+    	DynamicEconomy.usersConfig.set(event.getPlayer().getName() + ".SALEGROUPS", list2);
+    	
+    	try {
+			DynamicEconomy.usersConfig.save(DynamicEconomy.usersFile);
+		} catch (Exception e) {
+			log.info("[DynamicEconomy] Error saving users config");
+			log.info(e.toString());
+			e.printStackTrace();
+		}
+    }
+    	
+    	
     }
     
     @EventHandler
@@ -167,25 +187,25 @@ public class DynamicEconomyPlayerListener implements Listener {
     
     @EventHandler
     public void onEnchantItem(final EnchantItemEvent event) {
-    	Player player = event.getEnchanter();
+    	//Player player = event.getEnchanter();
     	
-    	int numLevels = event.getExpLevelCost();
+    	//int numLevels = event.getExpLevelCost();
     	
-    	int newExp;
+    	//int newExp;
     	
-    	for (int x = 0; x < numLevels; x++) {
-    		newExp = getTotalExp(player);
-    		player.setTotalExperience(0);
-    		player.setLevel(0);
-    		player.setExp(0);
-    		player.giveExp(newExp);
-    	}
+    	//for (int x = 0; x < numLevels; x++) {
+    	//	newExp = getTotalExp(player);
+    	//	player.setTotalExperience(0);
+    	//	player.setLevel(0);
+    	//	player.setExp(0);
+    	//	player.giveExp(newExp);
+    	//}
     	
     	
 		
-		log.info("Player Total Exp In Event: " + player.getTotalExperience());
-		log.info("Player Level In Event: " + player.getLevel());
-		log.info("Player Exp In Event: " + player.getExp());
+		//log.info("Player Total Exp In Event: " + player.getTotalExperience());
+		//log.info("Player Level In Event: " + player.getLevel());
+		//log.info("Player Exp In Event: " + player.getExp());
     	
     }
     

@@ -47,6 +47,8 @@ public class loan implements Runnable {
 			
 		}
 		
+		
+		
 		amount = amt;
 		player = play;
 		
@@ -61,6 +63,7 @@ public class loan implements Runnable {
 		loansFileConfig.set(node +  "amount", amount);
 		loansFileConfig.set(node + "time", time);
 		loansFileConfig.set(node + "interest", interest);
+		loansFileConfig.set(node + "debt", (amount + interest));
 		
 		try{
 			loansFileConfig.save(loansFile);
@@ -78,6 +81,7 @@ public class loan implements Runnable {
 		if (DynamicEconomy.useLoanAccount) {
 			DynamicEconomy.economy.withdrawPlayer(DynamicEconomy.loanAccountName, amount);
 		}
+	
 		
 	}
 	
@@ -110,6 +114,11 @@ public class loan implements Runnable {
 			try{
 				loansFileConfig.load(loansFile);
 			} catch (Exception e) {
+			}
+			
+			if (hasOutstandingDebt(player.getName())) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have an outstanding debt and therefore &fcannot &2take out any loans until it is payed.");
+				return false;
 			}
 			
 		double amount;	
@@ -198,6 +207,12 @@ public class loan implements Runnable {
 		
 		Set<String> loansSet = loansFileConfig.getConfigurationSection(node).getKeys(false);
 		
+		if (loansSet.size() == 0) {
+			color.sendColouredMessage(player, "&2You do not have any loans!");
+			Utility.writeToLog(player.getName() + " called /curloans, but didn't have any loans.");
+			return;
+		}
+		
 		Object[] loansObj = (loansSet.toArray());
 		String[] loans = new String[loansObj.length];
 		
@@ -210,6 +225,13 @@ public class loan implements Runnable {
 				double amount = loansFileConfig.getDouble(node + ".amount");
 				double interest = loansFileConfig.getDouble(node + ".interest");
 				long time = loansFileConfig.getLong(node + ".time");
+				double debt = 0;
+				boolean debtStatus = false;
+				
+				if (loansFileConfig.contains(node + ".debtStatus")) {
+					debt = loansFileConfig.getDouble(node + ".debt");
+					debtStatus = true;
+				}
 				
 				long curTime = Calendar.getInstance().getTimeInMillis();
 				
@@ -222,7 +244,12 @@ public class loan implements Runnable {
 				color.sendColouredMessage(player, "&2Loan " + (x+1));
 				color.sendColouredMessage(player, "&2Original Loan Amount: &f" + amount);
 				color.sendColouredMessage(player, "&2Interest Rate: &f" + (DynamicEconomy.interestRate * 100) + " %");
-				color.sendColouredMessage(player, "&2Total due: &f" + DynamicEconomy.currencySymbol + (interest + amount));
+				if (debtStatus) {
+					color.sendColouredMessage(player, "&2Total due: &f" + DynamicEconomy.currencySymbol + (debt));
+				} else {
+					color.sendColouredMessage(player, "&2Total due: &f" + DynamicEconomy.currencySymbol + (interest + amount));
+				}
+				
 				color.sendColouredMessage(player, "&2Due in approximately &f" + minutes + "&2 minutes and &f" + seconds + "&2 seconds");
 				color.sendColouredMessage(player, "&2---------&fLoan &f" + (x+1) + "&2 of &f" + loansSet.size() + "&2---------");
 			}
@@ -308,6 +335,67 @@ public class loan implements Runnable {
 		return interest;
 	}
 	
+	private static boolean hasOutstandingDebt(String playerName) {
+		
+		updateDebtStatus(playerName);
+		
+		try{
+			loansFileConfig.load(loansFile);
+		} catch (Exception e) {
+			Utility.writeToLog("Error loading loans file.");
+		}
+		
+		String request = "debts." + playerName;
+		boolean debt = loansFileConfig.getBoolean(request,false);
+		
+		return debt;
+		
+	}
+	
+	private static void updateDebtStatus(String playerName) {
+		
+		try{
+			loansFileConfig.load(loansFile);
+		} catch (Exception e) {
+			Utility.writeToLog("Error loading loans file.");
+		}
+		
+		if (loansFileConfig.contains("loans." + playerName) == false) {
+			return;
+		}
+		
+		Set<String> userLoansSet = loansFileConfig.getConfigurationSection("loans." + playerName).getKeys(false);
+		
+		Object[] userLoansObj = (userLoansSet.toArray());
+		String[] userLoans = new String[userLoansObj.length];
+		
+		for (int x = 0; x < userLoansObj.length; x++) {
+			userLoans[x] = userLoansObj[x].toString();
+		}
+		
+		boolean debt = false;
+		String node = "loans." + playerName;
+		boolean debtStat = false;
+		
+		for (int x = 0; x < userLoans.length; x++) {
+			node = "loans." + playerName + "." + userLoans[x] + ".debtStatus";
+			debtStat = loansFileConfig.getBoolean(node,false);
+			if (debtStat == true) {
+				debt = true;
+				break;
+			}
+		}
+		
+		loansFileConfig.set("debts." + playerName, debt);
+		
+		try{
+			loansFileConfig.save(loansFile);
+		} catch (Exception e) {
+			Utility.writeToLog("Error saving loans file.");
+		}
+		
+	}
+	
 	public void run() {
 	  if (DynamicEconomy.useLoans) {
 		try{
@@ -345,6 +433,9 @@ public class loan implements Runnable {
 		long time;
 		double interest;
 		double amount;
+		double debt;
+		
+		decFormat.applyPattern("#.###");
 		
 		for (int i = 0; i < loans.length; i++) {
 			node = "loans." + loans[i];
@@ -365,23 +456,40 @@ public class loan implements Runnable {
 				time = loansFileConfig.getLong(node + ".time");
 				interest = loansFileConfig.getLong(node + ".interest");
 				amount = loansFileConfig.getLong(node + ".amount");
+				debt = loansFileConfig.getDouble(node + ".debt");
 				
 				long curTime = Calendar.getInstance().getTimeInMillis();
 				
 				if (curTime > time) {
-					DynamicEconomy.economy.withdrawPlayer(loans[i], (amount + interest));
-
-					//OfflinePlayer offlinePlayer = DE.getServer().getOfflinePlayer(loans[i]);
 					
-					    Player player = Bukkit.getServer().getPlayer(loans[i]);
-					    
-					    if (player != null) {
-					    	color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have been charged &f" + DynamicEconomy.currencySymbol + (amount + interest) + "&2 for your loan.");
-					    }
-					    
-				
-					Utility.writeToLog(loans[i] + " has been charged " + (amount + interest) + " for their loan.");
-					loansFileConfig.set(node, null);
+					Player player = Bukkit.getServer().getPlayer(loans[i]);
+					double bal = DynamicEconomy.economy.getBalance(loans[i]);
+					
+					if ((bal < debt) && (bal != 0)) {
+						debt -= bal;
+						loansFileConfig.set(node + ".debt", debt);
+						DynamicEconomy.economy.withdrawPlayer(loans[i], bal);
+						
+						if (player != null) {
+					    	color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have been charged &f" + DynamicEconomy.currencySymbol + (decFormat.format(bal)) + "&2 for your loan.");
+					    	color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have  &f" + DynamicEconomy.currencySymbol + (decFormat.format(debt)) + "&2 remaining to pay.");
+					    	color.sendColouredMessage(player, DynamicEconomy.prefix + "&2Until this is paid, you &fcannot &2take out any more loans.");
+						}
+						Utility.writeToLog(loans[i] + " has been charged " + (amount + interest) + " for their loan.");
+						
+						loansFileConfig.set(node + ".debtStatus",true);
+						loansFileConfig.set("debts." + loans[i],true);
+						
+					} else if (bal > debt) {
+						DynamicEconomy.economy.withdrawPlayer(loans[i], debt);
+						
+						if (player != null) {
+							color.sendColouredMessage(player, DynamicEconomy.prefix + "&2You have been charged &f" + DynamicEconomy.currencySymbol + (decFormat.format(debt)) + "&2 for your loan.");
+						}
+						Utility.writeToLog(loans[i] + " has been charged " + (debt) + " for their loan.");
+						loansFileConfig.set(node, null);
+					}
+					
 					try {
 						loansFileConfig.save(loansFile);
 					} catch (Exception e) {

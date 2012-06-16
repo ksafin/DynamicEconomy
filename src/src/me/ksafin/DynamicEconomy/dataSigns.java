@@ -46,7 +46,32 @@ public class dataSigns {
     		ConfigurationSection curSign = conf.createSection(signID);
     		curSign.set("WORLD", block.getWorld().getName());
     		
-    		
+    		if ((item.equalsIgnoreCase("purchasetax")) || (item.equalsIgnoreCase("salestax"))) {
+    			String taxName;
+    			double tax;
+    			
+    			if (item.equalsIgnoreCase("purchasetax")) {
+    				taxName = "Purchase Tax";
+    				tax = DynamicEconomy.purchasetax;
+    			} else {
+    				taxName = "Sales Tax";
+    				tax = DynamicEconomy.salestax;
+    			}
+    			
+    			tax *=100;
+    			
+    			event.setLine(0, "");
+    			event.setLine(1, Utility.getColor(DynamicEconomy.signTaglineColor) + taxName);
+    			event.setLine(2, Utility.getColor(DynamicEconomy.signInfoColor) + tax + "%");
+    			
+    			curSign.set("TYPE", item); // Set TYPE to either purchasetax or salestax
+    			
+    			try {
+        			conf.save(DynamicEconomy.signsFile);
+        		} catch (Exception e) {
+        			e.printStackTrace();
+        		}
+    		} else {
     		
     		String[] itemInfo = Item.getAllInfo(item);
     		item = Item.getTrueName(item);
@@ -90,12 +115,78 @@ public class dataSigns {
             		event.setLine(3, "");
     			}
     			
-    			
-    			
-    			
     		}
+    	}
     		
     	}
+	}
+	
+	public static void updateTaxSigns() {
+		FileConfiguration conf = DynamicEconomy.signsConfig;
+		
+		
+		Set<String> set = conf.getKeys(false);
+		Object[] signsObj = set.toArray();
+		String[] signs = new String[signsObj.length];
+		
+		for (int x = 0; x < signsObj.length; x++) {
+			signs[x] = signsObj[x].toString();
+		}
+		
+		String request;
+		String type;
+		Sign sign;
+		
+		for (String signID : signs) {
+			request = signID + ".TYPE";
+			type = conf.getString(request);
+			
+			if (type.equalsIgnoreCase("purchasetax")) {
+				sign = getSign(signID);
+				if (sign != null) {
+					String tax = format.format(DynamicEconomy.purchasetax * 100);
+					sign.setLine(2, Utility.getColor(DynamicEconomy.signInfoColor) + tax + "%");
+					sign.update();
+				}
+			} else if  (type.equalsIgnoreCase("salestax")) {
+				sign = getSign(signID);
+				if (sign != null) {
+					String tax = format.format(DynamicEconomy.salestax * 100);
+					sign.setLine(2, Utility.getColor(DynamicEconomy.signInfoColor) + tax + "%");
+					sign.update();
+				}
+			}
+		}
+	}
+	
+	private static Sign getSign(String coords) {
+		FileConfiguration conf = DynamicEconomy.signsConfig;
+		String[] splitID = coords.split(" ");
+		int x = Integer.parseInt(splitID[0]);
+		int y = Integer.parseInt(splitID[1]);
+		int z = Integer.parseInt(splitID[2]);
+		
+		String node = coords + ".WORLD";
+		String worldName = conf.getString(node,"world");
+	
+		Location loc = new Location(Bukkit.getServer().getWorld(worldName),x,y,z);
+		Block block = loc.getBlock();
+		
+		Sign sign;
+		
+		if (block.getState() instanceof Sign) {
+		    sign = (Sign) block.getState();
+		    return sign;
+		} else {
+			conf.set(coords,null);
+			try {
+				conf.save(DynamicEconomy.signsFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			Utility.writeToLog("DynamicSign no longer found at " + coords + ", entry removed from file");
+			return null;
+		}
 	}
 	
 	public static void removeDataSign(Block block) {
@@ -208,29 +299,9 @@ public class dataSigns {
 		}
 		
 		
-		String[] splitID = signID.split(" ");
-		int x = Integer.parseInt(splitID[0]);
-		int y = Integer.parseInt(splitID[1]);
-		int z = Integer.parseInt(splitID[2]);
+		Sign sign = getSign(signID);
 		
-		String node = signID + ".WORLD";
-		String worldName = conf.getString(node,"world");
-	
-		Location loc = new Location(Bukkit.getServer().getWorld(worldName),x,y,z);
-		Block block = loc.getBlock();
-		
-		Sign sign;
-		
-		if (block.getState() instanceof Sign) {
-		    sign = (Sign) block.getState();
-		} else {
-			conf.set(signID,null);
-			try {
-				conf.save(DynamicEconomy.signsFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			Utility.writeToLog("DynamicSign no longer found at " + signID + ", entry removed from file");
+		if (sign == null) {
 			return;
 		}
 		

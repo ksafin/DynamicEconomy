@@ -1,7 +1,9 @@
 package me.ksafin.DynamicEconomy;
 
+import java.awt.List;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -38,6 +40,7 @@ public class Initialize {
 	    config.set("alt-commands",false);
 	    config.set("enable-update-checker",true);
 	    config.set("use-regions",false);
+	    config.set("use-region-flags", true);
 	    config.set("use-loans",true);
 	    config.set("use-static-interest",false);
 	    config.set("interest-rate",0.05);
@@ -52,10 +55,16 @@ public class Initialize {
 	    config.set("loan-check-interval",300);
 	    config.set("banned-sale-items","");
 	    config.set("banned-purchase-items","");
+	    
 	    config.set("enable-over-time-price-decay",true);
+	    config.set("enable-over-time-price-inflation",true);
+	    
 	    config.set("over-time-price-decay-percent",.1);
-	    config.set("over-time-price-decay-period",1440);
-	    config.set("over-time-price-decay-period-check",60);
+	    config.set("over-time-price-inflation-percent",.1);
+	    
+	    config.set("over-time-price-change-period",1440);
+	    config.set("over-time-price-change-period-check",60);
+	    
 	    config.set("use-percent-velocity",false);
 	    config.set("dynecon-world","world");
 	    config.set("currency-symbol","$");
@@ -65,7 +74,8 @@ public class Initialize {
 	    config.set("sign-tagline-color","&a");
 	    config.set("sign-info-color","&f");
 	    config.set("sign-invalid-color","&c");
-	    config.set("wand-enabled", true);
+	    
+	    config.set("group-control",false);
 	    
 		
 		try {
@@ -77,7 +87,997 @@ public class Initialize {
 		}
 	}
 	
-	public void setItems(DynamicEconomy plugin) {
+	public void setGroupsExample() {
+		FileConfiguration config = DynamicEconomy.groupsConfig;
+		
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("GLOWINGREDSTONEORE");
+		list.add("GOLDORE");
+		list.add("IRONORE");
+		list.add("COALORE");
+		list.add("LAPISLAZULIORE");
+		list.add("DIAMONDORE");
+		list.add("REDSTONEORE");
+		
+		config.set("ORES",list);
+		
+		try {
+			config.save(DynamicEconomy.groupsFile);
+		} catch (Exception e) {
+			log.info("[DynamicEconomy] Error saving groups.yml");
+			log.info(e.toString());
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void setAliases() {
+		FileConfiguration config = DynamicEconomy.aliasConfig;
+		
+		config.set("STONE","STONE");
+		config.set("SMOOTHSTONE","STONE");
+		config.set("1","STONE");
+		config.set("GRASS","GRASS");
+		config.set("2","GRASS");
+		config.set("DIRT","DIRT");
+		config.set("2","DIRT");
+		config.set("PLANK","PLANK");
+		config.set("WOODENPLANK","PLANK");
+		config.set("WOODENPLANKS","PLANK");
+		config.set("PLANKS","PLANK");
+		config.set("5","PLANK");
+		config.set("PINEPLANK","PINEPLANK");
+		config.set("PINEPLANKS","PINEPLANK");
+		config.set("5:1","PINEPLANK");
+		config.set("BIRCHPLANK","BIRCHPLANK");
+		config.set("BIRCHPLANKS","BIRCHPLANK");
+		config.set("5:2","BIRCHPLANK");
+		config.set("JUNGLEPLANK","JUNGLEPLANK");
+		config.set("JUNGLEPLANKS","JUNGLEPLANK");
+		config.set("5:3","JUNGLEPLANK");
+		config.set("COBBLESTONE","COBBLESTONE");
+		config.set("COBBLE","COBBLESTONE");
+		config.set("4","COBBLESTONE");
+		config.set("SAPLING","SAPLING");
+		config.set("6","SAPLING");
+		config.set("BIRCHSAPLING","BIRCHSAPLING");
+		config.set("SPRUCESAPLING","BIRCHSAPLING");
+		config.set("6:1","BIRCHSAPLING");
+		config.set("PINESAPLING","PINESAPLING");
+		config.set("6:2","PINESAPLING");
+		config.set("JUNGLESAPLING","JUNGLESAPLING");
+		config.set("6:3","JUNGLESAPLING");
+		config.set("BEDROCK","BEDROCK");
+		config.set("7","BEDROCK");
+		config.set("STILLWATER","STILLWATER");
+		config.set("8","STILLWATER");
+		config.set("WATER","WATER");
+		config.set("9","WATER");
+		config.set("STILLLAVA","STILLLAVA");
+		config.set("10","STILLLAVA");
+		config.set("LAVA","LAVA");
+		config.set("11","LAVA");
+		config.set("SAND","SAND");
+		config.set("12","SAND");
+		config.set("GRAVEL","GRAVEL");
+		config.set("13","GRAVEL");
+		config.set("WOOD","WOOD");
+		config.set("LOG","WOOD");
+		config.set("17","WOOD");
+		config.set("17:0","WOOD");
+		config.set("BIRCHWOOD","BIRCHWOOD");
+		config.set("BIRCHLOG","BIRCHWOOD");
+		config.set("17:2","BIRCHWOOD");
+		config.set("PINEWOOD","PINEWOOD");
+		config.set("DARKWOOD","PINEWOOD");
+		config.set("DARKLOG","PINEWOOD");
+		config.set("PINGLOG","PINEWOOD");
+		config.set("SPRUCEWOOD","PINEWOOD");
+		config.set("17:1","PINEWOOD");
+		config.set("JUNGLEWOOD","JUNGLEWOOD");
+		config.set("JUNGLELOG","JUNGLEWOOD");
+		config.set("17:3","JUNGLEWOOD");
+		config.set("SPONGE","SPONGE");
+		config.set("19","SPONGE");
+		config.set("GLASS","GLASS");
+		config.set("GLASSBLOCK","GLASS");
+		config.set("20","GLASS");
+		config.set("LAPISLAZULIBLOCK","LAPISLAZULIBLOCK");
+		config.set("22","LAPISLAZULIBLOCK");
+		config.set("DISPENSER","DISPENSER");
+		config.set("23","DISPENSER");
+		config.set("SANDSTONE","SANDSTONE");
+		config.set("SANDBRICK","SANDSTONE");
+		config.set("24","SANDSTONE");
+		config.set("HIEROGLYPHICSANDSTONE","HIEROGLYPHICSANDSTONE");
+		config.set("CREEPERSANDSTONE","HIEROGLYPHICSANDSTONE");
+		config.set("24:1","HIEROGLYPHICSANDSTONE");
+		config.set("SMOOTHSANDSTONE","SMOOTHSANDSTONE");
+		config.set("24:2","SMOOTHSANDSTONE");
+		config.set("NOTEBLOCK","NOTEBLOCK");
+		config.set("MUSICBLOCK","NOTEBLOCK");
+		config.set("25","NOTEBLOCK");
+		config.set("POWEREDRAIL","POWEREDRAIL");
+		config.set("POWERRAIL","POWEREDRAIL");
+		config.set("POWERTRACK","POWEREDRAIL");
+		config.set("POWEREDTRACK","POWEREDRAIL");
+		config.set("27","POWEREDRAIL");
+		config.set("DETECTORRAIL","DETECTORRAIL");
+		config.set("DETECTORTRACK","DETECTORRAIL");
+		config.set("28","DETECTORRAIL");
+		config.set("STICKYPISTON","STICKYPISTON");
+		config.set("29","STICKYPISTON");
+		config.set("WEB","WEB");
+		config.set("SPIDERWEB","WEB");
+		config.set("30","WEB");
+		config.set("DEADSHRUB","DEADSHRUB");
+		config.set("31:0","DEADSHRUB");
+		config.set("31","DEADSHRUB");
+		config.set("TALLGRASS","TALLGRASS");
+		config.set("31:1","TALLGRASS");
+		config.set("31001","TALLGRASS");
+		config.set("FERN","FERN");
+		config.set("31:2","FERN");
+		config.set("31002","FERN");
+		config.set("PISTON","PISTON");
+		config.set("33","PISTON");
+		config.set("WOOL","WOOL");
+		config.set("35","WOOL");
+		config.set("ORANGEWOOL","ORANGEWOOL");
+		config.set("35:1","ORANGEWOOL");
+		config.set("MAGENTAWOOL","MAGENTAWOOL");
+		config.set("35:2","MAGENTAWOOL");
+		config.set("LIGHTBLUEWOOL","LIGHTBLUEWOOL");
+		config.set("35:3","LIGHTBLUEWOOL");
+		config.set("YELLOWWOOL","YELLOWWOOL");
+		config.set("35:4","YELLOWWOOL");
+		config.set("LIMEWOOL","LIMEWOOL");
+		config.set("35:5","LIMEWOOL");
+		config.set("PINKWOOL","PINKWOOL");
+		config.set("35:6","PINKWOOL");
+		config.set("GRAYWOOL","GRAYWOOL");
+		config.set("GREYWOOL","GRAYWOOL");
+		config.set("35:7","GRAYWOOL");
+		config.set("LIGHTGRAYWOOL","LIGHTGRAYWOOL");
+		config.set("LIGHTGREYWOOL","LIGHTGRAYWOOL");
+		config.set("35:8","LIGHTGRAYWOOL");
+		config.set("CYANWOOL","CYANWOOL");
+		config.set("35:9","CYANWOOL");
+		config.set("PURPLEWOOL","PURPLEWOOL");
+		config.set("35:10","PURPLEWOOL");
+		config.set("BLUEWOOL","BLUEWOOL");
+		config.set("35:11","BLUEWOOL");
+		config.set("BROWNWOOL","BROWNWOOL");
+		config.set("35:12","BROWNWOOL");
+		config.set("GREENWOOL","GREENWOOL");
+		config.set("35:13","GREENWOOL");
+		config.set("REDWOOL","REDWOOL");
+		config.set("35:14","REDWOOL");
+		config.set("BLACKWOOL","BLACKWOOL");
+		config.set("35:15","BLACKWOOL");
+		config.set("DANDELION","DANDELION");
+		config.set("YELLOWFLOWER","DANDELION");
+		config.set("37","DANDELION");
+		config.set("ROSE","ROSE");
+		config.set("REDFLOWER","ROSE");
+		config.set("38","ROSE");
+		config.set("BROWNMUSHROOM","BROWNMUSHROOM");
+		config.set("39","BROWNMUSHROOM");
+		config.set("REDMUSHROOM","REDMUSHROOM");
+		config.set("40","REDMUSHROOM");
+		config.set("GOLDBLOCK","GOLDBLOCK");
+		config.set("BLOCKOFGOLD","GOLDBLOCK");
+		config.set("41","GOLDBLOCK");
+		config.set("IRONBLOCK","IRONBLOCK");
+		config.set("BLOCKOFIRON","IRONBLOCK");
+		config.set("42","IRONBLOCK");
+		config.set("DOUBLESLABS","DOUBLESLABS");
+		config.set("DOUBLESLAB","DOUBLESLABS");
+		config.set("DOUBLESTEP","DOUBLESLABS");
+		config.set("DOUBLESTEPS","DOUBLESLABS");
+		config.set("43","DOUBLESLABS");
+		config.set("SLABS","SLABS");
+		config.set("SLAB","SLABS");
+		config.set("STONESLAB","SLABS");
+		config.set("STONESLABS","SLABS");
+		config.set("44","SLABS");
+		config.set("SANDSTONESLABS","SANDSTONESLABS");
+		config.set("SANDSTONESLAB","SANDSTONESLABS");
+		config.set("SANDSLAB","SANDSTONESLABS");
+		config.set("SANDSLABS","SANDSTONESLABS");
+		config.set("44:1","SANDSTONESLABS");
+		config.set("PLANKSLABS","PLANKSLABS");
+		config.set("PLANKSLAB","PLANKSLABS");
+		config.set("WOODSLABS","PLANKSLABS");
+		config.set("WOODSLAB","PLANKSLABS");
+		config.set("44:2","PLANKSLABS");
+		config.set("COBBLESLABS","COBBLESLABS");
+		config.set("COBBLESLAB","COBBLESLABS");
+		config.set("44:3","COBBLESLABS");
+		config.set("BRICKSLABS","BRICKSLABS");
+		config.set("BRICKSLAB","BRICKSLABS");
+		config.set("44:4","BRICKSLABS");
+		config.set("STONEBRICKSLABS","STONEBRICKSLABS");
+		config.set("STONEBRICKSLAB","STONEBRICKSLABS");
+		config.set("STONEBRICKSSLABS","STONEBRICKSLABS");
+		config.set("STONEBRICKSSLAB","STONEBRICKSLABS");
+		config.set("44:5","STONEBRICKSLABS");
+		config.set("BRICKBLOCK","BRICKBLOCK");
+		config.set("45","BRICKBLOCK");
+		config.set("TNT","TNT");
+		config.set("46","TNT");
+		config.set("BOOKSHELF","BOOKSHELF");
+		config.set("47","BOOKSHELF");
+		config.set("MOSSYCOBBLE","MOSSYCOBBLE");
+		config.set("MOSSCOBBLE","MOSSYCOBBLE");
+		config.set("MOSSYCOBBLESTONE","MOSSYCOBBLE");
+		config.set("48","MOSSYCOBBLE");
+		config.set("OBSIDIAN","OBSIDIAN");
+		config.set("OBBY","OBSIDIAN");
+		config.set("49","OBSIDIAN");
+		config.set("TORCH","TORCH");
+		config.set("50","TORCH");
+		config.set("FIRE","FIRE");
+		config.set("51","FIRE");
+		config.set("MOBSPAWNER","MOBSPAWNER");
+		config.set("SPAWNER","MOBSPAWNER");
+		config.set("52","MOBSPAWNER");
+		config.set("WOODENSTAIRS","WOODENSTAIRS");
+		config.set("WOODSTAIRS","WOODENSTAIRS");
+		config.set("PLANKSTAIRS","WOODENSTAIRS");
+		config.set("53","WOODENSTAIRS");
+		config.set("CHEST","CHEST");
+		config.set("54","CHEST");
+		config.set("DIAMONDBLOCK","DIAMONDBLOCK");
+		config.set("BLOCKOFDIAMOND","DIAMONDBLOCK");
+		config.set("57","DIAMONDBLOCK");
+		config.set("CRAFTBENCH","CRAFTBENCH");
+		config.set("CRAFTINGBENCH","CRAFTBENCH");
+		config.set("CRAFTINGTABLE","CRAFTBENCH");
+		config.set("58","CRAFTBENCH");
+		config.set("FURNACE","FURNACE");
+		config.set("61","FURNACE");
+		config.set("BURNINGFURNACE","BURNINGFURNACE");
+		config.set("62","BURNINGFURNACE");
+		config.set("LADDER","LADDER");
+		config.set("LADDERS","LADDER");
+		config.set("65","LADDER");
+		config.set("RAIL","RAIL");
+		config.set("RAILS","RAIL");
+		config.set("TRACKS","RAIL");
+		config.set("66","RAIL");
+		config.set("COBBLESTAIRS","COBBLESTAIRS");
+		config.set("COBBLESTONESTAIRS","COBBLESTAIRS");
+		config.set("67","COBBLESTAIRS");
+		config.set("LEVER","LEVER");
+		config.set("69","LEVER");
+		config.set("STONEPLATE","STONEPLATE");
+		config.set("STONEPRESSUREPLATE","STONEPLATE");
+		config.set("70","STONEPLATE");
+		config.set("WOODENPLATE","WOODENPLATE");
+		config.set("WOODENPRESSUREPLATE","WOODENPLATE");
+		config.set("72","WOODENPLATE");
+		config.set("GLOWINGREDSTONEORE","GLOWINGREDSTONEORE");
+		config.set("GLOWINGREDSTONE","GLOWINGREDSTONEORE");
+		config.set("74","GLOWINGREDSTONEORE");
+		config.set("BUTTON","BUTTON");
+		config.set("STONEBUTTON","BUTTON");
+		config.set("77","BUTTON");
+		config.set("ICE","ICE");
+		config.set("ICEBLOCK","ICE");
+		config.set("79","ICE");
+		config.set("CACTUS","CACTUS");
+		config.set("CACTI","CACTUS");
+		config.set("81","CACTUS");
+		config.set("CLAYBLOCK","CLAYBLOCK");
+		config.set("82","CLAYBLOCK");
+		config.set("JUKEBOX","JUKEBOX");
+		config.set("84","JUKEBOX");
+		config.set("FENCE","FENCE");
+		config.set("85","FENCE");
+		config.set("PUMPKIN","PUMPKIN");
+		config.set("86","PUMPKIN");
+		config.set("NETHERRACK","NETHERRACK");
+		config.set("87","NETHERRACK");
+		config.set("SOULSAND","SOULSAND");
+		config.set("SLOWSAND","SOULSAND");
+		config.set("QUICKSAND","SOULSAND");
+		config.set("88","SOULSAND");
+		config.set("GLOWSTONE","GLOWSTONE");
+		config.set("GLOWSTONEBLOCK","GLOWSTONE");
+		config.set("89","GLOWSTONE");
+		config.set("TRAPDOOR","TRAPDOOR");
+		config.set("96","TRAPDOOR");
+		config.set("STONEBRICKS","STONE");
+		config.set("STONEBRICK","STONE");
+		config.set("98","STONE");
+		config.set("MOSSYSTONEBRICKS","MOSSYSTONEBRICKS");
+		config.set("MOSSYSTONEBRICK","MOSSYSTONEBRICKS");
+		config.set("98001","MOSSYSTONEBRICKS");
+		config.set("98:1","MOSSYSTONEBRICKS");
+		config.set("CRACKEDSTONEBRICKS","CRACKEDSTONEBRICKS");
+		config.set("CRACKEDSTONEBRICK","CRACKEDSTONEBRICKS");
+		config.set("98002","CRACKEDSTONEBRICKS");
+		config.set("98:2","CRACKEDSTONEBRICKS");
+		config.set("CIRCLESTONEBRICKS","CIRCLESTONEBRICKS");
+		config.set("CIRCLESTONEBRICKS","CIRCLESTONEBRICKS");
+		config.set("98003","CIRCLESTONEBRICKS");
+		config.set("98:3","CIRCLESTONEBRICKS");
+		config.set("IRONBARS","IRONBARS");
+		config.set("101","IRONBARS");
+		config.set("GLASSPANE","GLASSPANE");
+		config.set("102","GLASSPANE");
+		config.set("VINES","VINES");
+		config.set("106","VINES");
+		config.set("FENCEGATE","FENCEGATE");
+		config.set("107","FENCEGATE");
+		config.set("BRICKSTAIRS","BRICKSTAIRS");
+		config.set("108","BRICKSTAIRS");
+		config.set("STONEBRICKSTAIRS","STONEBRICKSTAIRS");
+		config.set("109","STONEBRICKSTAIRS");
+		config.set("MYCELIUM","MYCELIUM");
+		config.set("110","MYCELIUM");
+		config.set("LILYPAD","LILYPAD");
+		config.set("LILYPADS","LILYPAD");
+		config.set("111","LILYPAD");
+		config.set("NETHERBRICK","NETHERBRICK");
+		config.set("NETHERSTONE","NETHERBRICK");
+		config.set("112","NETHERBRICK");
+		config.set("NETHERBRICKFENCE","NETHERBRICKFENCE");
+		config.set("NETHERSTONEFENCE","NETHERBRICKFENCE");
+		config.set("113","NETHERBRICKFENCE");
+		config.set("NETHERBRICKSTAIRS","NETHERBRICKSTAIRS");
+		config.set("NETHERSTONESTAIRS","NETHERBRICKSTAIRS");
+		config.set("114","NETHERBRICKSTAIRS");
+		config.set("ENCHANTMENTTABLE","ENCHANTMENTTABLE");
+		config.set("116","ENCHANTMENTTABLE");
+		config.set("ENDSTONE","ENDSTONE");
+		config.set("121","ENDSTONE");
+		config.set("DRAGONEGG","DRAGONEGG");
+		config.set("122","DRAGONEGG");
+		config.set("REDSTONELAMP","REDSTONELAMP");
+		config.set("RSLAMP","REDSTONELAMP");
+		config.set("123","REDSTONELAMP");
+		config.set("IRONSHOVEL","IRONSHOVEL");
+		config.set("ISHOVEL","IRONSHOVEL");
+		config.set("256","IRONSHOVEL");
+		config.set("IRONPICKAXE","IRONPICKAXE");
+		config.set("IPICKAXE","IRONPICKAXE");
+		config.set("IPICK","IRONPICKAXE");
+		config.set("IRONPICK","IRONPICKAXE");
+		config.set("257","IRONPICKAXE");
+		config.set("IRONAXE","IRONAXE");
+		config.set("IAXE","IRONAXE");
+		config.set("IRONHATCHET","IRONAXE");
+		config.set("IHATCHET","IRONAXE");
+		config.set("258","IRONAXE");
+		config.set("FLINTANDSTEEL","FLINTANDSTEEL");
+		config.set("FLINTSTEEL","FLINTANDSTEEL");
+		config.set("259","FLINTANDSTEEL");
+		config.set("APPLE","APPLE");
+		config.set("REDAPPLE","APPLE");
+		config.set("260","APPLE");
+		config.set("BOW","BOW");
+		config.set("261","BOW");
+		config.set("ARROW","ARROW");
+		config.set("ARROWS","ARROW");
+		config.set("262","ARROW");
+		config.set("COAL","COAL");
+		config.set("263:0","COAL");
+		config.set("263","COAL");
+		config.set("CHARCOAL","CHARCOAL");
+		config.set("263:1","CHARCOAL");
+		config.set("DIAMOND","DIAMOND");
+		config.set("264","DIAMOND");
+		config.set("IRONINGOT","IRONINGOT");
+		config.set("IRON","IRONINGOT");
+		config.set("265","IRONINGOT");
+		config.set("GOLDINGOT","GOLDINGOT");
+		config.set("GOLD","GOLDINGOT");
+		config.set("266","GOLDINGOT");
+		config.set("IRONSWORD","IRONSWORD");
+		config.set("ISWORD","IRONSWORD");
+		config.set("267","IRONSWORD");
+		config.set("WOODENSWORD","WOODENSWORD");
+		config.set("WSWORD","WOODENSWORD");
+		config.set("268","WOODENSWORD");
+		config.set("WOODENSHOVEL","WOODENSHOVEL");
+		config.set("WSHOVEL","WOODENSHOVEL");
+		config.set("269","WOODENSHOVEL");
+		config.set("WOODENPICKAXE","WOODENPICKAXE");
+		config.set("WPICK","WOODENPICKAXE");
+		config.set("WPICKAXE","WOODENPICKAXE");
+		config.set("WOODENPICK","WOODENPICKAXE");
+		config.set("270","WOODENPICKAXE");
+		config.set("WOODENAXE","WOODENAXE");
+		config.set("WAXE","WOODENAXE");
+		config.set("WHATCHET","WOODENAXE");
+		config.set("WOODENHATCHET","WOODENAXE");
+		config.set("271","WOODENAXE");
+		config.set("STONESWORD","STONESWORD");
+		config.set("SSWORD","STONESWORD");
+		config.set("272","STONESWORD");
+		config.set("STONESHOVEL","STONESHOVEL");
+		config.set("SSHOVEL","STONESHOVEL");
+		config.set("273","STONESHOVEL");
+		config.set("STONEPICKAXE","STONEPICKAXE");
+		config.set("SPICKAXE","STONEPICKAXE");
+		config.set("SPICK","STONEPICKAXE");
+		config.set("STONEPICK","STONEPICKAXE");
+		config.set("274","STONEPICKAXE");
+		config.set("STONEAXE","STONEAXE");
+		config.set("SAXE","STONEAXE");
+		config.set("STONEHATCHET","STONEAXE");
+		config.set("SHATCHET","STONEAXE");
+		config.set("275","STONEAXE");
+		config.set("DIAMONDSWORD","DIAMONDSWORD");
+		config.set("DSWORD","DIAMONDSWORD");
+		config.set("276","DIAMONDSWORD");
+		config.set("DIAMONDSHOVEL","DIAMONDSHOVEL");
+		config.set("DSHOVEL","DIAMONDSHOVEL");
+		config.set("277","DIAMONDSHOVEL");
+		config.set("DIAMONDPICKAXE","DIAMONDPICKAXE");
+		config.set("DPICK","DIAMONDPICKAXE");
+		config.set("DPICKAXE","DIAMONDPICKAXE");
+		config.set("DIAMONDPICK","DIAMONDPICKAXE");
+		config.set("278","DIAMONDPICKAXE");
+		config.set("DIAMONDAXE","DIAMONDAXE");
+		config.set("DAXE","DIAMONDAXE");
+		config.set("DIAMONDHATCHET","DIAMONDAXE");
+		config.set("DHATCHET","DIAMONDAXE");
+		config.set("279","DIAMONDAXE");
+		config.set("STICK","STICK");
+		config.set("WOODENSTICK","STICK");
+		config.set("280","STICK");
+		config.set("BOWL","BOWL");
+		config.set("281","BOWL");
+		config.set("MUSHROOMSOUP","MUSHROOMSOUP");
+		config.set("282","MUSHROOMSOUP");
+		config.set("GOLDSWORD","STONE");
+		config.set("GSWORD","GOLDSWORD");
+		config.set("283","GOLDSWORD");
+		config.set("GOLDSHOVEL","GOLDSHOVEL");
+		config.set("GSHOVEL","GOLDSHOVEL");
+		config.set("284","GOLDSHOVEL");
+		config.set("GOLDPICKAXE","GOLDPICKAXE");
+		config.set("GPICK","GOLDPICKAXE");
+		config.set("GOLDPICK","GOLDPICKAXE");
+		config.set("GPICKAXE","GOLDPICKAXE");
+		config.set("285","GOLDPICKAXE");
+		config.set("GOLDAXE","GOLDAXE");
+		config.set("GAXE","GOLDAXE");
+		config.set("GOLDHATCHET","GOLDAXE");
+		config.set("GHATCHET","GOLDAXE");
+		config.set("286","GOLDAXE");
+		config.set("STRING","STRING");
+		config.set("287","STRING");
+		config.set("FEATHER","FEATHER");
+		config.set("288","FEATHER");
+		config.set("GUNPOWDER","GUNPOWDER");
+		config.set("289","GUNPOWDER");
+		config.set("WOODENHOE","WOODENHOE");
+		config.set("WHOE","WOODENHOE");
+		config.set("290","WOODENHOE");
+		config.set("STONEHOE","STONEHOE");
+		config.set("SHOE","STONEHOE");
+		config.set("291","STONEHOE");
+		config.set("IRONHOE","IRONHOE");
+		config.set("IHOE","IRONHOE");
+		config.set("292","IRONHOE");
+		config.set("DIAMONDHOE","DIAMONDHOE");
+		config.set("DHOE","DIAMONDHOE");
+		config.set("293","DIAMONDHOE");
+		config.set("GOLDHOE","GOLDHOE");
+		config.set("GHOE","GOLDHOE");
+		config.set("294","GOLDHOE");
+		config.set("SEEDS","SEEDS");
+		config.set("295","SEEDS");
+		config.set("WHEAT","WHEAT");
+		config.set("296","WHEAT");
+		config.set("BREAD","BREAD");
+		config.set("297","BREAD");
+		config.set("LEATHERCAP","LEATHERCAP");
+		config.set("LEATHERHELMET","LEATHERCAP");
+		config.set("298","LEATHERCAP");
+		config.set("LEATHERTUNIC","LEATHERTUNIC");
+		config.set("LEATHERCHESTPLATE","LEATHERTUNIC");
+		config.set("299","LEATHERTUNIC");
+		config.set("LEATHERPANTS","LEATHERPANTS");
+		config.set("LEATHERLEGGINGS","LEATHERPANTS");
+		config.set("300","LEATHERPANTS");
+		config.set("LEATHERBOOTS","LEATHERBOOTS");
+		config.set("301","LEATHERBOOTS");
+		config.set("CHAINMAILHELMET","CHAINMAILHELMET");
+		config.set("CMHELMET","CHAINMAILHELMET");
+		config.set("302","CHAINMAILHELMET");
+		config.set("CHAINMAILCHESTPLATE","CHAINMAILCHESTPLATE");
+		config.set("CMCHESTPLATE","CHAINMAILCHESTPLATE");
+		config.set("303","CHAINMAILCHESTPLATE");
+		config.set("CHAINMAILLEGGINGS","CHAINMAILLEGGINGS");
+		config.set("CMLEGGINGS","CHAINMAILLEGGINGS");
+		config.set("304","CHAINMAILLEGGINGS");
+		config.set("CHAINMAILBOOTS","CHAINMAILBOOTS");
+		config.set("CMBOOTS","CHAINMAILBOOTS");
+		config.set("305","CHAINMAILBOOTS");
+		config.set("IRONHELMET","IRONHELMET");
+		config.set("IHELMET","IRONHELMET");
+		config.set("306","IRONHELMET");
+		config.set("IRONCHESTPLATE","IRONCHESTPLATE");
+		config.set("ICHESTPLATE","IRONCHESTPLATE");
+		config.set("307","IRONCHESTPLATE");
+		config.set("IRONLEGGINGS","IRONLEGGINGS");
+		config.set("ILEGGINGS","IRONLEGGINGS");
+		config.set("308","IRONLEGGINGS");
+		config.set("IRONBOOTS","IRONBOOTS");
+		config.set("IBOOTS","IRONBOOTS");
+		config.set("309","IRONBOOTS");
+		config.set("DIAMONDHELMET","DIAMONDHELMET");
+		config.set("DHELMET","DIAMONDHELMET");
+		config.set("310","DIAMONDHELMET");
+		config.set("DIAMONDCHESTPLATE","DIAMONDHELMET");
+		config.set("DCHESTPLATE","DIAMONDHELMET");
+		config.set("311","DIAMONDHELMET");
+		config.set("DIAMONDLEGGINGS","DIAMONDLEGGINGS");
+		config.set("DLEGGINGS","DIAMONDLEGGINGS");
+		config.set("312","DIAMONDLEGGINGS");
+		config.set("DIAMONDBOOTS","DIAMONDBOOTS");
+		config.set("DBOOTS","DIAMONDBOOTS");
+		config.set("313","DIAMONDBOOTS");
+		config.set("GOLDHELMET","GOLDHELMET");
+		config.set("GHELMET","GOLDHELMET");
+		config.set("314","GOLDHELMET");
+		config.set("GOLDCHESTPLATE","GOLDCHESTPLATE");
+		config.set("GCHESTPLATE","GOLDCHESTPLATE");
+		config.set("315","GOLDCHESTPLATE");
+		config.set("GOLDLEGGINGS","GOLDLEGGINGS");
+		config.set("GLEGGINGS","GOLDLEGGINGS");
+		config.set("316","GOLDLEGGINGS");
+		config.set("GOLDBOOTS","GOLDBOOTS");
+		config.set("GBOOTS","GOLDBOOTS");
+		config.set("317","GOLDBOOTS");
+		config.set("FLINT","FLINT");
+		config.set("318","FLINT");
+		config.set("RAWPORKCHOP","RAWPORKCHOP");
+		config.set("RAWPORK","RAWPORKCHOP");
+		config.set("319","RAWPORKCHOP");
+		config.set("COOKEDPORKCHOP","COOKEDPORKCHOP");
+		config.set("COOKEDPORK","COOKEDPORKCHOP");
+		config.set("320","COOKEDPORKCHOP");
+		config.set("PAINTING","PAINTING");
+		config.set("321","PAINTING");
+		config.set("GOLDENAPPLE","GOLDENAPPLE");
+		config.set("GOLDAPPLE","GOLDENAPPLE");
+		config.set("322","GOLDENAPPLE");
+		config.set("SIGN","SIGN");
+		config.set("SIGNPOST","SIGN");
+		config.set("323","SIGN");
+		config.set("WOODENDOOR","WOODENDOOR");
+		config.set("WOODDOOR","WOODENDOOR");
+		config.set("324","WOODENDOOR");
+		config.set("BUCKET","BUCKET");
+		config.set("BUKKIT","BUCKET");
+		config.set("325","BUCKET");
+		config.set("WATERBUCKET","WATERBUCKET");
+		config.set("326","WATERBUCKET");
+		config.set("LAVABUCKET","LAVABUCKET");
+		config.set("327","LAVABUCKET");
+		config.set("MINECART","MINECART");
+		config.set("328","MINECART");
+		config.set("SADDLE","SADDLE");
+		config.set("329","SADDLE");
+		config.set("IRONDOOR","IRONDOOR");
+		config.set("330","IRONDOOR");
+		config.set("REDSTONE","REDSTONE");
+		config.set("REDSTONEDUST","REDSTONE");
+		config.set("RS","REDSTONE");
+		config.set("331","REDSTONE");
+		config.set("SNOWBALL","SNOWBALL");
+		config.set("332","SNOWBALL");
+		config.set("BOAT","BOAT");
+		config.set("333","BOAT");
+		config.set("GOLDORE","GOLDORE");
+		config.set("14","GOLDORE");
+		config.set("IRONORE","IRONORE");
+		config.set("15","IRONORE");
+		config.set("COALORE","COALORE");
+		config.set("16","COALORE");
+		config.set("LAPISLAZULIORE","LAPISLAZULIORE");
+		config.set("21","LAPISLAZULIORE");
+		config.set("DIAMONDORE","DIAMONDORE");
+		config.set("56","DIAMONDORE");
+		config.set("REDSTONEORE","REDSTONEORE");
+		config.set("73","REDSTONEORE");
+		config.set("LEATHER","LEATHER");
+		config.set("334","LEATHER");
+		config.set("MILK","MILK");
+		config.set("MILKBUCKET","MILK");
+		config.set("BUCKETOFMILK","MILK");
+		config.set("335","MILK");
+		config.set("BRICK","BRICK");
+		config.set("CLAYBRICK","BRICK");
+		config.set("336","BRICK");
+		config.set("CLAY","CLAY");
+		config.set("337","CLAY");
+		config.set("SUGARCANE","SUGARCANE");
+		config.set("REED","SUGARCANE");
+		config.set("338","SUGARCANE");
+		config.set("PAPER","PAPER");
+		config.set("339","PAPER");
+		config.set("BOOK","BOOK");
+		config.set("340","BOOK");
+		config.set("SLIMEBALL","SLIMEBALL");
+		config.set("SLIME","SLIMEBALL");
+		config.set("341","SLIMEBALL");
+		config.set("MINECARTWITHCHEST","MINECARTWITHCHEST");
+		config.set("342","MINECARTWITHCHEST");
+		config.set("MINECARTWITHFURNACE","MINECARTWITHFURNACE");
+		config.set("POWEREDMINECART","MINECARTWITHFURNACE");
+		config.set("343","MINECARTWITHFURNACE");
+		config.set("EGG","EGG");
+		config.set("344","EGG");
+		config.set("COMPASS","COMPASS");
+		config.set("345","COMPASS");
+		config.set("FISHINGROD","FISHINGROD");
+		config.set("346","FISHINGROD");
+		config.set("CLOCK","CLOCK");
+		config.set("347","CLOCK");
+		config.set("GLOWSTONEDUST","GLOWSTONEDUST");
+		config.set("348","GLOWSTONEDUST");
+		config.set("RAWFISH","RAWFISH");
+		config.set("349","RAWFISH");
+		config.set("COOKEDFISH","COOKEDFISH");
+		config.set("350","COOKEDFISH");
+		config.set("INK","INK");
+		config.set("INKSACK","INK");
+		config.set("351","INK");
+		
+		config.set("REDINK","REDINK");
+		config.set("REDDYE","REDINK");
+		config.set("ROSERED","REDINK");
+		config.set("351:1","REDINK");
+		
+		config.set("GREENINK","GREENINK");
+		config.set("GREENDYE","GREENINK");
+		config.set("CACTUSGREEN","GREENINK");
+		config.set("351:2","GREENINK");
+		
+		config.set("BROWNINK","BROWNINK");
+		config.set("BROWNDYE","BROWNINK");
+		config.set("COCOABEANBROWN","BROWNINK");
+		config.set("351:3","BROWNINK");
+		
+		config.set("LAPISLAZULI","LAPISLAZULI");
+		config.set("LAPIS","LAPISLAZULI");
+		config.set("LAZULI","LAPISLAZULI");
+		config.set("351:4","LAPISLAZULI");
+		
+		config.set("PURPLEINK","PURPLEINK");
+		config.set("PURPLEDYE","PURPLEINK");
+		config.set("351:5","PURPLEINK");
+		
+		config.set("CYANINK","CYANINK");
+		config.set("REDDYE","CYANINK");
+		config.set("351:6","CYANINK");
+		
+		config.set("LIGHTGRAYINK","LIGHTGRAYINK");
+		config.set("LIGHTGRAYDYE","LIGHTGRAYINK");
+		config.set("LIGHTGREYINK","LIGHTGRAYINK");
+		config.set("LIGHTGREYDYE","LIGHTGRAYINK");
+		config.set("351:7","LIGHTGRAYINK");
+		
+		config.set("GRAYINK","GRAYINK");
+		config.set("GRAYDYE","GRAYINK");
+		config.set("GREYINK","GRAYINK");
+		config.set("GREYDYE","GRAYINK");
+		config.set("351:8","GRAYINK");
+		
+		config.set("PINKINK","PINKINK");
+		config.set("PINKDYE","PINKINK");
+		config.set("351:9","PINKINK");
+		
+		config.set("LIMEINK","LIMEINK");
+		config.set("LIMEDYE","LIMEINK");
+		config.set("351:10","LIMEINK");
+		
+		config.set("YELLOWINK","YELLOWINK");
+		config.set("YELLOWDYE","YELLOWINK");
+		config.set("DANDELIONYELLOW","YELLOWINK");
+		config.set("351:11","YELLOWINK");
+		
+		config.set("LIGHTBLUEINK","LIGHTBLUEINK");
+		config.set("LIGHTBLUEDYE","LIGHTBLUEINK");
+		config.set("351:12","LIGHTBLUEINK");
+		
+		config.set("MAGENTAINK","MAGENTAINK");
+		config.set("MAGENTADYE","MAGENTAINK");
+		config.set("351:13","MAGENTAINK");
+		
+		config.set("ORANGEINK","ORANGEINK");
+		config.set("ORANGEDYE","ORANGEINK");
+		config.set("351:14","ORANGEINK");
+		
+		config.set("BONEMEAL","BONEMEAL");
+		config.set("351:15","BONEMEAL");
+		
+		config.set("BONE","BONE");
+		config.set("352","BONE");
+		config.set("SUGAR","SUGAR");
+		config.set("353","SUGAR");
+		config.set("CAKE","CAKE");
+		config.set("354","CAKE");
+		config.set("BED","BED");
+		config.set("355","BED");
+		config.set("REPEATER","REPEATER");
+		config.set("REDSTONEREPEATER","REPEATER");
+		config.set("DIODE","REPEATER");
+		config.set("356","REPEATER");
+		config.set("COOKIE","COOKIE");
+		config.set("357","COOKIE");
+		config.set("MAP","MAP");
+		config.set("358","MAP");
+		config.set("SHEARS","SHEARS");
+		config.set("359","SHEARS");
+		config.set("MELONSLICE","MELONSLICE");
+		config.set("MELON","MELONSLICE");
+		config.set("360","MELONSLICE");
+		config.set("PUMPKINSEED","PUMPKINSEED");
+		config.set("PUMPKINSEEDS","PUMPKINSEED");
+		config.set("361","PUMPKINSEED");
+		config.set("MELONSEED","MELONSEED");
+		config.set("MELONSEEDS","MELONSEED");
+		config.set("362","MELONSEED");
+		config.set("RAWBEEF","RAWBEEF");
+		config.set("363","RAWBEEF");
+		config.set("COOKEDBEEF","STEAK");
+		config.set("STEAK","STEAK");
+		config.set("364","STEAK");
+		config.set("RAWCHICKEN","RAWCHICKEN");
+		config.set("365","RAWCHICKEN");
+		config.set("COOKEDCHICKEN","COOKEDCHICKEN");
+		config.set("366","COOKEDCHICKEN");
+		config.set("ROTTENFLESH","ROTTENFLESH");
+		config.set("367","ROTTENFLESH");
+		config.set("ENDERPEARL","ENDERPEARL");
+		config.set("368","ENDERPEARL");
+		config.set("BLAZEROD","BLAZEROD");
+		config.set("369","BLAZEROD");
+		config.set("GHASTTEAR","GHASTTEAR");
+		config.set("370","GHASTTEAR");
+		config.set("GOLDNUGGET","GOLDNUGGET");
+		config.set("371","GOLDNUGGET");
+		config.set("NETHERWART","NETHERWART");
+		config.set("372","NETHERWART");
+		config.set("GLASSBOTTLE","GLASSBOTTLE");
+		config.set("GLASSVIAL","GLASSBOTTLE");
+		config.set("VIAL","GLASSBOTTLE");
+		config.set("374","GLASSBOTTLE");
+		config.set("SPIDEREYE","SPIDEREYE");
+		config.set("375","SPIDEREYE");
+		config.set("BREWINGSTAND","BREWINGSTAND");
+		config.set("379","BREWINGSTAND");
+		config.set("CAULDRON","CAULDRON");
+		config.set("380","CAULDRON");
+		config.set("EXPERIENCE","EXPERIENCE");
+		config.set("999","EXPERIENCE");
+		config.set("EXP","EXPERIENCE");
+		config.set("EXPPOINTS","EXPERIENCE");
+		
+		config.set("POTIONOFREGENERATION","POTIONOFREGENERATION");
+		config.set("373:8193","POTIONOFREGENERATION");
+		
+		config.set("POTIONOFSWIFTNESS","POTIONOFSWIFTNESS");
+		config.set("373:8194","POTIONOFSWIFTNESS");
+		
+		config.set("POTIONOFFIRERESISTANCE","POTIONOFFIRERESISTANCE");
+		config.set("373:8195","POTIONOFFIRERESISTANCE");
+		
+		config.set("POTIONOFHEALING","POTIONOFHEALING");
+		config.set("373:8261","POTIONOFHEALING");
+		
+		config.set("POTIONOFSTRENGTH","POTIONOFSTRENGTH");
+		config.set("373:8201","POTIONOFSTRENGTH");
+		
+		config.set("POTIONOFPOISON","POTIONOFPOISON");
+		config.set("373:8196","POTIONOFPOISON");
+		
+		config.set("POTIONOFWEAKNESS","POTIONOFWEAKNESS");
+		config.set("373:8200","POTIONOFWEAKNESS");
+		
+		config.set("POTIONOFSLOWNESS","POTIONOFSLOWNESS");
+		config.set("373:8202","POTIONOFSLOWNESS");
+		
+		config.set("POTIONOFHARMING","POTIONOFHARMING");
+		config.set("373:8204","POTIONOFHARMING");
+		
+		
+		config.set("POTIONOFREGENERATIONEXTENDED","POTIONOFREGENERATIONEXTENDED");
+		config.set("373:8257","POTIONOFREGENERATIONEXTENDED");
+		
+		config.set("POTIONOFSWIFTNESSEXTENDED","POTIONOFSWIFTNESSEXTENDED");
+		config.set("373:8258","POTIONOFSWIFTNESSEXTENDED");
+		
+		config.set("POTIONOFFIRERESISTANCEEXTENDED","POTIONOFFIRERESISTANCEEXTENDED");
+		config.set("373:8259","POTIONOFFIRERESISTANCEEXTENDED");
+		
+		config.set("POTIONOFHEALINGEXTENDED","POTIONOFHEALINGEXTENDED");
+		config.set("373:8261","POTIONOFHEALINGEXTENDED");
+		
+		config.set("POTIONOFSTRENGTHEXTENDED","POTIONOFSTRENGTHEXTENDED");
+		config.set("373:8265","POTIONOFSTRENGTHEXTENDED");
+		
+		config.set("POTIONOFPOISONEXTENDED","POTIONOFPOISONEXTENDED");
+		config.set("373:8260","POTIONOFPOISONEXTENDED");
+		
+		config.set("POTIONOFWEAKNESSEXTENDED","POTIONOFWEAKNESSEXTENDED");
+		config.set("373:8264","POTIONOFWEAKNESSEXTENDED");
+		
+		config.set("POTIONOFSLOWNESSEXTENDED","POTIONOFSLOWNESSEXTENDED");
+		config.set("373:8266","POTIONOFSLOWNESSEXTENDED");
+		
+		config.set("POTIONOFHARMINGEXTENDED","POTIONOFHARMINGEXTENDED");
+		config.set("373:8268","POTIONOFHARMINGEXTENDED");
+		
+		
+		config.set("POTIONOFREGENERATIONII","POTIONOFREGENERATIONII");
+		config.set("373:8225","POTIONOFREGENERATIONII");
+		
+		config.set("POTIONOFSWIFTNESSII","POTIONOFSWIFTNESSII");
+		config.set("373:8226","POTIONOFSWIFTNESSII");
+		
+		config.set("POTIONOFFIRERESISTANCEII","POTIONOFFIRERESISTANCEII");
+		config.set("373:8227","POTIONOFFIRERESISTANCEII");
+		
+		config.set("POTIONOFHEALINGII","POTIONOFHEALINGII");
+		config.set("373:8229","POTIONOFHEALINGII");
+		
+		config.set("POTIONOFSTRENGTHII","POTIONOFSTRENGTHII");
+		config.set("373:8233","POTIONOFSTRENGTHII");
+		
+		config.set("POTIONOFPOISONII","POTIONOFPOISONII");
+		config.set("373:8228","POTIONOFPOISONII");
+		
+		config.set("POTIONOFWEAKNESSII","POTIONOFWEAKNESSII");
+		config.set("373:8232","POTIONOFWEAKNESSII");
+		
+		config.set("POTIONOFSLOWNESSII","POTIONOFSLOWNESSII");
+		config.set("373:8234","POTIONOFSLOWNESSII");
+		
+		config.set("POTIONOFHARMINGII","POTIONOFHARMINGII");
+		config.set("373:8236","POTIONOFHARMINGII");
+		
+		
+		config.set("AWKWARDPOTION","AWKWARDPOTION");
+		config.set("373:16","AWKWARDPOTION");
+		config.set("THICKPOTION","THICKPOTION");
+		config.set("373:32","THICKPOTION");
+		config.set("MUNDANEPOTIONEXTENDED","MUNDANEPOTIONEXTENDED");
+		config.set("373:64","MUNDANEPOTIONEXTENDED");
+		config.set("MUNDANEPOTION","MUNDANEPOTION");
+		config.set("373:8192","MUNDANEPOTION");
+		config.set("WATERBOTTLE","WATERBOTTLE");
+		config.set("373:0","WATERBOTTLE");
+		
+		
+		config.set("SPLASHPOTIONOFREGENERATION","SPLASHPOTIONOFREGENERATION");
+		config.set("373:16385","SPLASHPOTIONOFREGENERATION");
+		
+		config.set("SPLASHPOTIONOFSWIFTNESS","SPLASHPOTIONOFSWIFTNESS");
+		config.set("373:16386","SPLASHPOTIONOFSWIFTNESS");
+		
+		config.set("SPLASHPOTIONOFFIRERESISTANCE","SPLASHPOTIONOFFIRERESISTANCE");
+		config.set("373:16387","SPLASHPOTIONOFFIRERESISTANCE");
+		
+		config.set("SPLASHPOTIONOFHEALING","SPLASHPOTIONOFHEALING");
+		config.set("373:16389","POTIONOFHEALING");
+		
+		config.set("SPLASHPOTIONOFSTRENGTH","SPLASHPOTIONOFSTRENGTH");
+		config.set("373:16393","SPLASHPOTIONOFSTRENGTH");
+		
+		config.set("SPLASHPOTIONOFPOISON","SPLASHPOTIONOFPOISON");
+		config.set("373:16388","SPLASHPOTIONOFPOISON");
+		
+		config.set("SPLASHPOTIONOFWEAKNESS","SPLASHPOTIONOFWEAKNESS");
+		config.set("373:16392","SPLASHPOTIONOFWEAKNESS");
+		
+		config.set("SPLASHPOTIONOFSLOWNESS","SPLASHPOTIONOFSLOWNESS");
+		config.set("373:16394","SPLASHPOTIONOFSLOWNESS");
+		
+		config.set("SPLASHPOTIONOFHARMING","SPLASHPOTIONOFHARMING");
+		config.set("373:16396","SPLASHPOTIONOFHARMING");
+		
+		
+		config.set("SPLASHPOTIONOFREGENERATIONEXTENDED","SPLASHPOTIONOFREGENERATIONEXTENDED");
+		config.set("373:16449","SPLASHPOTIONOFREGENERATIONEXTENDED");
+		
+		config.set("SPLASHPOTIONOFSWIFTNESSEXTENDED","SPLASHPOTIONOFSWIFTNESSEXTENDED");
+		config.set("373:16450","SPLASHPOTIONOFSWIFTNESSEXTENDED");
+		
+		config.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED","SPLASHPOTIONOFFIRERESISTANCEEXTENDED");
+		config.set("373:16451","SPLASHPOTIONOFFIRERESISTANCEEXTENDED");
+		
+		config.set("SPLASHPOTIONOFHEALINGEXTENDED","SPLASHPOTIONOFHEALINGEXTENDED");
+		config.set("373:16453","SPLASHPOTIONOFHEALINGEXTENDED");
+		
+		config.set("SPLASHPOTIONOFSTRENGTHEXTENDED","SPLASHPOTIONOFSTRENGTHEXTENDED");
+		config.set("373:16457","SPLASHPOTIONOFSTRENGTHEXTENDED");
+		
+		config.set("SPLASHPOTIONOFPOISONEXTENDED","SPLASHPOTIONOFPOISONEXTENDED");
+		config.set("373:16452","SPLASHPOTIONOFPOISONEXTENDED");
+		
+		config.set("SPLASHPOTIONOFWEAKNESSEXTENDED","SPLASHPOTIONOFWEAKNESSEXTENDED");
+		config.set("373:16456","SPLASHPOTIONOFWEAKNESSEXTENDED");
+		
+		config.set("SPLASHPOTIONOFSLOWNESSEXTENDED","SPLASHPOTIONOFSLOWNESSEXTENDED");
+		config.set("373:16458","SPLASHPOTIONOFSLOWNESSEXTENDED");
+		
+		config.set("SPLASHPOTIONOFHARMINGEXTENDED","SPLASHPOTIONOFHARMINGEXTENDED");
+		config.set("373:16460","SPLASHPOTIONOFHARMINGEXTENDED");
+		
+		
+		config.set("SPLASHPOTIONOFREGENERATIONII","SPLASHPOTIONOFREGENERATIONII");
+		config.set("373:16417","SPLASHPOTIONOFREGENERATIONII");
+		
+		config.set("SPLASHPOTIONOFSWIFTNESSII","SPLASHPOTIONOFSWIFTNESSII");
+		config.set("373:16418","SPLASHPOTIONOFSWIFTNESSII");
+		
+		config.set("SPLASHPOTIONOFFIRERESISTANCEII","SPLASHPOTIONOFFIRERESISTANCEII");
+		config.set("373:16419","SPLASHPOTIONOFFIRERESISTANCEII");
+		
+		config.set("SPLASHPOTIONOFHEALINGII","SPLASHPOTIONOFHEALINGII");
+		config.set("373:16421","SPLASHPOTIONOFHEALINGII");
+		
+		config.set("SPLASHPOTIONOFSTRENGTHII","SPLASHPOTIONOFSTRENGTHII");
+		config.set("373:16425","SPLASHPOTIONOFSTRENGTHII");
+		
+		config.set("SPLASHPOTIONOFPOISONII","SPLASHPOTIONOFPOISONII");
+		config.set("373:16420","SPLASHPOTIONOFPOISONII");
+		
+		config.set("SPLASHPOTIONOFWEAKNESSII","SPLASHPOTIONOFWEAKNESSII");
+		config.set("373:16424","SPLASHPOTIONOFWEAKNESSII");
+		
+		config.set("SPLASHPOTIONOFSLOWNESSII","SPLASHPOTIONOFSLOWNESSII");
+		config.set("373:16426","SPLASHPOTIONOFSLOWNESSII");
+		
+		config.set("SPLASHPOTIONOFHARMINGII","SPLASHPOTIONOFHARMINGII");
+		config.set("373:16428","SPLASHPOTIONOFHARMINGII");
+		
+		
+		config.set("SPLASHMUNDANEPOTION","SPLASHMUNDANEPOTION");
+		config.set("373:16384","SPLASHMUNDANEPOTION");
+		
+		config.set("MUSICDISK13","MUSICDISK13");
+		config.set("2256","MUSICDISK13");
+		config.set("MUSICDISKCAT","MUSICDISKCAT");
+		config.set("2257","MUSICDISKCAT");
+		config.set("MUSICDISKBLOCKS","MUSICDISKBLOCKS");
+		config.set("2258","MUSICDISKBLOCKS");
+		config.set("MUSICDISKCHIRP","MUSICDISKCHIRP");
+		config.set("2259","MUSICDISKCHIRP");
+		config.set("MUSICDISKFAR","MUSICDISKFAR");
+		config.set("2260","MUSICDISKFAR");
+		config.set("MUSICDISKMALL","MUSICDISKMALL");
+		config.set("2261","MUSICDISKMALL");
+		config.set("MUSICDISKMELLOHI","MUSICDISKMELLOHI");
+		config.set("2262","MUSICDISKMELLOHI");
+		config.set("MUSICDISKSTAL","MUSICDISKSTAL");
+		config.set("2263","MUSICDISKSTAL");
+		config.set("MUSICDISKSTRAD","MUSICDISKSTRAD");
+		config.set("2264","MUSICDISKSTRAD");
+		config.set("MUSICDISKWARD","MUSICDISKWARD");
+		config.set("2265","MUSICDISKWARD");
+		config.set("MUSICDISK11","MUSICDISK11");
+		config.set("2266","MUSICDISK11");
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	public void setItems() {
 		//File itemsFile = new File(plugin.getDataFolder(), "Items.yml");
 		//FileConfiguration conf = YamlConfiguration.loadConfiguration(itemsFile);
 		
@@ -90,7 +1090,8 @@ public class Initialize {
 		conf.set("STONE.description", "A Smooth Stone");
 		conf.set("STONE.stock",50);
 		conf.set("STONE.spread", .01);
-		conf.set("STONE.time",0);
+		conf.set("STONE.buytime",0);
+		conf.set("STONE.selltime",0);
 		
 		conf.set("GRASS.velocity", .01);
 		conf.set("GRASS.id", 2);
@@ -100,7 +1101,8 @@ public class Initialize {
 		conf.set("GRASS.description", "Grassy Green!");
 		conf.set("GRASS.stock",50);
 		conf.set("GRASS.spread", .01);
-		conf.set("GRASS.time",0);
+		conf.set("GRASS.buytime",0);
+		conf.set("GRASS.selltime",0);
 
 		conf.set("DIRT.velocity", .001);
 		conf.set("DIRT.id", 3);
@@ -110,7 +1112,8 @@ public class Initialize {
 		conf.set("DIRT.description", "Dirt dug from the crust");
 		conf.set("DIRT.stock",50);
 		conf.set("DIRT.spread", .001);
-		conf.set("DIRT.time",0);
+		conf.set("DIRT.buytime",0);
+		conf.set("DIRT.selltime",0);
 
 		conf.set("COBBLESTONE.velocity", .01);
 		conf.set("COBBLESTONE.id", 4);
@@ -120,7 +1123,8 @@ public class Initialize {
 		conf.set("COBBLESTONE.description", "Un-refined rock");
 		conf.set("COBBLESTONE.stock",50);
 		conf.set("COBBLESTONE.spread", .01);
-		conf.set("COBBLESTONE.time",0);
+		conf.set("COBBLESTONE.buytime",0);
+		conf.set("COBBLESTONE.selltime",0);
 		
 		// BEGIN ALL PLANKS
 
@@ -132,7 +1136,8 @@ public class Initialize {
 		conf.set("PLANK.description", "Processed wood");
 		conf.set("PLANK.stock",50);
 		conf.set("PLANK.spread", .01);
-		conf.set("PLANK.time",0);
+		conf.set("PLANK.buytime",0);
+		conf.set("PLANK.selltime",0);
 		
 		conf.set("PINEPLANK.velocity", .01);
 		conf.set("PINEPLANK.id", 5001);
@@ -142,7 +1147,8 @@ public class Initialize {
 		conf.set("PINEPLANK.description", "Processed wood");
 		conf.set("PINEPLANK.stock",50);
 		conf.set("PINEPLANK.spread", .01);
-		conf.set("PINEPLANK.time",0);
+		conf.set("PINEPLANK.buytime",0);
+		conf.set("PINEPLANK.selltime",0);
 		
 		conf.set("BIRCHPLANK.velocity", .01);
 		conf.set("BIRCHPLANK.id", 5002);
@@ -152,7 +1158,8 @@ public class Initialize {
 		conf.set("BIRCHPLANK.description", "Processed wood");
 		conf.set("BIRCHPLANK.stock",50);
 		conf.set("BIRCHPLANK.spread", .01);
-		conf.set("BIRCHPLANK.time",0);
+		conf.set("BIRCHPLANK.buytime",0);
+		conf.set("BIRCHPLANK.selltime",0);
 		
 		conf.set("JUNGLEPLANK.velocity", .01);
 		conf.set("JUNGLEPLANK.id", 5003);
@@ -162,7 +1169,8 @@ public class Initialize {
 		conf.set("JUNGLEPLANK.description", "Processed wood");
 		conf.set("JUNGLEPLANK.stock",50);
 		conf.set("JUNGLEPLANK.spread", .01);
-		conf.set("JUNGLEPLANK.time",0);
+		conf.set("JUNGLEPLANK.buytime",0);
+		conf.set("JUNGLEPLANK.selltime",0);
 		
 		// BEGIN ALL PLANK SLABS
 		
@@ -174,7 +1182,8 @@ public class Initialize {
 		conf.set("OAKSLAB.description", "Processed wood");
 		conf.set("OAKSLAB.stock",50);
 		conf.set("OAKSLAB.spread", .01);
-		conf.set("OAKSLAB.time",0);
+		conf.set("OAKSLAB.buytime",0);
+		conf.set("OAKSLAB.selltime",0);
 		
 		conf.set("PINESLAB.velocity", .01);
 		conf.set("PINESLAB.id", 126001);
@@ -184,7 +1193,8 @@ public class Initialize {
 		conf.set("PINESLAB.description", "Processed wood");
 		conf.set("PINESLAB.stock",50);
 		conf.set("PINESLAB.spread", .01);
-		conf.set("PINESLAB.time",0);
+		conf.set("PINESLAB.buytime",0);
+		conf.set("PINESLAB.selltime",0);
 		
 		conf.set("BIRCHSLAB.velocity", .01);
 		conf.set("BIRCHSLAB.id", 126002);
@@ -194,7 +1204,8 @@ public class Initialize {
 		conf.set("BIRCHSLAB.description", "Processed wood");
 		conf.set("BIRCHSLAB.stock",50);
 		conf.set("BIRCHSLAB.spread", .01);
-		conf.set("BIRCHSLAB.time",0);
+		conf.set("BIRCHSLAB.buytime",0);
+		conf.set("BIRCHSLAB.selltime",0);
 		
 		conf.set("JUNGLESLAB.velocity", .01);
 		conf.set("JUNGLESLAB.id", 126003);
@@ -204,7 +1215,8 @@ public class Initialize {
 		conf.set("JUNGLESLAB.description", "Processed wood");
 		conf.set("JUNGLESLAB.stock",50);
 		conf.set("JUNGLESLAB.spread", .01);
-		conf.set("JUNGLESLABK.time",0);
+		conf.set("JUNGLESLABK.buytime",0);
+		conf.set("JUNGLESLABK.selltime",0);
 
 		// BEGIN ALL SAPLINGS
 		
@@ -216,7 +1228,8 @@ public class Initialize {
 		conf.set("SAPLING.description", "A small plant");
 		conf.set("SAPLING.stock",50);
 		conf.set("SAPLING.spread", .01);
-		conf.set("SAPLING.time",0);
+		conf.set("SAPLING.buytime",0);
+		conf.set("SAPLING.selltime",0);
 		
 		conf.set("BIRCHSAPLING.velocity", .01);
 		conf.set("BIRCHSAPLING.id", 6001);
@@ -226,7 +1239,8 @@ public class Initialize {
 		conf.set("BIRCHSAPLING.description", "A small plant");
 		conf.set("BIRCHSAPLING.stock",50);
 		conf.set("BIRCHSAPLING.spread", .01);
-		conf.set("BIRCHSAPLING.time",0);
+		conf.set("BIRCHSAPLING.buytime",0);
+		conf.set("BIRCHSAPLING.selltime",0);
 		
 		conf.set("PINESAPLING.velocity", .01);
 		conf.set("PINESAPLING.id", 6002);
@@ -236,7 +1250,8 @@ public class Initialize {
 		conf.set("PINESAPLING.description", "A small plant");
 		conf.set("PINESAPLING.stock",50);
 		conf.set("PINESAPLING.spread", .01);
-		conf.set("PINESAPLING.time",0);
+		conf.set("PINESAPLING.buytime",0);
+		conf.set("PINESAPLING.selltime",0);
 		
 		conf.set("JUNGLESAPLING.velocity", .01);
 		conf.set("JUNGLESAPLING.id", 6003);
@@ -246,7 +1261,8 @@ public class Initialize {
 		conf.set("JUNGLESAPLING.description", "A small plant");
 		conf.set("JUNGLESAPLING.stock",50);
 		conf.set("JUNGLESAPLING.spread", .01);
-		conf.set("JUNGLESAPLING.time",0);
+		conf.set("JUNGLESAPLING.buytime",0);
+		conf.set("JUNGLESAPLING.selltime",0);
 		
 		// END SAPLINGS
 		
@@ -258,7 +1274,8 @@ public class Initialize {
 		conf.set("BEDROCK.description", "An unbreakable block that is found at the bottom of the world.");
 		conf.set("BEDROCK.stock",50);
 		conf.set("BEDROCK.spread", .01);
-		conf.set("BEDROCK.time",0);
+		conf.set("BEDROCK.buytime",0);
+		conf.set("BEDROCK.selltime",0);
 		
 		conf.set("WATER.velocity", .04);
 		conf.set("WATER.id", 8);
@@ -268,7 +1285,8 @@ public class Initialize {
 		conf.set("WATER.description", "Liquid H20");
 		conf.set("WATER.stock",50);
 		conf.set("WATER.spread", .01);
-		conf.set("WATER.time",0);
+		conf.set("WATER.buytime",0);
+		conf.set("WATER.selltime",0);
 		
 		conf.set("STILLWATER.velocity", .04);
 		conf.set("STILLWATER.id", 9);
@@ -278,7 +1296,8 @@ public class Initialize {
 		conf.set("STILLWATER.description", "Liquid H20");
 		conf.set("STILLWATER.stock",50);
 		conf.set("STILLWATER.spread", .01);
-		conf.set("STILLWATER.time",0);
+		conf.set("STILLWATER.buytime",0);
+		conf.set("STILLWATER.selltime",0);
 		
 		conf.set("LAVA.velocity", .04);
 		conf.set("LAVA.id", 10);
@@ -288,7 +1307,8 @@ public class Initialize {
 		conf.set("LAVA.description", "Molten Volcano stuff!");
 		conf.set("LAVA.stock",50);
 		conf.set("LAVA.spread", .01);
-		conf.set("LAVA.time",0);
+		conf.set("LAVA.buytime",0);
+		conf.set("LAVA.selltime",0);
 		
 		conf.set("STILLLAVA.velocity", .04);
 		conf.set("STILLLAVA.id", 11);
@@ -298,7 +1318,8 @@ public class Initialize {
 		conf.set("STILLLAVA.description", "Molten Volcano stuff!");
 		conf.set("STILLLAVA.stock",50);
 		conf.set("STILLLAVA.spread", .01);
-		conf.set("STILLLAVA.time",0);
+		conf.set("STILLLAVA.buytime",0);
+		conf.set("STILLLAVA.selltime",0);
 
 		conf.set("SAND.velocity", .001);
 		conf.set("SAND.id", 12);
@@ -308,7 +1329,8 @@ public class Initialize {
 		conf.set("SAND.description", "Found on beaches!");
 		conf.set("SAND.stock",50);
 		conf.set("SAND.spread", .001);
-		conf.set("SAND.time",0);
+		conf.set("SAND.buytime",0);
+		conf.set("SAND.selltime",0);
 
 		conf.set("GRAVEL.velocity", .001);
 		conf.set("GRAVEL.id", 13);
@@ -318,7 +1340,8 @@ public class Initialize {
 		conf.set("GRAVEL.description", "Useless cave slush");
 		conf.set("GRAVEL.stock",50);
 		conf.set("GRAVEL.spread", .001);
-		conf.set("GRAVEL.time",0);
+		conf.set("GRAVEL.buytime",0);
+		conf.set("GRAVEL.selltime",0);
 		
 		conf.set("GOLDORE.velocity", .19);
 		conf.set("GOLDORE.id", 14);
@@ -328,7 +1351,8 @@ public class Initialize {
 		conf.set("GOLDORE.description", "Prettiest metal ever!");
 		conf.set("GOLDORE.stock",50);
 		conf.set("GOLDORE.spread", .19);
-		conf.set("GOLDORE.time",0);
+		conf.set("GOLDORE.buytime",0);
+		conf.set("GOLDORE.selltime",0);
 		
 		conf.set("IRONORE.velocity", .12);
 		conf.set("IRONORE.id", 15);
@@ -338,7 +1362,8 @@ public class Initialize {
 		conf.set("IRONORE.description", "Tough as steel!");
 		conf.set("IRONORE.stock",50);
 		conf.set("IRONORE.spread", .12);
-		conf.set("IRONORE.time",0);
+		conf.set("IRONORE.buytime",0);
+		conf.set("IRONORE.selltime",0);
 		
 		conf.set("COALORE.velocity", .09);
 		conf.set("COALORE.id", 16);
@@ -348,7 +1373,8 @@ public class Initialize {
 		conf.set("COALORE.description", "Good for burning!");
 		conf.set("COALORE.stock",50);
 		conf.set("COALORE.spread", .09);
-		conf.set("COALORE.time",0);
+		conf.set("COALORE.buytime",0);
+		conf.set("COALORE.selltime",0);
 
 		conf.set("WOOD.velocity", .05);
 		conf.set("WOOD.id", 17);
@@ -358,7 +1384,8 @@ public class Initialize {
 		conf.set("WOOD.description", "Part of a tree!");
 		conf.set("WOOD.stock",50);
 		conf.set("WOOD.spread", .05);
-		conf.set("WOOD.time",0);
+		conf.set("WOOD.buytime",0);
+		conf.set("WOOD.selltime",0);
 		
 		conf.set("BIRCHWOOD.velocity", .05);
 		conf.set("BIRCHWOOD.id", 17002);
@@ -368,7 +1395,8 @@ public class Initialize {
 		conf.set("BIRCHWOOD.description", "Part of a tree!");
 		conf.set("BIRCHWOOD.stock",50);
 		conf.set("BIRCHWOOD.spread", .05);
-		conf.set("BIRCHWOOD.time",0);
+		conf.set("BIRCHWOOD.buytime",0);
+		conf.set("BIRCHWOOD.selltime",0);
 		
 		conf.set("PINEWOOD.velocity", .05);
 		conf.set("PINEWOOD.id", 17001);
@@ -378,7 +1406,8 @@ public class Initialize {
 		conf.set("PINEWOOD.description", "Part of a tree!");
 		conf.set("PINEWOOD.stock",50);
 		conf.set("PINEWOOD.spread", .05);
-		conf.set("PINEWOOD.time",0);
+		conf.set("PINEWOOD.buytime",0);
+		conf.set("PINEWOOD.selltime",0);
 		
 		conf.set("JUNGLEWOOD.velocity", .05);
 		conf.set("JUNGLEWOOD.id", 17003);
@@ -388,7 +1417,8 @@ public class Initialize {
 		conf.set("JUNGLEWOOD.description", "Part of a tree!");
 		conf.set("JUNGLEWOOD.stock",50);
 		conf.set("JUNGLEWOOD.spread", .05);
-		conf.set("JUNGLEWOOD.time",0);
+		conf.set("JUNGLEWOOD.buytime",0);
+		conf.set("JUNGLEWOOD.selltime",0);
 		
 		conf.set("SPONGE.velocity", .05);
 		conf.set("SPONGE.id", 19);
@@ -398,7 +1428,8 @@ public class Initialize {
 		conf.set("SPONGE.description", "Soaks up water like nothing else!");
 		conf.set("SPONGE.stock",50);
 		conf.set("SPONGE.spread", .05);
-		conf.set("SPONGE.time",0);
+		conf.set("SPONGE.buytime",0);
+		conf.set("SPONGE.selltime",0);
 
 		conf.set("GLASS.velocity", .02);
 		conf.set("GLASS.id", 20);
@@ -408,7 +1439,8 @@ public class Initialize {
 		conf.set("GLASS.description", "Clear as day.");
 		conf.set("GLASS.stock",50);
 		conf.set("GLASS.spread", .02);
-		conf.set("GLASS.time",0);
+		conf.set("GLASS.buytime",0);
+		conf.set("GLASS.selltime",0);
 		
 		conf.set("LAPISLAZULIORE.velocity", .9);
 		conf.set("LAPISLAZULIORE.id", 21);
@@ -418,7 +1450,8 @@ public class Initialize {
 		conf.set("LAPISLAZULIORE.description", "Prettiest ore in the world");
 		conf.set("LAPISLAZULIORE.stock",50);
 		conf.set("LAPISLAZULIORE.spread", .8);
-		conf.set("LAPISLAZULIORE.time",0);
+		conf.set("LAPISLAZULIORE.buytime",0);
+		conf.set("LAPISLAZULIORE.selltime",0);
 		
 		conf.set("LAPISLAZULIBLOCK.velocity", .9);
 		conf.set("LAPISLAZULIBLOCK.id", 22);
@@ -428,7 +1461,8 @@ public class Initialize {
 		conf.set("LAPISLAZULIBLOCK.description", "Prettiest ore in the world");
 		conf.set("LAPISLAZULIBLOCK.stock",50);
 		conf.set("LAPISLAZULIBLOCK.spread", .8);
-		conf.set("LAPISLAZULIBLOCK.time",0);
+		conf.set("LAPISLAZULIBLOCK.buytime",0);
+		conf.set("LAPISLAZULIBLOCK.selltime",0);
 		
 		conf.set("DISPENSER.velocity", .15);
 		conf.set("DISPENSER.id", 23);
@@ -438,7 +1472,8 @@ public class Initialize {
 		conf.set("DISPENSER.description", "Dispenses stuff!");
 		conf.set("DISPENSER.stock",50);
 		conf.set("DISPENSER.spread", .15);
-		conf.set("DISPENSER.time",0);
+		conf.set("DISPENSER.buytime",0);
+		conf.set("DISPENSER.selltime",0);
 		
 		// BEGIN SANDSTONE
 
@@ -450,7 +1485,8 @@ public class Initialize {
 		conf.set("SANDSTONE.description", "Looks like sand, feels like stone!");
 		conf.set("SANDSTONE.stock",50);
 		conf.set("SANDSTONE.spread", .01);
-		conf.set("SANDSTONE.time",0);
+		conf.set("SANDSTONE.buytime",0);
+		conf.set("SANDSTONE.selltime",0);
 		
 		conf.set("HIEROGLYPHICSANDSTONE.velocity", .01);
 		conf.set("HIEROGLYPHICSANDSTONE.id", 24001);
@@ -460,7 +1496,8 @@ public class Initialize {
 		conf.set("HIEROGLYPHICSANDSTONE.description", "Looks like sand, feels like stone!");
 		conf.set("HIEROGLYPHICSANDSTONE.stock",50);
 		conf.set("HIEROGLYPHICSANDSTONE.spread", .01);
-		conf.set("HIEROGLYPHICSANDSTONE.time",0);
+		conf.set("HIEROGLYPHICSANDSTONE.buytime",0);
+		conf.set("HIEROGLYPHICSANDSTONE.selltime",0);
 		
 		conf.set("SMOOTHSANDSTONE.velocity", .01);
 		conf.set("SMOOTHSANDSTONE.id", 24002);
@@ -470,7 +1507,8 @@ public class Initialize {
 		conf.set("SMOOTHSANDSTONE.description", "Looks like sand, feels like stone!");
 		conf.set("SMOOTHSANDSTONE.stock",50);
 		conf.set("SMOOTHSANDSTONE.spread", .01);
-		conf.set("SMOOTHSANDSTONE.time",0);
+		conf.set("SMOOTHSANDSTONE.buytime",0);
+		conf.set("SMOOTHSANDSTONE.selltime",0);
 
 		conf.set("NOTEBLOCK.velocity", .08);
 		conf.set("NOTEBLOCK.id", 25);
@@ -480,7 +1518,8 @@ public class Initialize {
 		conf.set("NOTEBLOCK.description", "Plays musical notes");
 		conf.set("NOTEBLOCK.stock",50);
 		conf.set("NOTEBLOCK.spread", .08);
-		conf.set("NOTEBLOCK.time",0);
+		conf.set("NOTEBLOCK.buytime",0);
+		conf.set("NOTEBLOCK.selltime",0);
 
 		conf.set("BED.velocity", .1);
 		conf.set("BED.id", 355);
@@ -490,8 +1529,9 @@ public class Initialize {
 		conf.set("BED.description", "Useful for sleeping!");
 		conf.set("BED.stock",50);
 		conf.set("BED.spread", .1);
-		conf.set("BED.time",0);
-
+		conf.set("BED.buytime",0);
+		conf.set("BED.selltime",0);
+		
 		conf.set("POWEREDRAIL.velocity", 1.2);
 		conf.set("POWEREDRAIL.id", 27);
 		conf.set("POWEREDRAIL.price",  301);
@@ -500,7 +1540,8 @@ public class Initialize {
 		conf.set("POWEREDRAIL.description", "A rail that can power minecarts");
 		conf.set("POWEREDRAIL.stock",50);
 		conf.set("POWEREDRAIL.spread", 1.2);
-		conf.set("POWEREDRAIL.time",0);
+		conf.set("POWEREDRAIL.buytime",0);
+		conf.set("POWEREDRAIL.selltime",0);
 
 		conf.set("DETECTORRAIL.velocity", .5);
 		conf.set("DETECTORRAIL.id", 28);
@@ -510,7 +1551,8 @@ public class Initialize {
 		conf.set("DETECTORRAIL.description", "Provides power!");
 		conf.set("DETECTORRAIL.stock",50);
 		conf.set("DETECTORRAIL.spread", .5);
-		conf.set("DETECTORRAIL.time",0);
+		conf.set("DETECTORRAIL.buytime",0);
+		conf.set("DETECTORRAIL.selltime",0);
 
 		conf.set("STICKYPISTON.velocity", .8);
 		conf.set("STICKYPISTON.id", 29);
@@ -520,7 +1562,8 @@ public class Initialize {
 		conf.set("STICKYPISTON.description", "Grabs and moves blocks!");
 		conf.set("STICKYPISTON.stock",50);
 		conf.set("STICKYPISTON.spread", .8);
-		conf.set("STICKYPISTON.time",0);
+		conf.set("STICKYPISTON.buytime",0);
+		conf.set("STICKYPISTON.selltime",0);
 		
 		conf.set("WEB.velocity", .03);
 		conf.set("WEB.id", 30);
@@ -530,7 +1573,8 @@ public class Initialize {
 		conf.set("WEB.description", "A spiders sweet home.");
 		conf.set("WEB.stock",50);
 		conf.set("WEB.spread", .8);
-		conf.set("WEB.time",0);
+		conf.set("WEB.buytime",0);
+		conf.set("WEB.selltime",0);
 		
 		conf.set("DEADSHRUB.velocity", .05);
 		conf.set("DEADSHRUB.id", 31);
@@ -540,7 +1584,8 @@ public class Initialize {
 		conf.set("DEADSHRUB.description", "Tall Grass in dead shrub form");
 		conf.set("DEADSHRUB.stock",50);
 		conf.set("DEADSHRUB.spread", .05);
-		conf.set("DEADSHRUB.time",0);
+		conf.set("DEADSHRUB.buytime",0);
+		conf.set("DEADSHRUB.selltime",0);
 		
 		conf.set("TALLGRASS.velocity", .05);
 		conf.set("TALLGRASS.id", 31001);
@@ -550,7 +1595,8 @@ public class Initialize {
 		conf.set("TALLGRASS.description", "Tall Grass");
 		conf.set("TALLGRASS.stock",50);
 		conf.set("TALLGRASS.spread", .05);
-		conf.set("TALLGRASS.time",0);
+		conf.set("TALLGRASS.buytime",0);
+		conf.set("TALLGRASS.selltime",0);
 		
 		conf.set("FERN.velocity", .05);
 		conf.set("FERN.id", 31002);
@@ -560,7 +1606,8 @@ public class Initialize {
 		conf.set("FERN.description", "Tall Grass in Fern form!");
 		conf.set("FERN.stock",50);
 		conf.set("FERN.spread", .05);
-		conf.set("FERN.time",0);
+		conf.set("FERN.buytime",0);
+		conf.set("FERN.selltime",0);
 
 		conf.set("PISTON.velocity", .75);
 		conf.set("PISTON.id", 33);
@@ -570,7 +1617,8 @@ public class Initialize {
 		conf.set("PISTON.description", "Moves stuff!");
 		conf.set("PISTON.stock",50);
 		conf.set("PISTON.spread", .75);
-		conf.set("PISTON.time",0);
+		conf.set("PISTON.buytime",0);
+		conf.set("PISTON.selltime",0);
 
 		conf.set("WOOL.velocity", .05);
 		conf.set("WOOL.id", 35);
@@ -580,7 +1628,8 @@ public class Initialize {
 		conf.set("WOOL.description", "Found on sheep & dye-able!");
 		conf.set("WOOL.stock",50);
 		conf.set("WOOL.spread", .05);
-		conf.set("WOOL.time",0);
+		conf.set("WOOL.buytime",0);
+		conf.set("WOOL.selltime",0);
 		
 		// COLORED WOOLS
 		
@@ -592,7 +1641,8 @@ public class Initialize {
 		conf.set("ORANGEWOOL.description", "Found on sheep & dye-able!");
 		conf.set("ORANGEWOOL.stock",50);
 		conf.set("ORANGEWOOL.spread", .05);
-		conf.set("ORANGEWOOL.time",0);
+		conf.set("ORANGEWOOL.buytime",0);
+		conf.set("ORANGEWOOL.selltime",0);
 		
 		conf.set("MAGENTAWOOL.velocity", .05);
 		conf.set("MAGENTAWOOL.id", 35002);
@@ -602,7 +1652,8 @@ public class Initialize {
 		conf.set("MAGENTAWOOL.description", "Found on sheep & dye-able!");
 		conf.set("MAGENTAWOOL.stock",50);
 		conf.set("MAGENTAWOOL.spread", .05);
-		conf.set("MAGENTAWOOL.time",0);
+		conf.set("MAGENTAWOOL.buytime",0);
+		conf.set("MAGENTAWOOL.selltime",0);
 		
 		conf.set("LIGHTBLUEWOOL.velocity", .05);
 		conf.set("LIGHTBLUEWOOL.id", 35003);
@@ -612,7 +1663,8 @@ public class Initialize {
 		conf.set("LIGHTBLUEWOOL.description", "Found on sheep & dye-able!");
 		conf.set("LIGHTBLUEWOOL.stock",50);
 		conf.set("LIGHTBLUEWOOL.spread", .05);
-		conf.set("LIGHTBLUEWOOL.time",0);
+		conf.set("LIGHTBLUEWOOL.buytime",0);
+		conf.set("LIGHTBLUEWOOL.selltime",0);
 		
 		conf.set("YELLOWWOOL.velocity", .05);
 		conf.set("YELLOWWOOL.id", 35004);
@@ -622,7 +1674,8 @@ public class Initialize {
 		conf.set("YELLOWWOOL.description", "Found on sheep & dye-able!");
 		conf.set("YELLOWWOOL.stock",50);
 		conf.set("YELLOWWOOL.spread", .05);
-		conf.set("YELLOWWOOL.time",0);
+		conf.set("YELLOWWOOL.buytime",0);
+		conf.set("YELLOWWOOL.selltime",0);
 		
 		conf.set("LIMEWOOL.velocity", .05);
 		conf.set("LIMEWOOL.id", 35005);
@@ -632,7 +1685,8 @@ public class Initialize {
 		conf.set("LIMEWOOL.description", "Found on sheep & dye-able!");
 		conf.set("LIMEWOOL.stock",50);
 		conf.set("LIMEWOOL.spread", .05);
-		conf.set("LIMEWOOL.time",0);
+		conf.set("LIMEWOOL.buytime",0);
+		conf.set("LIMEWOOL.selltime",0);
 		
 		conf.set("PINKWOOL.velocity", .05);
 		conf.set("PINKWOOL.id", 35006);
@@ -642,7 +1696,8 @@ public class Initialize {
 		conf.set("PINKWOOL.description", "Found on sheep & dye-able!");
 		conf.set("PINKWOOL.stock",50);
 		conf.set("PINKWOOL.spread", .05);
-		conf.set("PINKWOOL.time",0);
+		conf.set("PINKWOOL.buytime",0);
+		conf.set("PINKWOOL.selltime",0);
 		
 		conf.set("GRAYWOOL.velocity", .05);
 		conf.set("GRAYWOOL.id", 35007);
@@ -652,7 +1707,8 @@ public class Initialize {
 		conf.set("GRAYWOOL.description", "Found on sheep & dye-able!");
 		conf.set("GRAYWOOL.stock",50);
 		conf.set("GRAYWOOL.spread", .05);
-		conf.set("GRAYWOOL.time",0);
+		conf.set("GRAYWOOL.buytime",0);
+		conf.set("GRAYWOOL.selltime",0);
 		
 		conf.set("LIGHTGRAYWOOL.velocity", .05);
 		conf.set("LIGHTGRAYWOOL.id", 35008);
@@ -662,7 +1718,8 @@ public class Initialize {
 		conf.set("LIGHTGRAYWOOL.description", "Found on sheep & dye-able!");
 		conf.set("LIGHTGRAYWOOL.stock",50);
 		conf.set("LIGHTGRAYWOOL.spread", .05);
-		conf.set("LIGHTGRAYWOOL.time",0);
+		conf.set("LIGHTGRAYWOOL.buytime",0);
+		conf.set("LIGHTGRAYWOOL.selltime",0);
 		
 		conf.set("CYANWOOL.velocity", .05);
 		conf.set("CYANWOOL.id", 35009);
@@ -672,7 +1729,8 @@ public class Initialize {
 		conf.set("CYANWOOL.description", "Found on sheep & dye-able!");
 		conf.set("CYANWOOL.stock",50);
 		conf.set("CYANWOOL.spread", .05);
-		conf.set("CYANWOOL.time",0);
+		conf.set("CYANWOOL.buytime",0);
+		conf.set("CYANWOOL.selltime",0);
 		
 		conf.set("PURPLEWOOL.velocity", .05);
 		conf.set("PURPLEWOOL.id", 350010);
@@ -682,7 +1740,8 @@ public class Initialize {
 		conf.set("PURPLEWOOL.description", "Found on sheep & dye-able!");
 		conf.set("PURPLEWOOL.stock",50);
 		conf.set("PURPLEWOOL.spread", .05);
-		conf.set("PURPLEWOOL.time",0);
+		conf.set("PURPLEWOOL.buytime",0);
+		conf.set("PURPLEWOOL.selltime",0);
 		
 		conf.set("BLUEWOOL.velocity", .05);
 		conf.set("BLUEWOOL.id", 350011);
@@ -692,7 +1751,8 @@ public class Initialize {
 		conf.set("BLUEWOOL.description", "Found on sheep & dye-able!");
 		conf.set("BLUEWOOL.stock",50);
 		conf.set("BLUEWOOL.spread", .05);
-		conf.set("BLUEWOOL.time",0);
+		conf.set("BLUEWOOL.buytime",0);
+		conf.set("BLUEWOOL.selltime",0);
 		
 		conf.set("BROWNWOOL.velocity", .05);
 		conf.set("BROWNWOOL.id", 350012);
@@ -702,7 +1762,8 @@ public class Initialize {
 		conf.set("BROWNWOOL.description", "Found on sheep & dye-able!");
 		conf.set("BROWNWOOL.stock",50);
 		conf.set("BROWNWOOL.spread", .05);
-		conf.set("BROWNWOOL.time",0);
+		conf.set("BROWNWOOL.buytime",0);
+		conf.set("BROWNWOOL.selltime",0);
 		
 		conf.set("GREENWOOL.velocity", .05);
 		conf.set("GREENWOOL.id", 350013);
@@ -712,7 +1773,8 @@ public class Initialize {
 		conf.set("GREENWOOL.description", "Found on sheep & dye-able!");
 		conf.set("GREENWOOL.stock",50);
 		conf.set("GREENWOOL.spread", .05);
-		conf.set("GREENWOOL.time",0);
+		conf.set("GREENWOOL.buytime",0);
+		conf.set("GREENWOOL.selltime",0);
 		
 		conf.set("REDWOOL.velocity", .05);
 		conf.set("REDWOOL.id", 350014);
@@ -722,7 +1784,8 @@ public class Initialize {
 		conf.set("REDWOOL.description", "Found on sheep & dye-able!");
 		conf.set("REDWOOL.stock",50);
 		conf.set("REDWOOL.spread", .05);
-		conf.set("REDWOOL.time",0);
+		conf.set("REDWOOL.buytime",0);
+		conf.set("REDWOOL.selltime",0);
 		
 		conf.set("BLACKWOOL.velocity", .05);
 		conf.set("BLACKWOOL.id", 350015);
@@ -732,7 +1795,8 @@ public class Initialize {
 		conf.set("BLACKWOOL.description", "Found on sheep & dye-able!");
 		conf.set("BLACKWOOL.stock",50);
 		conf.set("BLACKWOOL.spread", .05);
-		conf.set("BLACKWOOL.time",0);
+		conf.set("BLACKWOOL.buytime",0);
+		conf.set("BLACKWOOL.selltime",0);
 		
 		// END COLORED WOOLS
 		
@@ -744,7 +1808,8 @@ public class Initialize {
 		conf.set("DANDELION.description", "A pretty yellow flower!");
 		conf.set("DANDELION.stock",50);
 		conf.set("DANDELION.spread", .8);
-		conf.set("DANDELION.time",0);
+		conf.set("DANDELION.buytime",0);
+		conf.set("DANDELION.selltime",0);
 
 		conf.set("ROSE.velocity", .8);
 		conf.set("ROSE.id", 38);
@@ -754,7 +1819,8 @@ public class Initialize {
 		conf.set("ROSE.description", "A pretty red flower!");
 		conf.set("ROSE.stock",50);
 		conf.set("ROSE.spread", .8);
-		conf.set("ROSE.time",0);
+		conf.set("ROSE.buytime",0);
+		conf.set("ROSE.selltime",0);
 
 		conf.set("BROWNMUSHROOM.velocity", .6);
 		conf.set("BROWNMUSHROOM.id", 39);
@@ -764,7 +1830,8 @@ public class Initialize {
 		conf.set("BROWNMUSHROOM.description", "Tasty.. or not?");
 		conf.set("BROWNMUSHROOM.stock",50);
 		conf.set("BROWNMUSHROOM.spread", .6);
-		conf.set("BROWNMUSHROOM.time",0);
+		conf.set("BROWNMUSHROOM.buytime",0);
+		conf.set("BROWNMUSHROOM.selltime",0);
 
 		conf.set("REDMUSHROOM.velocity", .6);
 		conf.set("REDMUSHROOM.id", 40);
@@ -774,7 +1841,8 @@ public class Initialize {
 		conf.set("REDMUSHROOM.description", "Tasty.. or not?");
 		conf.set("REDMUSHROOM.stock",50);
 		conf.set("REDMUSHROOM.spread", .8);
-		conf.set("REDMUSHROOM.time",0);
+		conf.set("REDMUSHROOM.buytime",0);
+		conf.set("REDMUSHROOM.selltime",0);
 
 		conf.set("GOLDBLOCK.velocity", 1);
 		conf.set("GOLDBLOCK.id", 41);
@@ -784,7 +1852,8 @@ public class Initialize {
 		conf.set("GOLDBLOCK.description", "A block of solid gold!");
 		conf.set("GOLDBLOCK.stock",50);
 		conf.set("GOLDBLOCK.spread", 1);
-		conf.set("GOLDBLOCK.time",0);
+		conf.set("GOLDBLOCK.buytime",0);
+		conf.set("GOLDBLOCK.selltime",0);
 
 		conf.set("IRONBLOCK.velocity", 1);
 		conf.set("IRONBLOCK.id", 42);
@@ -794,7 +1863,8 @@ public class Initialize {
 		conf.set("IRONBLOCK.description", "A block of solid Iron!!");
 		conf.set("IRONBLOCK.stock",50);
 		conf.set("IRONBLOCK.spread", 1);
-		conf.set("IRONBLOCK.time",0);
+		conf.set("IRONBLOCK.buytime",0);
+		conf.set("IRONBLOCK.selltime",0);
 
 		conf.set("DOUBLESLABS.velocity", .03);
 		conf.set("DOUBLESLABS.id", 43);
@@ -804,7 +1874,8 @@ public class Initialize {
 		conf.set("DOUBLESLABS.description", "Very sophisticated!");
 		conf.set("DOUBLESLABS.stock",50);
 		conf.set("DOUBLESLABS.spread", .03);
-		conf.set("DOUBLESLABS.time",0);
+		conf.set("DOUBLESLABS.buytime",0);
+		conf.set("DOUBLESLABS.selltime",0);
 
 		// BEGIN SLABS
 		
@@ -816,7 +1887,8 @@ public class Initialize {
 		conf.set("SLABS.description", "Half as sophisticated!");
 		conf.set("SLABS.stock",50);
 		conf.set("SLABS.spread", .03);
-		conf.set("SLABS.time",0);
+		conf.set("SLABS.buytime",0);
+		conf.set("SLABS.selltime",0);
 		
 		conf.set("SANDSTONESLABS.velocity", .03);
 		conf.set("SANDSTONESLABS.id", 44001);
@@ -826,7 +1898,8 @@ public class Initialize {
 		conf.set("SANDSTONESLABS.description", "Half as sophisticated!");
 		conf.set("SANDSTONESLABS.stock",50);
 		conf.set("SANDSTONESLABS.spread", .03);
-		conf.set("SANDSTONESLABS.time",0);
+		conf.set("SANDSTONESLABS.buytime",0);
+		conf.set("SANDSTONESLABS.selltime",0);
 		
 		conf.set("PLANKSLABS.velocity", .03);
 		conf.set("PLANKSLABS.id", 44002);
@@ -836,7 +1909,8 @@ public class Initialize {
 		conf.set("PLANKSLABS.description", "Half as sophisticated!");
 		conf.set("PLANKSLABS.stock",50);
 		conf.set("PLANKSLABS.spread", .03);
-		conf.set("PLANKSLABS.time",0);
+		conf.set("PLANKSLABS.buytime",0);
+		conf.set("PLANKSLABS.selltime",0);
 		
 		conf.set("COBBLESLABS.velocity", .03);
 		conf.set("COBBLESLABS.id", 44003);
@@ -846,7 +1920,8 @@ public class Initialize {
 		conf.set("COBBLESLABS.description", "Half as sophisticated!");
 		conf.set("COBBLESLABS.stock",50);
 		conf.set("COBBLESLABS.spread", .03);
-		conf.set("COBBLESLABS.time",0);
+		conf.set("COBBLESLABS.buytime",0);
+		conf.set("COBBLESLABS.selltime",0);
 		
 		conf.set("BRICKSLABS.velocity", .03);
 		conf.set("BRICKSLABS.id", 44004);
@@ -856,7 +1931,8 @@ public class Initialize {
 		conf.set("BRICKSLABS.description", "Half as sophisticated!");
 		conf.set("BRICKSLABS.stock",50);
 		conf.set("BRICKSLABS.spread", .03);
-		conf.set("BRICKSLABS.time",0);
+		conf.set("BRICKSLABS.buytime",0);
+		conf.set("BRICKSLABS.selltime",0);
 		
 		conf.set("STONEBRICKSLABS.velocity", .03);
 		conf.set("STONEBRICKSLABS.id", 44005);
@@ -866,7 +1942,8 @@ public class Initialize {
 		conf.set("STONEBRICKSLABS.description", "Half as sophisticated!");
 		conf.set("STONEBRICKSLABS.stock",50);
 		conf.set("STONEBRICKSLABS.spread", .03);
-		conf.set("STONEBRICKSLABS.time",0);
+		conf.set("STONEBRICKSLABS.buytime",0);
+		conf.set("STONEBRICKSLABS.selltime",0);
 		
 		// END SLABS
 
@@ -878,7 +1955,8 @@ public class Initialize {
 		conf.set("BRICKBLOCK.description", "Reminds me of Brooklyn!");
 		conf.set("BRICKBLOCK.stock",50);
 		conf.set("BRICKBLOCK.spread", .8);
-		conf.set("BRICKBLOCK.time",0);
+		conf.set("BRICKBLOCK.buytime",0);
+		conf.set("BRICKBLOCK.selltime",0);
 
 		conf.set("TNT.velocity", .7);
 		conf.set("TNT.id", 46);
@@ -888,7 +1966,8 @@ public class Initialize {
 		conf.set("TNT.description", "Blows everything up!");
 		conf.set("TNT.stock",50);
 		conf.set("TNT.spread", .7);
-		conf.set("TNT.time",0);
+		conf.set("TNT.buytime",0);
+		conf.set("TNT.selltime",0);
 
 		conf.set("BOOKSHELF.velocity", .4);
 		conf.set("BOOKSHELF.id", 47);
@@ -898,7 +1977,8 @@ public class Initialize {
 		conf.set("BOOKSHELF.description", "Found in the homes of the sophisticated and educated!");
 		conf.set("BOOKSHELF.stock",50);
 		conf.set("BOOKSHELF.spread", .4);
-		conf.set("BOOKSHELF.time",0);
+		conf.set("BOOKSHELF.buytime",0);
+		conf.set("BOOKSHELF.selltime",0);
 
 		conf.set("MOSSYCOBBLE.velocity", 1.3);
 		conf.set("MOSSYCOBBLE.id", 48);
@@ -908,7 +1988,8 @@ public class Initialize {
 		conf.set("MOSSYCOBBLE.description", "Found in Dungeons!");
 		conf.set("MOSSYCOBBLE.stock",50);
 		conf.set("MOSSYCOBBLE.spread", 1.3);
-		conf.set("MOSSYCOBBLE.time",0);
+		conf.set("MOSSYCOBBLE.buytime",0);
+		conf.set("MOSSYCOBBLE.selltime",0);
 
 		conf.set("OBSIDIAN.velocity", 1.1);
 		conf.set("OBSIDIAN.id", 49);
@@ -918,7 +1999,8 @@ public class Initialize {
 		conf.set("OBSIDIAN.description", "Hardened Lava!");
 		conf.set("OBSIDIAN.stock",50);
 		conf.set("OBSIDIAN.spread", 1.1);
-		conf.set("OBSIDIAN.time",0);
+		conf.set("OBSIDIAN.buytime",0);
+		conf.set("OBSIDIAN.selltime",0);
 
 		conf.set("TORCH.velocity", .01);
 		conf.set("TORCH.id", 50);
@@ -928,7 +2010,8 @@ public class Initialize {
 		conf.set("TORCH.description", "Cheapest light source!");
 		conf.set("TORCH.stock",50);
 		conf.set("TORCH.spread", .01);
-		conf.set("TORCH.time",0);
+		conf.set("TORCH.buytime",0);
+		conf.set("TORCH.selltime",0);
 		
 		conf.set("FIRE.velocity", .06);
 		conf.set("FIRE.id", 51);
@@ -938,7 +2021,8 @@ public class Initialize {
 		conf.set("FIRE.description", "YOU CAVE. ME MAN. CAVEMAN MAKE FIRE!");
 		conf.set("FIRE.stock",50);
 		conf.set("FIRE.spread", .01);
-		conf.set("FIRE.time",0);
+		conf.set("FIRE.buytime",0);
+		conf.set("FIRE.selltime",0);
 		
 		conf.set("MOBSPAWNER.velocity", .06);
 		conf.set("MOBSPAWNER.id", 52);
@@ -948,7 +2032,8 @@ public class Initialize {
 		conf.set("MOBSPAWNER.description", "It.. makes monsters? Why would you want this?");
 		conf.set("MOBSPAWNER.stock",50);
 		conf.set("MOBSPAWNER.spread", .01);
-		conf.set("MOBSPAWNER.time",0);
+		conf.set("MOBSPAWNER.buytime",0);
+		conf.set("MOBSPAWNER.selltime",0);
 		
 		conf.set("WOODENSTAIRS.velocity", .2);
 		conf.set("WOODENSTAIRS.id", 53);
@@ -958,7 +2043,8 @@ public class Initialize {
 		conf.set("WOODENSTAIRS.description", "set up high with wooden stairs!");
 		conf.set("WOODENSTAIRS.stock",50);
 		conf.set("WOODENSTAIRS.spread", .2);
-		conf.set("WOODENSTAIRS.time",0);
+		conf.set("WOODENSTAIRS.buytime",0);
+		conf.set("WOODENSTAIRS.selltime",0);
 
 		conf.set("CHEST.velocity", .2);
 		conf.set("CHEST.id", 54);
@@ -968,7 +2054,8 @@ public class Initialize {
 		conf.set("CHEST.description", "Used for hiding your darkest secrets!");
 		conf.set("CHEST.stock",50);
 		conf.set("CHEST.spread", .2);
-		conf.set("CHEST.time",0);
+		conf.set("CHEST.buytime",0);
+		conf.set("CHEST.selltime",0);
 		
 		conf.set("DIAMONDORE.velocity", 2.2);
 		conf.set("DIAMONDORE.id", 56);
@@ -978,7 +2065,8 @@ public class Initialize {
 		conf.set("DIAMONDORE.description", "A block of solid Diamond!");
 		conf.set("DIAMONDORE.stock",50);
 		conf.set("DIAMONDORE.spread", 2.2);
-		conf.set("DIAMONDORE.time",0);
+		conf.set("DIAMONDORE.buytime",0);
+		conf.set("DIAMONDORE.selltime",0);
 
 		conf.set("DIAMONDBLOCK.velocity", 2.2);
 		conf.set("DIAMONDBLOCK.id", 57);
@@ -988,7 +2076,8 @@ public class Initialize {
 		conf.set("DIAMONDBLOCK.description", "A block of solid Diamond!");
 		conf.set("DIAMONDBLOCK.stock",50);
 		conf.set("DIAMONDBLOCK.spread", 2.2);
-		conf.set("DIAMONDBLOCK.time",0);
+		conf.set("DIAMONDBLOCK.buytime",0);
+		conf.set("DIAMONDBLOCK.selltime",0);
 
 		conf.set("CRAFTBENCH.velocity", .09);
 		conf.set("CRAFTBENCH.id", 58);
@@ -998,7 +2087,8 @@ public class Initialize {
 		conf.set("CRAFTBENCH.description", "Use it to built just about anything!");
 		conf.set("CRAFTBENCH.stock",50);
 		conf.set("CRAFTBENCH.spread", .09);
-		conf.set("CRAFTBENCH.time",0);
+		conf.set("CRAFTBENCH.buytime",0);
+		conf.set("CRAFTBENCH.selltime",0);
 		
 		conf.set("FURNACE.velocity", .09);
 		conf.set("FURNACE.id", 61);
@@ -1008,7 +2098,8 @@ public class Initialize {
 		conf.set("FURNACE.description", "Use it to burn all your stuff up or cook your food!");
 		conf.set("FURNACE.stock",50);
 		conf.set("FURNACE.spread", .09);
-		conf.set("FURNACE.time",0);
+		conf.set("FURNACE.buytime",0);
+		conf.set("FURNACE.selltime",0);
 		
 		conf.set("BURNINGFURNACE.velocity", .09);
 		conf.set("BURNINGFURNACE.id", 62);
@@ -1018,7 +2109,8 @@ public class Initialize {
 		conf.set("BURNINGFURNACE.description", "Use it to burn all your stuff up or cook your food!");
 		conf.set("BURNINGFURNACE.stock",50);
 		conf.set("BURNINGFURNACE.spread", .09);
-		conf.set("BURNINGFURNACE.time",0);
+		conf.set("BURNINGFURNACE.buytime",0);
+		conf.set("BURNINGFURNACE.selltime",0);
 
 		conf.set("LADDER.velocity", .001);
 		conf.set("LADDER.id", 65);
@@ -1028,7 +2120,8 @@ public class Initialize {
 		conf.set("LADDER.description", "Climb straight up anything!");
 		conf.set("LADDER.stock",50);
 		conf.set("LADDER.spread", .001);
-		conf.set("LADDER.time",0);
+		conf.set("LADDER.buytime",0);
+		conf.set("LADDER.selltime",0);
 
 		conf.set("RAIL.velocity", .4);
 		conf.set("RAIL.id", 66);
@@ -1038,7 +2131,8 @@ public class Initialize {
 		conf.set("RAIL.description", "Helps minecarts move along!");
 		conf.set("RAIL.stock",50);
 		conf.set("RAIL.spread", .4);
-		conf.set("RAIL.time",0);
+		conf.set("RAIL.buytime",0);
+		conf.set("RAIL.selltime",0);
 
 		conf.set("COBBLESTAIRS.velocity", .04);
 		conf.set("COBBLESTAIRS.id", 67);
@@ -1048,7 +2142,8 @@ public class Initialize {
 		conf.set("COBBLESTAIRS.description", "Walk up high on cobble stairs!");
 		conf.set("COBBLESTAIRS.stock",50);
 		conf.set("COBBLESTAIRS.spread", .04);
-		conf.set("COBBLESTAIRS.time",0);
+		conf.set("COBBLESTAIRS.buytime",0);
+		conf.set("COBBLESTAIRS.selltime",0);
 
 		conf.set("LEVER.velocity", .08);
 		conf.set("LEVER.id", 69);
@@ -1058,7 +2153,8 @@ public class Initialize {
 		conf.set("LEVER.description", "Either off or on!");
 		conf.set("LEVER.stock",50);
 		conf.set("LEVER.spread", .08);
-		conf.set("LEVER.time",0);
+		conf.set("LEVER.buytime",0);
+		conf.set("LEVER.selltime",0);
 
 		conf.set("STONEPLATE.velocity", .06);
 		conf.set("STONEPLATE.id", 70);
@@ -1068,7 +2164,8 @@ public class Initialize {
 		conf.set("STONEPLATE.description", "Step to activate!");
 		conf.set("STONEPLATE.stock",50);
 		conf.set("STONEPLATE.spread", .06);
-		conf.set("STONEPLATE.time",0);
+		conf.set("STONEPLATE.buytime",0);
+		conf.set("STONEPLATE.selltime",0);
 
 		conf.set("WOODENPLATE.velocity", .06);
 		conf.set("WOODENPLATE.id", 72);
@@ -1078,7 +2175,8 @@ public class Initialize {
 		conf.set("WOODENPLATE.description", "Step to activate!");
 		conf.set("WOODENPLATE.stock",50);
 		conf.set("WOODENPLATE.spread", .06);
-		conf.set("WOODENPLATE.time",0);
+		conf.set("WOODENPLATE.buytime",0);
+		conf.set("WOODENPLATE.selltime",0);
 		
 		conf.set("REDSTONEORE.velocity", .6);
 		conf.set("REDSTONEORE.id", 73);
@@ -1088,7 +2186,8 @@ public class Initialize {
 		conf.set("REDSTONEORE.description", "Conducts power!");
 		conf.set("REDSTONEORE.stock",50);
 		conf.set("REDSTONEORE.spread", .01);
-		conf.set("REDSTONEORE.time",0);
+		conf.set("REDSTONEORE.buytime",0);
+		conf.set("REDSTONEORE.selltime",0);
 		
 		conf.set("GLOWINGREDSTONEORE.velocity", .6);
 		conf.set("GLOWINGREDSTONEORE.id", 74);
@@ -1098,7 +2197,8 @@ public class Initialize {
 		conf.set("GLOWINGREDSTONEORE.description", "Conducts power!");
 		conf.set("GLOWINGREDSTONEORE.stock",50);
 		conf.set("GLOWINGREDSTONEORE.spread", .01);
-		conf.set("GLOWINGREDSTONEORE.time",0);
+		conf.set("GLOWINGREDSTONEORE.buytime",0);
+		conf.set("GLOWINGREDSTONEORE.selltime",0);
 
 		conf.set("BUTTON.velocity", .06);
 		conf.set("BUTTON.id", 77);
@@ -1108,7 +2208,8 @@ public class Initialize {
 		conf.set("BUTTON.description", "Press to activate!");
 		conf.set("BUTTON.stock",50);
 		conf.set("BUTTON.spread", .06);
-		conf.set("BUTTON.time",0);
+		conf.set("BUTTON.buytime",0);
+		conf.set("BUTTON.selltime",0);
 		
 		conf.set("ICE.velocity", .06);
 		conf.set("ICE.id", 79);
@@ -1118,7 +2219,8 @@ public class Initialize {
 		conf.set("ICE.description", "Melts near hot stuff.");
 		conf.set("ICE.stock",50);
 		conf.set("ICE.spread", .06);
-		conf.set("ICE.time",0);
+		conf.set("ICE.buytime",0);
+		conf.set("ICE.selltime",0);
 
 		conf.set("CACTUS.velocity", .3);
 		conf.set("CACTUS.id", 81);
@@ -1128,7 +2230,8 @@ public class Initialize {
 		conf.set("CACTUS.description", "Prickly! Found in deserts.");
 		conf.set("CACTUS.stock",50);
 		conf.set("CACTUS.spread", .3);
-		conf.set("CACTUS.time",0);
+		conf.set("CACTUS.buytime",0);
+		conf.set("CACTUS.selltime",0);
 		
 		conf.set("CLAYBLOCK.velocity", .3);
 		conf.set("CLAYBLOCK.id", 82);
@@ -1138,7 +2241,8 @@ public class Initialize {
 		conf.set("CLAYBLOCK.description", "Soft and mushy, like clay!");
 		conf.set("CLAYBLOCK.stock",50);
 		conf.set("CLAYBLOCK.spread", .3);
-		conf.set("CLAYBLOCK.time",0);
+		conf.set("CLAYBLOCK.buytime",0);
+		conf.set("CLAYBLOCK.selltime",0);
 
 		conf.set("JUKEBOX.velocity", 1.8);
 		conf.set("JUKEBOX.id", 84);
@@ -1148,7 +2252,8 @@ public class Initialize {
 		conf.set("JUKEBOX.description", "Plays lovely records!");
 		conf.set("JUKEBOX.stock",50);
 		conf.set("JUKEBOX.spread", 1.8);
-		conf.set("JUKEBOX.time",0);
+		conf.set("JUKEBOX.buytime",0);
+		conf.set("JUKEBOX.selltime",0);
 
 		conf.set("FENCE.velocity", .02);
 		conf.set("FENCE.id", 85);
@@ -1158,7 +2263,8 @@ public class Initialize {
 		conf.set("FENCE.description", "Guard your territory!");
 		conf.set("FENCE.stock",50);
 		conf.set("FENCE.spread", .02);
-		conf.set("FENCE.time",0);
+		conf.set("FENCE.buytime",0);
+		conf.set("FENCE.selltime",0);
 
 		conf.set("PUMPKIN.velocity", .8);
 		conf.set("PUMPKIN.id", 86);
@@ -1168,7 +2274,8 @@ public class Initialize {
 		conf.set("PUMPKIN.description", "Scary or delicious?!");
 		conf.set("PUMPKIN.stock",50);
 		conf.set("PUMPKIN.spread", .8);
-		conf.set("PUMPKIN.time",0);
+		conf.set("PUMPKIN.buytime",0);
+		conf.set("PUMPKIN.selltime",0);
 
 		conf.set("NETHERRACK.velocity", .001);
 		conf.set("NETHERRACK.id", 87);
@@ -1178,7 +2285,8 @@ public class Initialize {
 		conf.set("NETHERRACK.description", "Burns indefinitely!");
 		conf.set("NETHERRACK.stock",50);
 		conf.set("NETHERRACK.spread", .001);
-		conf.set("NETHERRACK.time",0);
+		conf.set("NETHERRACK.buytime",0);
+		conf.set("NETHERRACK.selltime",0);
 
 		conf.set("SOULSAND.velocity", .06);
 		conf.set("SOULSAND.id", 88);
@@ -1188,7 +2296,8 @@ public class Initialize {
 		conf.set("SOULSAND.description", "Slows you down!");
 		conf.set("SOULSAND.stock",50);
 		conf.set("SOULSAND.spread", .06);
-		conf.set("SOULSAND.time",0);
+		conf.set("SOULSAND.buytime",0);
+		conf.set("SOULSAND.selltime",0);
 
 		conf.set("GLOWSTONE.velocity", .09);
 		conf.set("GLOWSTONE.id", 89);
@@ -1198,7 +2307,8 @@ public class Initialize {
 		conf.set("GLOWSTONE.description", "Light from the pits of hell!");
 		conf.set("GLOWSTONE.stock",50);
 		conf.set("GLOWSTONE.spread", .09);
-		conf.set("GLOWSTONE.time",0);
+		conf.set("GLOWSTONE.buytime",0);
+		conf.set("GLOWSTONE.selltime",0);
 
 		conf.set("TRAPDOOR.velocity", .03);
 		conf.set("TRAPDOOR.id", 96);
@@ -1208,7 +2318,8 @@ public class Initialize {
 		conf.set("TRAPDOOR.description", "Kind of like.. a door for your floor!");
 		conf.set("TRAPDOOR.stock",50);
 		conf.set("TRAPDOOR.spread", .03);
-		conf.set("TRAPDOOR.time",0);
+		conf.set("TRAPDOOR.buytime",0);
+		conf.set("TRAPDOOR.selltime",0);
 
 		conf.set("STONEBRICKS.velocity", .9);
 		conf.set("STONEBRICKS.id", 98);
@@ -1218,7 +2329,8 @@ public class Initialize {
 		conf.set("STONEBRICKS.description", "Fancy Stronghold stone!");
 		conf.set("STONEBRICKS.stock",50);
 		conf.set("STONEBRICKS.spread", .9);
-		conf.set("STONEBRICKS.time",0);
+		conf.set("STONEBRICKS.buytime",0);
+		conf.set("STONEBRICKS.selltime",0);
 		
 		conf.set("MOSSYSTONEBRICKS.velocity", .9);
 		conf.set("MOSSYSTONEBRICKS.id", 98001);
@@ -1228,7 +2340,8 @@ public class Initialize {
 		conf.set("MOSSYSTONEBRICKS.description", "Fancy Stronghold stone, moss edition!");
 		conf.set("MOSSYSTONEBRICKS.stock",50);
 		conf.set("MOSSYSTONEBRICKS.spread", .9);
-		conf.set("MOSSYSTONEBRICKS.time",0);
+		conf.set("MOSSYSTONEBRICKS.buytime",0);
+		conf.set("MOSSYSTONEBRICKS.selltime",0);
 		
 		conf.set("CRACKEDSTONEBRICKS.velocity", .9);
 		conf.set("CRACKEDSTONEBRICKS.id", 98002);
@@ -1238,7 +2351,8 @@ public class Initialize {
 		conf.set("CRACKEDSTONEBRICKS.description", "Fancy Stronghold stone, cracked edition!");
 		conf.set("CRACKEDSTONEBRICKS.stock",50);
 		conf.set("CRACKEDSTONEBRICKS.spread", .9);
-		conf.set("CRACKEDSTONEBRICKS.time",0);
+		conf.set("CRACKEDSTONEBRICKS.buytime",0);
+		conf.set("CRACKEDSTONEBRICKS.selltime",0);
 		
 		conf.set("CIRCLESTONEBRICKS.velocity", .9);
 		conf.set("CIRCLESTONEBRICKS.id", 98003);
@@ -1248,7 +2362,8 @@ public class Initialize {
 		conf.set("CIRCLESTONEBRICKS.description", "Fancy Stronghold stone, circle edition!");
 		conf.set("CIRCLESTONEBRICKS.stock",50);
 		conf.set("CIRCLESTONEBRICKS.spread", .9);
-		conf.set("CIRCLESTONEBRICKS.time",0);
+		conf.set("CIRCLESTONEBRICKS.buytime",0);
+		conf.set("CIRCLESTONEBRICKS.selltime",0);
 
 		conf.set("IRONBARS.velocity", .11);
 		conf.set("IRONBARS.id", 101);
@@ -1258,7 +2373,8 @@ public class Initialize {
 		conf.set("IRONBARS.description", "Fit for prisons!");
 		conf.set("IRONBARS.stock",50);
 		conf.set("IRONBARS.spread", .11);
-		conf.set("IRONBARS.time",0);
+		conf.set("IRONBARS.buytime",0);
+		conf.set("IRONBARS.selltime",0);
 
 		conf.set("GLASSPANE.velocity", .005);
 		conf.set("GLASSPANE.id", 102);
@@ -1268,7 +2384,8 @@ public class Initialize {
 		conf.set("GLASSPANE.description", "Thinner than glass!");
 		conf.set("GLASSPANE.stock",50);
 		conf.set("GLASSPANE.spread", .005);
-		conf.set("GLASSPANE.time",0);
+		conf.set("GLASSPANE.buytime",0);
+		conf.set("GLASSPANE.selltime",0);
 		
 		conf.set("VINES.velocity", .005);
 		conf.set("VINES.id", 106);
@@ -1278,7 +2395,8 @@ public class Initialize {
 		conf.set("VINES.description", "Seems like a vineyard kinda vine.");
 		conf.set("VINES.stock",50);
 		conf.set("VINES.spread", .005);
-		conf.set("VINES.time",0);
+		conf.set("VINES.buytime",0);
+		conf.set("VINES.selltime",0);
 		
 		conf.set("FENCEGATE.velocity", .005);
 		conf.set("FENCEGATE.id", 107);
@@ -1288,7 +2406,8 @@ public class Initialize {
 		conf.set("FENCEGATE.description", "Essential for any fence!");
 		conf.set("FENCEGATE.stock",50);
 		conf.set("FENCEGATE.spread", .005);
-		conf.set("FENCEGATE.time",0);
+		conf.set("FENCEGATE.buytime",0);
+		conf.set("FENCEGATE.selltime",0);
 
 		conf.set("BRICKSTAIRS.velocity", .09);
 		conf.set("BRICKSTAIRS.id", 108);
@@ -1298,7 +2417,8 @@ public class Initialize {
 		conf.set("BRICKSTAIRS.description", "Walk up high with brick stairs!");
 		conf.set("BRICKSTAIRS.stock",50);
 		conf.set("BRICKSTAIRS.spread", .09);
-		conf.set("BRICKSTAIRS.time",0);
+		conf.set("BRICKSTAIRS.buytime",0);
+		conf.set("BRICKSTAIRS.selltime",0);
 
 		conf.set("STONEBRICKSTAIRS.velocity", .06);
 		conf.set("STONEBRICKSTAIRS.id", 109);
@@ -1308,7 +2428,8 @@ public class Initialize {
 		conf.set("STONEBRICKSTAIRS.description", "Walk up high with stairs from strongholds!");
 		conf.set("STONEBRICKSTAIRS.stock",50);
 		conf.set("STONEBRICKSTAIRS.spread", .06);
-		conf.set("STONEBRICKSTAIRS.time",0);
+		conf.set("STONEBRICKSTAIRS.buytime",0);
+		conf.set("STONEBRICKSTAIRS.selltime",0);
 		
 		conf.set("MYCELIUM.velocity", .06);
 		conf.set("MYCELIUM.id", 110);
@@ -1318,7 +2439,8 @@ public class Initialize {
 		conf.set("MYCELIUM.description", "Found in swamps.");
 		conf.set("MYCELIUM.stock",50);
 		conf.set("MYCELIUM.spread", .06);
-		conf.set("MYCELIUM.time",0);
+		conf.set("MYCELIUM.buytime",0);
+		conf.set("MYCELIUM.selltime",0);
 		
 		conf.set("LILYPAD.velocity", .06);
 		conf.set("LILYPAD.id", 111);
@@ -1328,7 +2450,8 @@ public class Initialize {
 		conf.set("LILYPAD.description", "Frogs love em, you will too!");
 		conf.set("LILYPAD.stock",50);
 		conf.set("LILYPAD.spread", .06);
-		conf.set("LILYPAD.time",0);
+		conf.set("LILYPAD.buytime",0);
+		conf.set("LILYPAD.selltime",0);
 
 		conf.set("NETHERBRICK.velocity", .07);
 		conf.set("NETHERBRICK.id", 112);
@@ -1338,7 +2461,8 @@ public class Initialize {
 		conf.set("NETHERBRICK.description", "Stolen from the strongholds of hell!");
 		conf.set("NETHERBRICK.stock",50);
 		conf.set("NETHERBRICK.spread", .07);
-		conf.set("NETHERBRICK.time",0);
+		conf.set("NETHERBRICK.buytime",0);
+		conf.set("NETHERBRICK.selltime",0);
 
 		conf.set("NETHERBRICKFENCE.velocity", .11);
 		conf.set("NETHERBRICKFENCE.id", 113);
@@ -1348,7 +2472,8 @@ public class Initialize {
 		conf.set("NETHERBRICKFENCE.description", "Stolen from the strongholds of hell!");
 		conf.set("NETHERBRICKFENCE.stock",50);
 		conf.set("NETHERBRICKFENCE.spread", .11);
-		conf.set("NETHERBRICKFENCE.time",0);
+		conf.set("NETHERBRICKFENCE.buytime",0);
+		conf.set("NETHERBRICKFENCE.selltime",0);
 
 		conf.set("NETHERBRICKSTAIRS.velocity", .07);
 		conf.set("NETHERBRICKSTAIRS.id", 114);
@@ -1358,7 +2483,8 @@ public class Initialize {
 		conf.set("NETHERBRICKSTAIRS.description", "Stolen from the strongholds of hell!");
 		conf.set("NETHERBRICKSTAIRS.stock",50);
 		conf.set("NETHERBRICKSTAIRS.spread", .07);
-		conf.set("NETHERBRICKSTAIRS.time",0);
+		conf.set("NETHERBRICKSTAIRS.buytime",0);
+		conf.set("NETHERBRICKSTAIRS.selltime",0);
 
 		conf.set("ENCHANTMENTTABLE.velocity", 1.5);
 		conf.set("ENCHANTMENTTABLE.id", 116);
@@ -1368,7 +2494,8 @@ public class Initialize {
 		conf.set("ENCHANTMENTTABLE.description", "Used to enchant tools and armor!");
 		conf.set("ENCHANTMENTTABLE.stock",50);
 		conf.set("ENCHANTMENTTABLE.spread", 1.5);
-		conf.set("ENCHANTMENTTABLE.time",0);
+		conf.set("ENCHANTMENTTABLE.buytime",0);
+		conf.set("ENCHANTMENTTABLE.selltime",0);
 		
 		conf.set("ENDSTONE.velocity", .3);
 		conf.set("ENDSTONE.id", 121);
@@ -1378,7 +2505,8 @@ public class Initialize {
 		conf.set("ENDSTONE.description", "Straight from The End!");
 		conf.set("ENDSTONE.stock",50);
 		conf.set("ENDSTONE.spread", 1.5);
-		conf.set("ENDSTONE.time",0);
+		conf.set("ENDSTONE.buytime",0);
+		conf.set("ENDSTONE.selltime",0);
 		
 		conf.set("DRAGONEGG.velocity", .3);
 		conf.set("DRAGONEGG.id", 122);
@@ -1388,7 +2516,8 @@ public class Initialize {
 		conf.set("DRAGONEGG.description", "The hatchling for a dragon.");
 		conf.set("DRAGONEGG.stock",50);
 		conf.set("DRAGONEGG.spread", 1.5);
-		conf.set("DRAGONEGG.time",0);
+		conf.set("DRAGONEGG.buytime",0);
+		conf.set("DRAGONEGG.selltime",0);
 		
 		conf.set("REDSTONELAMP.velocity", .09);
 		conf.set("REDSTONELAMP.id", 123);
@@ -1398,7 +2527,8 @@ public class Initialize {
 		conf.set("REDSTONELAMP.description", "Finally, a lamp with a simple lightswitch!");
 		conf.set("REDSTONELAMP.stock",50);
 		conf.set("REDSTONELAMP.spread", 1.5);
-		conf.set("REDSTONELAMP.time",0);
+		conf.set("REDSTONELAMP.buytime",0);
+		conf.set("REDSTONELAMP.selltime",0);
 		
 		conf.set("SANDSTONESTAIRS.velocity", .02);
 		conf.set("SANDSTONESTAIRS.id", 128);
@@ -1408,7 +2538,8 @@ public class Initialize {
 		conf.set("SANDSTONESTAIRS.description", "Stairs of sand?");
 		conf.set("SANDSTONESTAIRS.stock",50);
 		conf.set("SANDSTONESTAIRS.spread", .01);
-		conf.set("SANDSTONESTAIRS.time",0);
+		conf.set("SANDSTONESTAIRS.buytime",0);
+		conf.set("SANDSTONESTAIRS.selltime",0);
 
 		conf.set("BREWINGSTAND.velocity", .45);
 		conf.set("BREWINGSTAND.id", 379);
@@ -1418,7 +2549,8 @@ public class Initialize {
 		conf.set("BREWINGSTAND.description", "Used to make potions!");
 		conf.set("BREWINGSTAND.stock",50);
 		conf.set("BREWINGSTAND.spread", .45);
-		conf.set("BREWINGSTAND.time",0);
+		conf.set("BREWINGSTAND.buytime",0);
+		conf.set("BREWINGSTAND.selltime",0);
 
 		conf.set("CAULDRON.velocity", .25);
 		conf.set("CAULDRON.id", 380);
@@ -1428,7 +2560,8 @@ public class Initialize {
 		conf.set("CAULDRON.description", "Holds water for potion-making!");
 		conf.set("CAULDRON.stock",50);
 		conf.set("CAULDRON.spread", .25);
-		conf.set("CAULDRON.time",0);
+		conf.set("CAULDRON.buytime",0);
+		conf.set("CAULDRON.selltime",0);
 
 		conf.set("IRONSHOVEL.velocity", .8);
 		conf.set("IRONSHOVEL.id", 256);
@@ -1438,7 +2571,8 @@ public class Initialize {
 		conf.set("IRONSHOVEL.description", "Digging with iron!");
 		conf.set("IRONSHOVEL.stock",50);
 		conf.set("IRONSHOVEL.spread", .8);
-		conf.set("IRONSHOVEL.time",0);
+		conf.set("IRONSHOVEL.buytime",0);
+		conf.set("IRONSHOVEL.selltime",0);
 
 		conf.set("IRONPICKAXE.velocity", 1.1);
 		conf.set("IRONPICKAXE.id", 257);
@@ -1448,7 +2582,8 @@ public class Initialize {
 		conf.set("IRONPICKAXE.description", "Mining with iron!");
 		conf.set("IRONPICKAXE.stock",50);
 		conf.set("IRONPICKAXE.spread", 1.1);
-		conf.set("IRONPICKAXE.time",0);
+		conf.set("IRONPICKAXE.buytime",0);
+		conf.set("IRONPICKAXE.selltime",0);
 
 		conf.set("IRONAXE.velocity", .9);
 		conf.set("IRONAXE.id", 258);
@@ -1458,7 +2593,8 @@ public class Initialize {
 		conf.set("IRONAXE.description", "Cutting with iron!");
 		conf.set("IRONAXE.stock",50);
 		conf.set("IRONAXE.spread", .9);
-		conf.set("IRONAXE.time",0);
+		conf.set("IRONAXE.buytime",0);
+		conf.set("IRONAXE.selltime",0);
 
 		conf.set("FLINTANDSTEEL.velocity", .001);
 		conf.set("FLINTANDSTEEL.id", 259);
@@ -1468,7 +2604,8 @@ public class Initialize {
 		conf.set("FLINTANDSTEEL.description", "Best friend to an Arsonist!");
 		conf.set("FLINTANDSTEEL.stock",50);
 		conf.set("FLINTANDSTEEL.spread", .001);
-		conf.set("FLINTANDSTEEL.time",0);
+		conf.set("FLINTANDSTEEL.buytime",0);
+		conf.set("FLINTANDSTEEL.selltime",0);
 
 		conf.set("APPLE.velocity", .8);
 		conf.set("APPLE.id", 260);
@@ -1478,7 +2615,8 @@ public class Initialize {
 		conf.set("APPLE.description", "A delicious fruit!");
 		conf.set("APPLE.stock",50);
 		conf.set("APPLE.spread", .8);
-		conf.set("APPLE.time",0);
+		conf.set("APPLE.buytime",0);
+		conf.set("APPLE.selltime",0);
 
 		conf.set("BOW.velocity", .1);
 		conf.set("BOW.id", 261);
@@ -1488,7 +2626,8 @@ public class Initialize {
 		conf.set("BOW.description", "Kill your opponents from far away!");
 		conf.set("BOW.stock",50);
 		conf.set("BOW.spread", .1);
-		conf.set("BOW.time",0);
+		conf.set("BOW.buytime",0);
+		conf.set("BOW.selltime",0);
 
 		conf.set("ARROW.velocity", .14);
 		conf.set("ARROW.id", 262);
@@ -1498,7 +2637,8 @@ public class Initialize {
 		conf.set("ARROW.description", "Ammo for your bow!");
 		conf.set("ARROW.stock",50);
 		conf.set("ARROW.spread", .14);
-		conf.set("ARROW.time",0);
+		conf.set("ARROW.buytime",0);
+		conf.set("ARROW.selltime",0);
 
 		conf.set("COAL.velocity", .09);
 		conf.set("COAL.id", 263);
@@ -1508,7 +2648,8 @@ public class Initialize {
 		conf.set("COAL.description", "Good for burning!");
 		conf.set("COAL.stock",50);
 		conf.set("COAL.spread", .09);
-		conf.set("COAL.time",0);
+		conf.set("COAL.buytime",0);
+		conf.set("COAL.selltime",0);
 		
 		conf.set("CHARCOAL.velocity", .09);
 		conf.set("CHARCOAL.id", 263001);
@@ -1518,7 +2659,8 @@ public class Initialize {
 		conf.set("CHARCOAL.description", "Good for burning!");
 		conf.set("CHARCOAL.stock",50);
 		conf.set("CHARCOAL.spread", .09);
-		conf.set("CHARCOAL.time",0);
+		conf.set("CHARCOAL.buytime",0);
+		conf.set("CHARCOAL.selltime",0);
 
 		conf.set("DIAMOND.velocity", 2.9);
 		conf.set("DIAMOND.id", 264);
@@ -1528,7 +2670,8 @@ public class Initialize {
 		conf.set("DIAMOND.description", "The most precious jewel of them all!");
 		conf.set("DIAMOND.stock",50);
 		conf.set("DIAMOND.spread", 2.9);
-		conf.set("DIAMOND.time",0);
+		conf.set("DIAMOND.buytime",0);
+		conf.set("DIAMOND.selltime",0);
 
 		conf.set("IRONINGOT.velocity", .12);
 		conf.set("IRONINGOT.id", 265);
@@ -1538,7 +2681,8 @@ public class Initialize {
 		conf.set("IRONINGOT.description", "Tough as steel!");
 		conf.set("IRONINGOT.stock",50);
 		conf.set("IRONINGOT.spread", .12);
-		conf.set("IRONINGOT.time",0);
+		conf.set("IRONINGOT.buytime",0);
+		conf.set("IRONINGOT.selltime",0);
 
 		conf.set("GOLDINGOT.velocity", .19);
 		conf.set("GOLDINGOT.id", 266);
@@ -1548,7 +2692,8 @@ public class Initialize {
 		conf.set("GOLDINGOT.description", "Prettiest metal ever!");
 		conf.set("GOLDINGOT.stock",50);
 		conf.set("GOLDINGOT.spread", .19);
-		conf.set("GOLDINGOT.time",0);
+		conf.set("GOLDINGOT.buytime",0);
+		conf.set("GOLDINGOT.selltime",0);
 		
 		conf.set("IRONSWORD.velocity", .29);
 		conf.set("IRONSWORD.id", 267);
@@ -1558,7 +2703,8 @@ public class Initialize {
 		conf.set("IRONSWORD.description", "Fight with Iron!");
 		conf.set("IRONSWORD.stock",50);
 		conf.set("IRONSWORD.spread", .29);
-		conf.set("IRONSWORD.time",0);
+		conf.set("IRONSWORD.buytime",0);
+		conf.set("IRONSWORD.selltime",0);
 
 		conf.set("WOODENSWORD.velocity", .009);
 		conf.set("WOODENSWORD.id", 268);
@@ -1568,7 +2714,8 @@ public class Initialize {
 		conf.set("WOODENSWORD.description", "A weak sword made of wood!");
 		conf.set("WOODENSWORD.stock",50);
 		conf.set("WOODENSWORD.spread", .009);
-		conf.set("WOODENSWORD.time",0);
+		conf.set("WOODENSWORD.buytime",0);
+		conf.set("WOODENSWORD.selltime",0);
 
 		conf.set("WOODENSHOVEL.velocity", .009);
 		conf.set("WOODENSHOVEL.id", 269);
@@ -1578,7 +2725,8 @@ public class Initialize {
 		conf.set("WOODENSHOVEL.description", "Not a very reliable shovel!");
 		conf.set("WOODENSHOVEL.stock",50);
 		conf.set("WOODENSHOVEL.spread", .009);
-		conf.set("WOODENSHOVEL.time",0);
+		conf.set("WOODENSHOVEL.buytime",0);
+		conf.set("WOODENSHOVEL.selltime",0);
 
 		conf.set("WOODENPICKAXE.velocity", .009);
 		conf.set("WOODENPICKAXE.id", 270);
@@ -1588,7 +2736,8 @@ public class Initialize {
 		conf.set("WOODENPICKAXE.description", "I'm not sure if this can break stone..!");
 		conf.set("WOODENPICKAXE.stock",50);
 		conf.set("WOODENPICKAXE.spread", .009);
-		conf.set("WOODENPICKAXE.time",0);
+		conf.set("WOODENPICKAXE.buytime",0);
+		conf.set("WOODENPICKAXE.selltime",0);
 
 		conf.set("WOODENAXE.velocity", .009);
 		conf.set("WOODENAXE.id", 271);
@@ -1598,7 +2747,8 @@ public class Initialize {
 		conf.set("WOODENAXE.description", "Wood on wood cutting!!");
 		conf.set("WOODENAXE.stock",50);
 		conf.set("WOODENAXE.spread", .009);
-		conf.set("WOODENAXE.time",0);
+		conf.set("WOODENAXE.buytime",0);
+		conf.set("WOODENAXE.selltime",0);
 
 		conf.set("STONESWORD.velocity", .03);
 		conf.set("STONESWORD.id", 272);
@@ -1608,7 +2758,8 @@ public class Initialize {
 		conf.set("STONESWORD.description", "A sword of stone!");
 		conf.set("STONESWORD.stock",50);
 		conf.set("STONESWORD.spread", .03);
-		conf.set("STONESWORD.time",0);
+		conf.set("STONESWORD.buytime",0);
+		conf.set("STONESWORD.selltime",0);
 
 		conf.set("STONESHOVEL.velocity", .03);
 		conf.set("STONESHOVEL.id", 273);
@@ -1618,7 +2769,8 @@ public class Initialize {
 		conf.set("STONESHOVEL.description", "A shovel of stone!");
 		conf.set("STONESHOVEL.stock",50);
 		conf.set("STONESHOVEL.spread", .03);
-		conf.set("STONESHOVEL.time",0);
+		conf.set("STONESHOVEL.buytime",0);
+		conf.set("STONESHOVEL.selltime",0);
 
 		conf.set("STONEPICKAXE.velocity", .03);
 		conf.set("STONEPICKAXE.id", 274);
@@ -1628,7 +2780,8 @@ public class Initialize {
 		conf.set("STONEPICKAXE.description", "Stone on Stone mining!");
 		conf.set("STONEPICKAXE.stock",50);
 		conf.set("STONEPICKAXE.spread", .03);
-		conf.set("STONEPICKAXE.time",0);
+		conf.set("STONEPICKAXE.buytime",0);
+		conf.set("STONEPICKAXE.selltime",0);
 
 		conf.set("STONEAXE.velocity", .03);
 		conf.set("STONEAXE.id", 275);
@@ -1638,7 +2791,8 @@ public class Initialize {
 		conf.set("STONEAXE.description", "An axe of stone!");
 		conf.set("STONEAXE.stock",50);
 		conf.set("STONEAXE.spread", .03);
-		conf.set("STONEAXE.time",0);
+		conf.set("STONEAXE.buytime",0);
+		conf.set("STONEAXE.selltime",0);
 
 		conf.set("DIAMONDSWORD.velocity", 9.3);
 		conf.set("DIAMONDSWORD.id", 276);
@@ -1648,7 +2802,8 @@ public class Initialize {
 		conf.set("DIAMONDSWORD.description", "Kill your enemies with DIAMOND!");
 		conf.set("DIAMONDSWORD.stock",50);
 		conf.set("DIAMONDSWORD.spread", 9.3);
-		conf.set("DIAMONDSWORD.time",0);
+		conf.set("DIAMONDSWORD.buytime",0);
+		conf.set("DIAMONDSWORD.selltime",0);
 
 		conf.set("DIAMONDSHOVEL.velocity", 9.3);
 		conf.set("DIAMONDSHOVEL.id", 277);
@@ -1658,7 +2813,8 @@ public class Initialize {
 		conf.set("DIAMONDSHOVEL.description", "Dirt and diamond, a nasty combo!");
 		conf.set("DIAMONDSHOVEL.stock",50);
 		conf.set("DIAMONDSHOVEL.spread", 9.3);
-		conf.set("DIAMONDSHOVEL.time",0);
+		conf.set("DIAMONDSHOVEL.buytime",0);
+		conf.set("DIAMONDSHOVEL.selltime",0);
 		
 		conf.set("DIAMONDPICKAXE.velocity", 12.2);
 		conf.set("DIAMONDPICKAXE.id", 278);
@@ -1668,7 +2824,8 @@ public class Initialize {
 		conf.set("DIAMONDPICKAXE.description", "Breaks through anything!");
 		conf.set("DIAMONDPICKAXE.stock",50);
 		conf.set("DIAMONDPICKAXE.spread", 12.2);
-		conf.set("DIAMONDPICKAXE.time",0);
+		conf.set("DIAMONDPICKAXE.buytime",0);
+		conf.set("DIAMONDPICKAXE.selltime",0);
 
 		conf.set("DIAMONDAXE.velocity", 9.3);
 		conf.set("DIAMONDAXE.id", 279);
@@ -1678,7 +2835,8 @@ public class Initialize {
 		conf.set("DIAMONDAXE.description", "Cuts through anything!");
 		conf.set("DIAMONDAXE.stock",50);
 		conf.set("DIAMONDAXE.spread", 9.3);
-		conf.set("DIAMONDAXE.time",0);
+		conf.set("DIAMONDAXE.buytime",0);
+		conf.set("DIAMONDAXE.selltime",0);
 
 		conf.set("STICK.velocity", .003);
 		conf.set("STICK.id", 280);
@@ -1688,7 +2846,8 @@ public class Initialize {
 		conf.set("STICK.description", "Just a wooden stick!");
 		conf.set("STICK.stock",50);
 		conf.set("STICK.spread", .003);
-		conf.set("STICK.time",0);
+		conf.set("STICK.buytime",0);
+		conf.set("STICK.selltime",0);
 
 		conf.set("BOWL.velocity", .003);
 		conf.set("BOWL.id", 281);
@@ -1698,7 +2857,8 @@ public class Initialize {
 		conf.set("BOWL.description", "A bowl.. for soup!");
 		conf.set("BOWL.stock",50);
 		conf.set("BOWL.spread", .003);
-		conf.set("BOWL.time",0);
+		conf.set("BOWL.buytime",0);
+		conf.set("BOWL.selltime",0);
 
 		conf.set("MUSHROOMSOUP.velocity", .04);
 		conf.set("MUSHROOMSOUP.id", 282);
@@ -1708,7 +2868,8 @@ public class Initialize {
 		conf.set("MUSHROOMSOUP.description", "Shroom soup!");
 		conf.set("MUSHROOMSOUP.stock",50);
 		conf.set("MUSHROOMSOUP.spread", .04);
-		conf.set("MUSHROOMSOUP.time",0);
+		conf.set("MUSHROOMSOUP.buytime",0);
+		conf.set("MUSHROOMSOUP.selltime",0);
 
 		conf.set("GOLDSWORD.velocity", 5.6);
 		conf.set("GOLDSWORD.id", 283);
@@ -1718,7 +2879,8 @@ public class Initialize {
 		conf.set("GOLDSWORD.description", "Effective, but short-lived!");
 		conf.set("GOLDSWORD.stock",50);
 		conf.set("GOLDSWORD.spread", 5.6);
-		conf.set("GOLDSWORD.time",0);
+		conf.set("GOLDSWORD.buytime",0);
+		conf.set("GOLDSWORD.selltime",0);
 
 		conf.set("GOLDSHOVEL.velocity", 5.6);
 		conf.set("GOLDSHOVEL.id", 284);
@@ -1728,7 +2890,8 @@ public class Initialize {
 		conf.set("GOLDSHOVEL.description", "Effective, but short-lived!");
 		conf.set("GOLDSHOVEL.stock",50);
 		conf.set("GOLDSHOVEL.spread", 5.6);
-		conf.set("GOLDSHOVEL.time",0);
+		conf.set("GOLDSHOVEL.buytime",0);
+		conf.set("GOLDSHOVEL.selltime",0);
 
 		conf.set("GOLDPICKAXE.velocity", 5.6);
 		conf.set("GOLDPICKAXE.id", 285);
@@ -1738,7 +2901,8 @@ public class Initialize {
 		conf.set("GOLDPICKAXE.description", "Effective, but short-lived!");
 		conf.set("GOLDPICKAXE.stock",50);
 		conf.set("GOLDPICKAXE.spread", 5.6);
-		conf.set("GOLDPICKAXE.time",0);
+		conf.set("GOLDPICKAXE.buytime",0);
+		conf.set("GOLDPICKAXE.selltime",0);
 
 		conf.set("GOLDAXE.velocity", 5.6);
 		conf.set("GOLDAXE.id", 286);
@@ -1748,7 +2912,8 @@ public class Initialize {
 		conf.set("GOLDAXE.description", "Effective, but short-lived!");
 		conf.set("GOLDAXE.stock",50);
 		conf.set("GOLDAXE.spread", 5.6);
-		conf.set("GOLDAXE.time",0);
+		conf.set("GOLDAXE.buytime",0);
+		conf.set("GOLDAXE.selltime",0);
 
 		conf.set("STRING.velocity", .16);
 		conf.set("STRING.id", 287);
@@ -1758,7 +2923,8 @@ public class Initialize {
 		conf.set("STRING.description", "String from spiders!");
 		conf.set("STRING.stock",50);
 		conf.set("STRING.spread", .16);
-		conf.set("STRING.time",0);
+		conf.set("STRING.buytime",0);
+		conf.set("STRING.selltime",0);
 
 		conf.set("FEATHER.velocity", .16);
 		conf.set("FEATHER.id", 288);
@@ -1768,7 +2934,8 @@ public class Initialize {
 		conf.set("FEATHER.description", "Feathers from...zombies?!");
 		conf.set("FEATHER.stock",50);
 		conf.set("FEATHER.spread", .16);
-		conf.set("FEATHER.time",0);
+		conf.set("FEATHER.buytime",0);
+		conf.set("FEATHER.selltime",0);
 
 		conf.set("GUNPOWDER.velocity", .32);
 		conf.set("GUNPOWDER.id", 289);
@@ -1778,7 +2945,8 @@ public class Initialize {
 		conf.set("GUNPOWDER.description", "The heart of a creeper!");
 		conf.set("GUNPOWDER.stock",50);
 		conf.set("GUNPOWDER.spread", .32);
-		conf.set("GUNPOWDER.time",0);
+		conf.set("GUNPOWDER.buytime",0);
+		conf.set("GUNPOWDER.selltime",0);
 
 		conf.set("WOODENHOE.velocity", .005);
 		conf.set("WOODENHOE.id", 290);
@@ -1788,7 +2956,8 @@ public class Initialize {
 		conf.set("WOODENHOE.description", "Till your farm, wood-style!");
 		conf.set("WOODENHOE.stock",50);
 		conf.set("WOODENHOE.spread", .005);
-		conf.set("WOODENHOE.time",0);
+		conf.set("WOODENHOE.buytime",0);
+		conf.set("WOODENHOE.selltime",0);
 
 		conf.set("STONEHOE.velocity", .01);
 		conf.set("STONEHOE.id", 291);
@@ -1798,7 +2967,8 @@ public class Initialize {
 		conf.set("STONEHOE.description", "Till your farm, stone-style!");
 		conf.set("STONEHOE.stock",50);
 		conf.set("STONEHOE.spread", .01);
-		conf.set("STONEHOE.time",0);
+		conf.set("STONEHOE.buytime",0);
+		conf.set("STONEHOE.selltime",0);
 
 		conf.set("IRONHOE.velocity", 1.9);
 		conf.set("IRONHOE.id", 292);
@@ -1808,7 +2978,8 @@ public class Initialize {
 		conf.set("IRONHOE.description", "Till your farm, iron-style!");
 		conf.set("IRONHOE.stock",50);
 		conf.set("IRONHOE.spread", 1.9);
-		conf.set("IRONHOE.time",0);
+		conf.set("IRONHOE.buytime",0);
+		conf.set("IRONHOE.selltime",0);
 
 		conf.set("DIAMONDHOE.velocity", 12.1);
 		conf.set("DIAMONDHOE.id", 293);
@@ -1818,7 +2989,8 @@ public class Initialize {
 		conf.set("DIAMONDHOE.description", "Till your farm in excessive luxury!");
 		conf.set("DIAMONDHOE.stock",50);
 		conf.set("DIAMONDHOE.spread", 12.1);
-		conf.set("DIAMONDHOE.time",0);
+		conf.set("DIAMONDHOE.buytime",0);
+		conf.set("DIAMONDHOE.selltime",0);
 
 		conf.set("GOLDHOE.velocity", 7.9);
 		conf.set("GOLDHOE.id", 294);
@@ -1828,7 +3000,8 @@ public class Initialize {
 		conf.set("GOLDHOE.description", "Found on beaches!");
 		conf.set("GOLDHOE.stock",50);
 		conf.set("GOLDHOE.spread", 7.9);
-		conf.set("GOLDHOE.time",0);
+		conf.set("GOLDHOE.buytime",0);
+		conf.set("GOLDHOE.selltime",0);
 
 		conf.set("SEEDS.velocity", .01);
 		conf.set("SEEDS.id", 295);
@@ -1838,7 +3011,8 @@ public class Initialize {
 		conf.set("SEEDS.description", "Grows wheat!");
 		conf.set("SEEDS.stock",50);
 		conf.set("SEEDS.spread", .01);
-		conf.set("SEEDS.time",0);
+		conf.set("SEEDS.buytime",0);
+		conf.set("SEEDS.selltime",0);
 
 		conf.set("WHEAT.velocity", .07);
 		conf.set("WHEAT.id", 296);
@@ -1848,7 +3022,8 @@ public class Initialize {
 		conf.set("WHEAT.description", "Mmm, good for bread and cake!");
 		conf.set("WHEAT.stock",50);
 		conf.set("WHEAT.spread", .07);
-		conf.set("WHEAT.time",0);
+		conf.set("WHEAT.buytime",0);
+		conf.set("WHEAT.selltime",0);
 
 		conf.set("BREAD.velocity", .11);
 		conf.set("BREAD.id", 297);
@@ -1858,7 +3033,8 @@ public class Initialize {
 		conf.set("BREAD.description", "Scrumptious carbohydrates!");
 		conf.set("BREAD.stock",50);
 		conf.set("BREAD.spread", .11);
-		conf.set("BREAD.time",0);
+		conf.set("BREAD.buytime",0);
+		conf.set("BREAD.selltime",0);
 
 		conf.set("LEATHERCAP.velocity", .78);
 		conf.set("LEATHERCAP.id", 298);
@@ -1868,7 +3044,8 @@ public class Initialize {
 		conf.set("LEATHERCAP.description", "A hat made of cow skin!");
 		conf.set("LEATHERCAP.stock",50);
 		conf.set("LEATHERCAP.spread", .78);
-		conf.set("LEATHERCAP.time",0);
+		conf.set("LEATHERCAP.buytime",0);
+		conf.set("LEATHERCAP.selltime",0);
 
 		conf.set("LEATHERTUNIC.velocity", .8);
 		conf.set("LEATHERTUNIC.id", 299);
@@ -1878,7 +3055,8 @@ public class Initialize {
 		conf.set("LEATHERTUNIC.description", "A shirt made of cow skin!");
 		conf.set("LEATHERTUNIC.stock",50);
 		conf.set("LEATHERTUNIC.spread", .8);
-		conf.set("LEATHERTUNIC.time",0);
+		conf.set("LEATHERTUNIC.buytime",0);
+		conf.set("LEATHERTUNIC.selltime",0);
 
 		conf.set("LEATHERPANTS.velocity", .9);
 		conf.set("LEATHERPANTS.id", 300);
@@ -1888,7 +3066,8 @@ public class Initialize {
 		conf.set("LEATHERPANTS.description", "Pants made of cow skin!");
 		conf.set("LEATHERPANTS.stock",50);
 		conf.set("LEATHERPANTS.spread", .9);
-		conf.set("LEATHERPANTS.time",0);
+		conf.set("LEATHERPANTS.buytime",0);
+		conf.set("LEATHERPANTS.selltime",0);
 
 		conf.set("LEATHERBOOTS.velocity", 1);
 		conf.set("LEATHERBOOTS.id", 301);
@@ -1898,7 +3077,8 @@ public class Initialize {
 		conf.set("LEATHERBOOTS.description", "Boots made of cow skin!");
 		conf.set("LEATHERBOOTS.stock",50);
 		conf.set("LEATHERBOOTS.spread", 1);
-		conf.set("LEATHERBOOTS.time",0);
+		conf.set("LEATHERBOOTS.buytime",0);
+		conf.set("LEATHERBOOTS.selltime",0);
 		
 		conf.set("CHAINMAILHELMET.velocity", 1);
 		conf.set("CHAINMAILHELMET.id", 302);
@@ -1908,7 +3088,8 @@ public class Initialize {
 		conf.set("CHAINMAILHELMET.description", "Legendary chainmail armor");
 		conf.set("CHAINMAILHELMET.stock",50);
 		conf.set("CHAINMAILHELMET.spread", 1);
-		conf.set("CHAINMAILHELMET.time",0);
+		conf.set("CHAINMAILHELMET.buytime",0);
+		conf.set("CHAINMAILHELMET.selltime",0);
 		
 		conf.set("CHAINMAILCHESTPLATE.velocity", 1);
 		conf.set("CHAINMAILCHESTPLATE.id", 303);
@@ -1918,7 +3099,8 @@ public class Initialize {
 		conf.set("CHAINMAILCHESTPLATE.description", "Legendary chainmail armor");
 		conf.set("CHAINMAILCHESTPLATE.stock",50);
 		conf.set("CHAINMAILCHESTPLATE.spread", 1);
-		conf.set("CHAINMAILCHESTPLATE.time",0);
+		conf.set("CHAINMAILCHESTPLATE.buytime",0);
+		conf.set("CHAINMAILCHESTPLATE.selltime",0);
 		
 		conf.set("CHAINMAILLEGGINGS.velocity", 1);
 		conf.set("CHAINMAILLEGGINGS.id", 304);
@@ -1928,7 +3110,8 @@ public class Initialize {
 		conf.set("CHAINMAILLEGGINGS.description", "Legendary chainmail armor");
 		conf.set("CHAINMAILLEGGINGS.stock",50);
 		conf.set("CHAINMAILLEGGINGS.spread", 1);
-		conf.set("CHAINMAILLEGGINGS.time",0);
+		conf.set("CHAINMAILLEGGINGS.buytime",0);
+		conf.set("CHAINMAILLEGGINGS.selltime",0);
 		
 		conf.set("CHAINMAILBOOTS.velocity", 1);
 		conf.set("CHAINMAILBOOTS.id", 305);
@@ -1938,7 +3121,8 @@ public class Initialize {
 		conf.set("CHAINMAILBOOTS.description", "Legendary chainmail armor");
 		conf.set("CHAINMAILBOOTS.stock",50);
 		conf.set("CHAINMAILBOOTS.spread", 1);
-		conf.set("CHAINMAILBOOTS.time",0);
+		conf.set("CHAINMAILBOOTS.buytime",0);
+		conf.set("CHAINMAILBOOTS.selltime",0);
 
 		conf.set("IRONHELMET.velocity", 2.6);
 		conf.set("IRONHELMET.id", 306);
@@ -1948,7 +3132,8 @@ public class Initialize {
 		conf.set("IRONHELMET.description", "Ironhead!");
 		conf.set("IRONHELMET.stock",50);
 		conf.set("IRONHELMET.spread", 2.6);
-		conf.set("IRONHELMET.time",0);
+		conf.set("IRONHELMET.buytime",0);
+		conf.set("IRONHELMET.selltime",0);
 
 		conf.set("IRONCHESTPLATE.velocity", 3.6);
 		conf.set("IRONCHESTPLATE.id", 307);
@@ -1958,7 +3143,8 @@ public class Initialize {
 		conf.set("IRONCHESTPLATE.description", "IronTorso!");
 		conf.set("IRONCHESTPLATE.stock",50);
 		conf.set("IRONCHESTPLATE.spread", 3.6);
-		conf.set("IRONCHESTPLATE.time",0);
+		conf.set("IRONCHESTPLATE.buytime",0);
+		conf.set("IRONCHESTPLATE.selltime",0);
 
 		conf.set("IRONLEGGINGS.velocity", 3.9);
 		conf.set("IRONLEGGINGS.id", 308);
@@ -1968,7 +3154,8 @@ public class Initialize {
 		conf.set("IRONLEGGINGS.description", "Ironlegs!");
 		conf.set("IRONLEGGINGS.stock",50);
 		conf.set("IRONLEGGINGS.spread", 3.9);
-		conf.set("IRONLEGGINGS.time",0);
+		conf.set("IRONLEGGINGS.buytime",0);
+		conf.set("IRONLEGGINGS.selltime",0);
 
 		conf.set("IRONBOOTS.velocity", 4.6);
 		conf.set("IRONBOOTS.id", 309);
@@ -1978,7 +3165,8 @@ public class Initialize {
 		conf.set("IRONBOOTS.description", "IronFeet!");
 		conf.set("IRONBOOTS.stock",50);
 		conf.set("IRONBOOTS.spread", 4.6);
-		conf.set("IRONBOOTS.time",0);
+		conf.set("IRONBOOTS.buytime",0);
+		conf.set("IRONBOOTS.selltime",0);
 
 		conf.set("DIAMONDHELMET.velocity", 23.9);
 		conf.set("DIAMONDHELMET.id", 310);
@@ -1988,7 +3176,8 @@ public class Initialize {
 		conf.set("DIAMONDHELMET.description", "Flashiest helmet around!");
 		conf.set("DIAMONDHELMET.stock",50);
 		conf.set("DIAMONDHELMET.spread", 23.9);
-		conf.set("DIAMONDHELMET.time",0);
+		conf.set("DIAMONDHELMET.buytime",0);
+		conf.set("DIAMONDHELMET.selltime",0);
 
 		conf.set("DIAMONDCHESTPLATE.velocity", 59.1);
 		conf.set("DIAMONDCHESTPLATE.id", 311);
@@ -1998,7 +3187,8 @@ public class Initialize {
 		conf.set("DIAMONDCHESTPLATE.description", "Flashiest chestplate around!");
 		conf.set("DIAMONDCHESTPLATE.stock",50);
 		conf.set("DIAMONDCHESTPLATE.spread", 59.1);
-		conf.set("DIAMONDCHESTPLATE.time",0);
+		conf.set("DIAMONDCHESTPLATE.buytime",0);
+		conf.set("DIAMONDCHESTPLATE.selltime",0);
 
 
 		conf.set("DIAMONDLEGGINGS.velocity", 49.2);
@@ -2009,7 +3199,8 @@ public class Initialize {
 		conf.set("DIAMONDLEGGINGS.description", "Flashiest leggings around!");
 		conf.set("DIAMONDLEGGINGS.stock",50);
 		conf.set("DIAMONDLEGGINGS.spread", 49.2);
-		conf.set("DIAMONDLEGGINGS.time",0);
+		conf.set("DIAMONDLEGGINGS.buytime",0);
+		conf.set("DIAMONDLEGGINGS.selltime",0);
 
 
 		conf.set("DIAMONDBOOTS.velocity", 26.3);
@@ -2020,7 +3211,8 @@ public class Initialize {
 		conf.set("DIAMONDBOOTS.description", "Flashiest boots around!");
 		conf.set("DIAMONDBOOTS.stock",50);
 		conf.set("DIAMONDBOOTS.spread", 26.3);
-		conf.set("DIAMONDBOOTS.time",0);
+		conf.set("DIAMONDBOOTS.buytime",0);
+		conf.set("DIAMONDBOOTS.selltime",0);
 
 
 		conf.set("GOLDHELMET.velocity", 28.4);
@@ -2031,7 +3223,8 @@ public class Initialize {
 		conf.set("GOLDHELMET.description", "14K Helmet!");
 		conf.set("GOLDHELMET.stock",50);
 		conf.set("GOLDHELMET.spread", 28.4);
-		conf.set("GOLDHELMET.time",0);
+		conf.set("GOLDHELMET.buytime",0);
+		conf.set("GOLDHELMET.selltime",0);
 
 
 		conf.set("GOLDCHESTPLATE.velocity", 39.1);
@@ -2042,7 +3235,8 @@ public class Initialize {
 		conf.set("GOLDCHESTPLATE.description", "20K Chestplate!");
 		conf.set("GOLDCHESTPLATE.stock",50);
 		conf.set("GOLDCHESTPLATE.spread", 39.1);
-		conf.set("GOLDCHESTPLATE.time",0);
+		conf.set("GOLDCHESTPLATE.buytime",0);
+		conf.set("GOLDCHESTPLATE.selltime",0);
 
 
 		conf.set("GOLDLEGGINGS.velocity", 23.6);
@@ -2053,7 +3247,8 @@ public class Initialize {
 		conf.set("GOLDLEGGINGS.description", "24K Leggings!");
 		conf.set("GOLDLEGGINGS.stock",50);
 		conf.set("GOLDLEGGINGS.spread", 23.6);
-		conf.set("GOLDLEGGINGS.time",0);
+		conf.set("GOLDLEGGINGS.buytime",0);
+		conf.set("GOLDLEGGINGS.selltime",0);
 
 
 		conf.set("GOLDBOOTS.velocity", 29.3);
@@ -2064,7 +3259,8 @@ public class Initialize {
 		conf.set("GOLDBOOTS.description", "Boots, now in White Gold!");
 		conf.set("GOLDBOOTS.stock",50);
 		conf.set("GOLDBOOTS.spread", 29.3);
-		conf.set("GOLDBOOTS.time",0);
+		conf.set("GOLDBOOTS.buytime",0);
+		conf.set("GOLDBOOTS.selltime",0);
 
 
 		conf.set("FLINT.velocity", .6);
@@ -2075,7 +3271,8 @@ public class Initialize {
 		conf.set("FLINT.description", "This has a purpose..?");
 		conf.set("FLINT.stock",50);
 		conf.set("FLINT.spread", .6);
-		conf.set("FLINT.time",0);
+		conf.set("FLINT.buytime",0);
+		conf.set("FLINT.selltime",0);
 
 
 		conf.set("RAWPORKCHOP.velocity", .4);
@@ -2086,7 +3283,8 @@ public class Initialize {
 		conf.set("RAWPORKCHOP.description", "Mmm, Piggy!");
 		conf.set("RAWPORKCHOP.stock",50);
 		conf.set("RAWPORKCHOP.spread", .4);
-		conf.set("RAWPORKCHOP.time",0);
+		conf.set("RAWPORKCHOP.buytime",0);
+		conf.set("RAWPORKCHOP.selltime",0);
 
 
 		conf.set("COOKEDPORKCHOP.velocity", .4);
@@ -2097,7 +3295,8 @@ public class Initialize {
 		conf.set("COOKEDPORKCHOP.description", "Mmm, Piggy read to eat!");
 		conf.set("COOKEDPORKCHOP.stock",50);
 		conf.set("COOKEDPORKCHOP.spread", .4);
-		conf.set("COOKEDPORKCHOP.time",0);
+		conf.set("COOKEDPORKCHOP.buytime",0);
+		conf.set("COOKEDPORKCHOP.selltime",0);
 
 
 		conf.set("PAINTING.velocity", .5);
@@ -2108,7 +3307,8 @@ public class Initialize {
 		conf.set("PAINTING.description", "Paintings by Notch Da Vinci himself!");
 		conf.set("PAINTING.stock",50);
 		conf.set("PAINTING.spread", .5);
-		conf.set("PAINTING.time",0);
+		conf.set("PAINTING.buytime",0);
+		conf.set("PAINTING.selltime",0);
 
 		conf.set("GOLDENAPPLE.velocity", 231.4);
 		conf.set("GOLDENAPPLE.id", 322);
@@ -2118,7 +3318,8 @@ public class Initialize {
 		conf.set("GOLDENAPPLE.description", "An apple of GOLD. Rather hard to consume!");
 		conf.set("GOLDENAPPLE.stock",50);
 		conf.set("GOLDENAPPLE.spread", 231.4);
-		conf.set("GOLDENAPPLE.time",0);
+		conf.set("GOLDENAPPLE.buytime",0);
+		conf.set("GOLDENAPPLE.selltime",0);
 
 		conf.set("SIGN.velocity", .25);
 		conf.set("SIGN.id", 323);
@@ -2128,7 +3329,8 @@ public class Initialize {
 		conf.set("SIGN.description", "Used to write meaningful information!");
 		conf.set("SIGN.stock",50);
 		conf.set("SIGN.spread", .25);
-		conf.set("SIGN.time",0);
+		conf.set("SIGN.buytime",0);
+		conf.set("SIGN.selltime",0);
 
 		conf.set("WOODENDOOR.velocity", .05);
 		conf.set("WOODENDOOR.id", 324);
@@ -2138,7 +3340,8 @@ public class Initialize {
 		conf.set("WOODENDOOR.description", "A door of wood!");
 		conf.set("WOODENDOOR.stock",50);
 		conf.set("WOODENDOOR.spread", .05);
-		conf.set("WOODENDOOR.time",0);
+		conf.set("WOODENDOOR.buytime",0);
+		conf.set("WOODENDOOR.selltime",0);
 
 		conf.set("BUCKET.velocity", 1.4);
 		conf.set("BUCKET.id", 325);
@@ -2148,7 +3351,8 @@ public class Initialize {
 		conf.set("BUCKET.description", "A bucket for holding liquids.. or plasmas!");
 		conf.set("BUCKET.stock",50);
 		conf.set("BUCKET.spread", 1.4);
-		conf.set("BUCKET.time",0);
+		conf.set("BUCKET.buytime",0);
+		conf.set("BUCKET.selltime",0);
 
 		conf.set("WATERBUCKET.velocity", 2.1);
 		conf.set("WATERBUCKET.id", 326);
@@ -2158,7 +3362,8 @@ public class Initialize {
 		conf.set("WATERBUCKET.description", "A bucket, with free water!");
 		conf.set("WATERBUCKET.stock",50);
 		conf.set("WATERBUCKET.spread", 2.1);
-		conf.set("WATERBUCKET.time",0);
+		conf.set("WATERBUCKET.buytime",0);
+		conf.set("WATERBUCKET.selltime",0);
 
 		conf.set("LAVABUCKET.velocity", 3.1);
 		conf.set("LAVABUCKET.id", 327);
@@ -2168,7 +3373,8 @@ public class Initialize {
 		conf.set("LAVABUCKET.description", "A bucket, with free molten death!");
 		conf.set("LAVABUCKET.stock",50);
 		conf.set("LAVABUCKET.spread", 3.1);
-		conf.set("LAVABUCKET.time",0);
+		conf.set("LAVABUCKET.buytime",0);
+		conf.set("LAVABUCKET.selltime",0);
 
 		conf.set("MINECART.velocity", 1.6);
 		conf.set("MINECART.id", 328);
@@ -2178,7 +3384,8 @@ public class Initialize {
 		conf.set("MINECART.description", "Takes you places!");
 		conf.set("MINECART.stock",50);
 		conf.set("MINECART.spread", 1.6);
-		conf.set("MINECART.time",0);
+		conf.set("MINECART.buytime",0);
+		conf.set("MINECART.selltime",0);
 
 		conf.set("SADDLE.velocity", 3.7);
 		conf.set("SADDLE.id", 329);
@@ -2188,7 +3395,8 @@ public class Initialize {
 		conf.set("SADDLE.description", "Used to ride piggies!");
 		conf.set("SADDLE.stock",50);
 		conf.set("SADDLE.spread", 3.7);
-		conf.set("SADDLE.time",0);
+		conf.set("SADDLE.buytime",0);
+		conf.set("SADDLE.selltime",0);
 
 		conf.set("IRONDOOR.velocity", 1.9);
 		conf.set("IRONDOOR.id", 330);
@@ -2198,7 +3406,8 @@ public class Initialize {
 		conf.set("IRONDOOR.description", "Burglars won't be able to open this badboy!");
 		conf.set("IRONDOOR.stock",50);
 		conf.set("IRONDOOR.spread", 1.9);
-		conf.set("IRONDOOR.time",0);
+		conf.set("IRONDOOR.buytime",0);
+		conf.set("IRONDOOR.selltime",0);
 
 		conf.set("REDSTONE.velocity", .01);
 		conf.set("REDSTONE.id", 331);
@@ -2208,7 +3417,8 @@ public class Initialize {
 		conf.set("REDSTONE.description", "Conducts power!");
 		conf.set("REDSTONE.stock",50);
 		conf.set("REDSTONE.spread", .01);
-		conf.set("REDSTONE.time",0);
+		conf.set("REDSTONE.buytime",0);
+		conf.set("REDSTONE.selltime",0);
 		
 		conf.set("SNOWBALL.velocity", .01);
 		conf.set("SNOWBALL.id", 332);
@@ -2218,7 +3428,8 @@ public class Initialize {
 		conf.set("SNOWBALL.description", "Conducts power!");
 		conf.set("SNOWBALL.stock",50);
 		conf.set("SNOWBALL.spread", .01);
-		conf.set("SNOWBALL.time",0);
+		conf.set("SNOWBALL.buytime",0);
+		conf.set("SNOWBALL.selltime",0);
 
 		conf.set("BOAT.velocity", .6);
 		conf.set("BOAT.id", 333);
@@ -2228,7 +3439,8 @@ public class Initialize {
 		conf.set("BOAT.description", "Use this to ride the waves into newly generated land!");
 		conf.set("BOAT.stock",50);
 		conf.set("BOAT.spread", .6);
-		conf.set("BOAT.time",0);
+		conf.set("BOAT.buytime",0);
+		conf.set("BOAT.selltime",0);
 
 		conf.set("LEATHER.velocity", .4);
 		conf.set("LEATHER.id", 334);
@@ -2238,7 +3450,8 @@ public class Initialize {
 		conf.set("LEATHER.description", "The skin of cattle!");
 		conf.set("LEATHER.stock",50);
 		conf.set("LEATHER.spread", .4);
-		conf.set("LEATHER.time",0);
+		conf.set("LEATHER.buytime",0);
+		conf.set("LEATHER.selltime",0);
 
 		conf.set("MILK.velocity", 3.6);
 		conf.set("MILK.id", 335);
@@ -2248,7 +3461,8 @@ public class Initialize {
 		conf.set("MILK.description", "White, creamy goodness!");
 		conf.set("MILK.stock",50);
 		conf.set("MILK.spread", 3.6);
-		conf.set("MILK.time",0);
+		conf.set("MILK.buytime",0);
+		conf.set("MILK.selltime",0);
 
 		conf.set("BRICK.velocity", .3);
 		conf.set("BRICK.id", 336);
@@ -2258,7 +3472,8 @@ public class Initialize {
 		conf.set("BRICK.description", "A brick of hardened clay!");
 		conf.set("BRICK.stock",50);
 		conf.set("BRICK.spread", .3);
-		conf.set("BRICK.time",0);
+		conf.set("BRICK.buytime",0);
+		conf.set("BRICK.selltime",0);
 
 		conf.set("CLAY.velocity", .25);
 		conf.set("CLAY.id", 337);
@@ -2268,7 +3483,8 @@ public class Initialize {
 		conf.set("CLAY.description", "Moldable puddy!");
 		conf.set("CLAY.stock",50);
 		conf.set("CLAY.spread", .25);
-		conf.set("CLAY.time",0);
+		conf.set("CLAY.buytime",0);
+		conf.set("CLAY.selltime",0);
 
 		conf.set("SUGARCANE.velocity", .03);
 		conf.set("SUGARCANE.id", 338);
@@ -2278,7 +3494,8 @@ public class Initialize {
 		conf.set("SUGARCANE.description", "Raw sugar!");
 		conf.set("SUGARCANE.stock",50);
 		conf.set("SUGARCANE.spread", .03);
-		conf.set("SUGARCANE.time",0);
+		conf.set("SUGARCANE.buytime",0);
+		conf.set("SUGARCANE.selltime",0);
 
 		conf.set("PAPER.velocity", .07);
 		conf.set("PAPER.id", 339);
@@ -2288,7 +3505,8 @@ public class Initialize {
 		conf.set("PAPER.description", "Good for taking notes!");
 		conf.set("PAPER.stock",50);
 		conf.set("PAPER.spread", .07);
-		conf.set("PAPER.time",0);
+		conf.set("PAPER.buytime",0);
+		conf.set("PAPER.selltime",0);
 
 		conf.set("BOOK.velocity", .09);
 		conf.set("BOOK.id", 340);
@@ -2298,7 +3516,8 @@ public class Initialize {
 		conf.set("BOOK.description", "Good for reading.. except its blank!");
 		conf.set("BOOK.stock",50);
 		conf.set("BOOK.spread", .09);
-		conf.set("BOOK.time",0);
+		conf.set("BOOK.buytime",0);
+		conf.set("BOOK.selltime",0);
 
 		conf.set("SLIMEBALL.velocity", .5);
 		conf.set("SLIMEBALL.id", 341);
@@ -2308,7 +3527,8 @@ public class Initialize {
 		conf.set("SLIMEBALL.description", "A chunk of a slime!");
 		conf.set("SLIMEBALL.stock",50);
 		conf.set("SLIMEBALL.spread", .5);
-		conf.set("SLIMEBALL.time",0);
+		conf.set("SLIMEBALL.buytime",0);
+		conf.set("SLIMEBALL.selltime",0);
 
 		conf.set("MINECARTWITHCHEST.velocity", 1.8);
 		conf.set("MINECARTWITHCHEST.id", 342);
@@ -2318,7 +3538,8 @@ public class Initialize {
 		conf.set("MINECARTWITHCHEST.description", "Rapid transportation of items!");
 		conf.set("MINECARTWITHCHEST.stock",50);
 		conf.set("MINECARTWITHCHEST.spread", 1.8);
-		conf.set("MINECARTWITHCHEST.time",0);
+		conf.set("MINECARTWITHCHEST.buytime",0);
+		conf.set("MINECARTWITHCHEST.selltime",0);
 
 		conf.set("MINECARTWITHFURNACE.velocity", 1.08);
 		conf.set("MINECARTWITHFURNACE.id", 343);
@@ -2328,7 +3549,8 @@ public class Initialize {
 		conf.set("MINECARTWITHFURNACE.description", "Choo Choo!");
 		conf.set("MINECARTWITHFURNACE.stock",50);
 		conf.set("MINECARTWITHFURNACE.spread", 1.08);
-		conf.set("MINECARTWITHFURNACE.time",0);
+		conf.set("MINECARTWITHFURNACE.buytime",0);
+		conf.set("MINECARTWITHFURNACE.selltime",0);
 
 		conf.set("EGG.velocity", .1);
 		conf.set("EGG.id", 344);
@@ -2338,7 +3560,8 @@ public class Initialize {
 		conf.set("EGG.description", "Right out of the chickens beh- you know.");
 		conf.set("EGG.stock",50);
 		conf.set("EGG.spread", .1);
-		conf.set("EGG.time",0);
+		conf.set("EGG.buytime",0);
+		conf.set("EGG.selltime",0);
 
 		conf.set("COMPASS.velocity", 2.7);
 		conf.set("COMPASS.id", 345);
@@ -2348,7 +3571,8 @@ public class Initialize {
 		conf.set("COMPASS.description", "Shows you direction!");
 		conf.set("COMPASS.stock",50);
 		conf.set("COMPASS.spread", 2.7);
-		conf.set("COMPASS.time",0);
+		conf.set("COMPASS.buytime",0);
+		conf.set("COMPASS.selltime",0);
 
 		conf.set("FISHINGROD.velocity", 1.6);
 		conf.set("FISHINGROD.id", 346);
@@ -2358,7 +3582,8 @@ public class Initialize {
 		conf.set("FISHINGROD.description", "Reel in a big one, son!");
 		conf.set("FISHINGROD.stock",50);
 		conf.set("FISHINGROD.spread", 1.6);
-		conf.set("FISHINGROD.time",0);
+		conf.set("FISHINGROD.buytime",0);
+		conf.set("FISHINGROD.selltime",0);
 
 		conf.set("CLOCK.velocity", 12.3);
 		conf.set("CLOCK.id", 347);
@@ -2368,7 +3593,8 @@ public class Initialize {
 		conf.set("CLOCK.description", "Can anyone say 'What time is it?' Not this thing!");
 		conf.set("CLOCK.stock",50);
 		conf.set("CLOCK.spread", 12.3);
-		conf.set("CLOCK.time",0);
+		conf.set("CLOCK.buytime",0);
+		conf.set("CLOCK.selltime",0);
 
 		conf.set("GLOWSTONEDUST.velocity", .1);
 		conf.set("GLOWSTONEDUST.id", 348);
@@ -2378,7 +3604,8 @@ public class Initialize {
 		conf.set("GLOWSTONEDUST.description", "A particle of glowstone!");
 		conf.set("GLOWSTONEDUST.stock",50);
 		conf.set("GLOWSTONEDUST.spread", .1);
-		conf.set("GLOWSTONEDUST.time",0);
+		conf.set("GLOWSTONEDUST.buytime",0);
+		conf.set("GLOWSTONEDUST.selltime",0);
 
 		conf.set("RAWFISH.velocity", .4);
 		conf.set("RAWFISH.id", 349);
@@ -2388,7 +3615,8 @@ public class Initialize {
 		conf.set("RAWFISH.description", "Don't eat this unless you want Salmonella!");
 		conf.set("RAWFISH.stock",50);
 		conf.set("RAWFISH.spread", .4);
-		conf.set("RAWFISH.time",0);
+		conf.set("RAWFISH.buytime",0);
+		conf.set("RAWFISH.selltime",0);
 
 		conf.set("COOKEDFISH.velocity", .6);
 		conf.set("COOKEDFISH.id", 350);
@@ -2398,7 +3626,9 @@ public class Initialize {
 		conf.set("COOKEDFISH.description", "Delicious fishy!");
 		conf.set("COOKEDFISH.stock",50);
 		conf.set("COOKEDFISH.spread", .6);
-		conf.set("COOKEDFISH.time",0);
+		conf.set("COOKEDFISH.spread", .6);
+		conf.set("COOKEDFISH.selltime",0);
+		conf.set("COOKEDFISH.buytime",0);
 
 		// INKS BEGIN
 		
@@ -2410,7 +3640,8 @@ public class Initialize {
 		conf.set("INK.description", "Black Ink, from a squid!");
 		conf.set("INK.stock",50);
 		conf.set("INK.spread", .8);
-		conf.set("INK.time",0);
+		conf.set("INK.selltime",0);
+		conf.set("INK.buytime",0);
 		
 		conf.set("REDINK.velocity", .8);
 		conf.set("REDINK.id", 351001);
@@ -2420,7 +3651,8 @@ public class Initialize {
 		conf.set("REDINK.description", "Red Ink, from the petals of a rose!");
 		conf.set("REDINK.stock",50);
 		conf.set("REDINK.spread", .8);
-		conf.set("REDINK.time",0);
+		conf.set("REDINK.selltime",0);
+		conf.set("REDINK.buytime",0);
 		
 		conf.set("GREENINK.velocity", .8);
 		conf.set("GREENINK.id", 351002);
@@ -2430,7 +3662,8 @@ public class Initialize {
 		conf.set("GREENINK.description", "Green ink, from melted cacti!");
 		conf.set("GREENINK.stock",50);
 		conf.set("GREENINK.spread", .8);
-		conf.set("GREENINK.time",0);
+		conf.set("GREENINK.selltime",0);
+		conf.set("GREENINK.buytime",0);
 		
 		conf.set("BROWNINK.velocity", .8);
 		conf.set("BROWNINK.id", 351003);
@@ -2440,7 +3673,8 @@ public class Initialize {
 		conf.set("BROWNINK.description", "Brown ink, from the coloring of cocoa beans!");
 		conf.set("BROWNINK.stock",50);
 		conf.set("BROWNINK.spread", .8);
-		conf.set("BROWNINK.time",0);
+		conf.set("BROWNINK.selltime",0);
+		conf.set("BROWNINK.buytime",0);
 		
 		conf.set("LAPISLAZULI.velocity", .8);
 		conf.set("LAPISLAZULI.id", 351004);
@@ -2450,7 +3684,8 @@ public class Initialize {
 		conf.set("LAPISLAZULI.description", "Prettiest ore in the world");
 		conf.set("LAPISLAZULI.stock",50);
 		conf.set("LAPISLAZULI.spread", .8);
-		conf.set("LAPISLAZULI.time",0);
+		conf.set("LAPISLAZULI.selltime",0);
+		conf.set("LAPISLAZULI.buytime",0);
 		
 		conf.set("PURPLEINK.velocity", .8);
 		conf.set("PURPLEINK.id", 351005);
@@ -2460,7 +3695,8 @@ public class Initialize {
 		conf.set("PURPLEINK.description", "Purple ink!");
 		conf.set("PURPLEINK.stock",50);
 		conf.set("PURPLEINK.spread", .8);
-		conf.set("PURPLEINK.time",0);
+		conf.set("PURPLEINK.buytime",0);
+		conf.set("PURPLEINK.selltime",0);
 		
 		conf.set("CYANINK.velocity", .8);
 		conf.set("CYANINK.id", 351006);
@@ -2470,7 +3706,8 @@ public class Initialize {
 		conf.set("CYANINK.description", "Cyan ink!");
 		conf.set("CYANINK.stock",50);
 		conf.set("CYANINK.spread", .8);
-		conf.set("CYANINK.time",0);
+		conf.set("CYANINK.buytime",0);
+		conf.set("CYANINK.selltime",0);
 		
 		conf.set("LIGHTGRAYINK.velocity", .8);
 		conf.set("LIGHTGRAYINK.id", 351007);
@@ -2480,7 +3717,8 @@ public class Initialize {
 		conf.set("LIGHTGRAYINK.description", "Light gray ink!");
 		conf.set("LIGHTGRAYINK.stock",50);
 		conf.set("LIGHTGRAYINK.spread", .8);
-		conf.set("LIGHTGRAYINK.time",0);
+		conf.set("LIGHTGRAYINK.buytime",0);
+		conf.set("LIGHTGRAYINK.selltime",0);
 		
 		conf.set("GRAYINK.velocity", .8);
 		conf.set("GRAYINK.id", 351008);
@@ -2490,7 +3728,8 @@ public class Initialize {
 		conf.set("GRAYINK.description", "Gray ink!");
 		conf.set("GRAYINK.stock",50);
 		conf.set("GRAYINK.spread", .8);
-		conf.set("GRAYINK.time",0);
+		conf.set("GRAYINK.buytime",0);
+		conf.set("GRAYINK.selltime",0);
 		
 		conf.set("PINKINK.velocity", .8);
 		conf.set("PINKINK.id", 351009);
@@ -2500,7 +3739,8 @@ public class Initialize {
 		conf.set("PINKINK.description", "Pink ink!");
 		conf.set("PINKINK.stock",50);
 		conf.set("PINKINK.spread", .8);
-		conf.set("PINKINK.time",0);
+		conf.set("PINKINK.buytime",0);
+		conf.set("PINKINK.selltime",0);
 		
 		conf.set("LIMEINK.velocity", .8);
 		conf.set("LIMEINK.id", 3510010);
@@ -2510,7 +3750,8 @@ public class Initialize {
 		conf.set("LIMEINK.description", "Lime ink!");
 		conf.set("LIMEINK.stock",50);
 		conf.set("LIMEINK.spread", .8);
-		conf.set("LIMEINK.time",0);
+		conf.set("LIMEINK.buytime",0);
+		conf.set("LIMEINK.selltime",0);
 		
 		conf.set("YELLOWINK.velocity", .8);
 		conf.set("YELLOWINK.id", 3510011);
@@ -2520,7 +3761,8 @@ public class Initialize {
 		conf.set("YELLOWINK.description", "Yellow ink, from the petals of dandelions!");
 		conf.set("YELLOWINK.stock",50);
 		conf.set("YELLOWINK.spread", .8);
-		conf.set("YELLOWINK.time",0);
+		conf.set("YELLOWINK.buytime",0);
+		conf.set("YELLOWINK.selltime",0);
 		
 		conf.set("LIGHTBLUEINK.velocity", .8);
 		conf.set("LIGHTBLUEINK.id", 3510012);
@@ -2530,7 +3772,8 @@ public class Initialize {
 		conf.set("LIGHTBLUEINK.description", "Light blue ink!");
 		conf.set("LIGHTBLUEINK.stock",50);
 		conf.set("LIGHTBLUEINK.spread", .8);
-		conf.set("LIGHTBLUEINK.time",0);
+		conf.set("LIGHTBLUEINK.buytime",0);
+		conf.set("LIGHTBLUEINK.selltime",0);
 		
 		conf.set("MAGENTAINK.velocity", .8);
 		conf.set("MAGENTAINK.id", 3510013);
@@ -2540,7 +3783,8 @@ public class Initialize {
 		conf.set("MAGENTAINK.description", "Magenta ink!");
 		conf.set("MAGENTAINK.stock",50);
 		conf.set("MAGENTAINK.spread", .8);
-		conf.set("MAGENTAINK.time",0);
+		conf.set("MAGENTAINK.buytime",0);
+		conf.set("MAGENTAINK.selltime",0);
 		
 		conf.set("ORANGEINK.velocity", .8);
 		conf.set("ORANGEINK.id", 3510014);
@@ -2550,7 +3794,8 @@ public class Initialize {
 		conf.set("ORANGEINK.description", "Orange ink!");
 		conf.set("ORANGEINK.stock",50);
 		conf.set("ORANGEINK.spread", .8);
-		conf.set("ORANGEINK.time",0);
+		conf.set("ORANGEINK.buytime",0);
+		conf.set("ORANGEINK.selltime",0);
 		
 		conf.set("BONEMEAL.velocity", .8);
 		conf.set("BONEMEAL.id", 3510015);
@@ -2560,7 +3805,8 @@ public class Initialize {
 		conf.set("BONEMEAL.description", "Crushed bone.");
 		conf.set("BONEMEAL.stock",50);
 		conf.set("BONEMEAL.spread", .8);
-		conf.set("BONEMEAL.time",0);
+		conf.set("BONEMEAL.buytime",0);
+		conf.set("BONEMEAL.selltime",0);
 		
 		// INKS END
 
@@ -2572,7 +3818,8 @@ public class Initialize {
 		conf.set("BONE.description", "Not at all creepy!");
 		conf.set("BONE.stock",50);
 		conf.set("BONE.spread", .7);
-		conf.set("BONE.time",0);
+		conf.set("BONE.buytime",0);
+		conf.set("BONE.selltime",0);
 
 		conf.set("SUGAR.velocity", .008);
 		conf.set("SUGAR.id",353);
@@ -2582,7 +3829,8 @@ public class Initialize {
 		conf.set("SUGAR.description", "Mmm, sweet and delicious; ready for baking!");
 		conf.set("SUGAR.stock",50);
 		conf.set("SUGAR.spread", .008);
-		conf.set("SUGAR.time",0);
+		conf.set("SUGAR.buytime",0);
+		conf.set("SUGAR.selltime",0);
 
 		conf.set("CAKE.velocity", 1.8);
 		conf.set("CAKE.id", 354);
@@ -2592,7 +3840,8 @@ public class Initialize {
 		conf.set("CAKE.description", "This time, the cake is not a lie!");
 		conf.set("CAKE.stock",50);
 		conf.set("CAKE.spread", 1.8);
-		conf.set("CAKE.time",0);
+		conf.set("CAKE.buytime",0);
+		conf.set("CAKE.selltime",0);
 
 		conf.set("REPEATER.velocity", .7);
 		conf.set("REPEATER.id", 356);
@@ -2602,7 +3851,8 @@ public class Initialize {
 		conf.set("REPEATER.description", "Extends a RedStone current!");
 		conf.set("REPEATER.stock",50);
 		conf.set("REPEATER.spread", .7);
-		conf.set("REPEATER.time",0);
+		conf.set("REPEATER.buytime",0);
+		conf.set("REPEATER.selltime",0);
 
 		conf.set("COOKIE.velocity", 19.2);
 		conf.set("COOKIE.id", 357);
@@ -2612,7 +3862,8 @@ public class Initialize {
 		conf.set("COOKIE.description", "A Deliciously rare bite-size snack!");
 		conf.set("COOKIE.stock",50);
 		conf.set("COOKIE.spread", 19.2);
-		conf.set("COOKIE.time",0);
+		conf.set("COOKIE.buytime",0);
+		conf.set("COOKIE.selltime",0);
 
 		conf.set("MAP.velocity", 1.6);
 		conf.set("MAP.id", 358);
@@ -2622,7 +3873,8 @@ public class Initialize {
 		conf.set("MAP.description", "Helps you make your way through the unknown!");
 		conf.set("MAP.stock",50);
 		conf.set("MAP.spread", 1.6);
-		conf.set("MAP.time",0);
+		conf.set("MAP.buytime",0);
+		conf.set("MAP.selltime",0);
 
 		conf.set("SHEARS.velocity", 1.3);
 		conf.set("SHEARS.id", 359);
@@ -2632,7 +3884,8 @@ public class Initialize {
 		conf.set("SHEARS.description", "Sheep beware!");
 		conf.set("SHEARS.stock",50);
 		conf.set("SHEARS.spread", 1.3);
-		conf.set("SHEARS.time",0);
+		conf.set("SHEARS.buytime",0);
+		conf.set("SHEARS.selltime",0);
 
 		conf.set("MELONSLICE.velocity", .35);
 		conf.set("MELONSLICE.id", 360);
@@ -2642,7 +3895,8 @@ public class Initialize {
 		conf.set("MELONSLICE.description", "Mmm, a summer treat!");
 		conf.set("MELONSLICE.stock",50);
 		conf.set("MELONSLICE.spread", .35);
-		conf.set("MELONSLICE.time",0);
+		conf.set("MELONSLICE.buytime",0);
+		conf.set("MELONSLICE.selltime",0);
 
 		conf.set("PUMPKINSEED.velocity", 18.3);
 		conf.set("PUMPKINSEED.id", 361);
@@ -2652,7 +3906,8 @@ public class Initialize {
 		conf.set("PUMPKINSEED.description", "The seed of a pumpkin!");
 		conf.set("PUMPKINSEED.stock",50);
 		conf.set("PUMPKINSEED.spread", 18.3);
-		conf.set("PUMPKINSEED.time",0);
+		conf.set("PUMPKINSEED.buytime",0);
+		conf.set("PUMPKINSEED.selltime",0);
 
 		conf.set("MELONSEED.velocity", 21.3);
 		conf.set("MELONSEED.id", 362);
@@ -2662,7 +3917,8 @@ public class Initialize {
 		conf.set("MELONSEED.description", "The seed of a melon!");
 		conf.set("MELONSEED.stock",50);
 		conf.set("MELONSEED.spread", 21.3);
-		conf.set("MELONSEED.time",0);
+		conf.set("MELONSEED.buytime",0);
+		conf.set("MELONSEED.selltime",0);
 
 		conf.set("RAWBEEF.velocity", .6);
 		conf.set("RAWBEEF.id", 363);
@@ -2672,7 +3928,8 @@ public class Initialize {
 		conf.set("RAWBEEF.description", "Raw moo moo!");
 		conf.set("RAWBEEF.stock",50);
 		conf.set("RAWBEEF.spread", .6);
-		conf.set("RAWBEEF.time",0);
+		conf.set("RAWBEEF.buytime",0);
+		conf.set("RAWBEEF.selltime",0);
 
 		conf.set("STEAK.velocity", .5);
 		conf.set("STEAK.id", 364);
@@ -2682,7 +3939,8 @@ public class Initialize {
 		conf.set("STEAK.description", "Ready to eat moo moo!");
 		conf.set("STEAK.stock",50);
 		conf.set("STEAK.spread", .5);
-		conf.set("STEAK.time",0);
+		conf.set("STEAK.buytime",0);
+		conf.set("STEAK.selltime",0);
 
 		conf.set("RAWCHICKEN.velocity", .6);
 		conf.set("RAWCHICKEN.id", 365);
@@ -2692,7 +3950,8 @@ public class Initialize {
 		conf.set("RAWCHICKEN.description", "Cocka-doodle-munch!");
 		conf.set("RAWCHICKEN.stock",50);
 		conf.set("RAWCHICKEN.spread", .6);
-		conf.set("RAWCHICKEN.time",0);
+		conf.set("RAWCHICKEN.buytime",0);
+		conf.set("RAWCHICKEN.selltime",0);
 
 		conf.set("COOKEDCHICKEN.velocity", .5);
 		conf.set("COOKEDCHICKEN.id", 366);
@@ -2702,7 +3961,8 @@ public class Initialize {
 		conf.set("COOKEDCHICKEN.description", "Cocka-doodle-devour!");
 		conf.set("COOKEDCHICKEN.stock",50);
 		conf.set("COOKEDCHICKEN.spread", .5);
-		conf.set("COOKEDCHICKEN.time",0);
+		conf.set("COOKEDCHICKEN.buytime",0);
+		conf.set("COOKEDCHICKEN.selltime",0);
 
 		conf.set("ROTTENFLESH.velocity", 1.7);
 		conf.set("ROTTENFLESH.id", 367);
@@ -2712,7 +3972,8 @@ public class Initialize {
 		conf.set("ROTTENFLESH.description", "Gross. Poisonous zombie flesh!");
 		conf.set("ROTTENFLESH.stock",50);
 		conf.set("ROTTENFLESH.spread", 1.7);
-		conf.set("ROTTENFLESH.time",0);
+		conf.set("ROTTENFLESH.buytime",0);
+		conf.set("ROTTENFLESH.selltime",0);
 
 		conf.set("ENDERPEARL.velocity", 1.9);
 		conf.set("ENDERPEARL.id", 368);
@@ -2722,7 +3983,8 @@ public class Initialize {
 		conf.set("ENDERPEARL.description", "A pearl of darkness!");
 		conf.set("ENDERPEARL.stock",50);
 		conf.set("ENDERPEARL.spread", 1.9);
-		conf.set("ENDERPEARL.time",0);
+		conf.set("ENDERPEARL.buytime",0);
+		conf.set("ENDERPEARL.selltime",0);
 
 		conf.set("BLAZEROD.velocity", 4.3);
 		conf.set("BLAZEROD.id", 369);
@@ -2732,7 +3994,8 @@ public class Initialize {
 		conf.set("BLAZEROD.description", "A rod from the fiery guardians of hell!");
 		conf.set("BLAZEROD.stock",50);
 		conf.set("BLAZEROD.spread", 4.3);
-		conf.set("BLAZEROD.time",0);
+		conf.set("BLAZEROD.buytime",0);
+		conf.set("BLAZEROD.selltime",0);
 
 		conf.set("GHASTTEAR.velocity", 6.1);
 		conf.set("GHASTTEAR.id", 370);
@@ -2742,7 +4005,8 @@ public class Initialize {
 		conf.set("GHASTTEAR.description", "The tear of a very depressed, very insane creature!");
 		conf.set("GHASTTEAR.stock",50);
 		conf.set("GHASTTEAR.spread", 6.1);
-		conf.set("GHASTTEAR.time",0);
+		conf.set("GHASTTEAR.buytime",0);
+		conf.set("GHASTTEAR.selltime",0);
 
 		conf.set("GOLDNUGset.velocity", .9);
 		conf.set("GOLDNUGset.id", 371);
@@ -2752,7 +4016,8 @@ public class Initialize {
 		conf.set("GOLDNUGset.description", "A small piece of gold!");
 		conf.set("GOLDNUGset.stock",50);
 		conf.set("GOLDNUGset.spread", .9);
-		conf.set("GOLDNUGset.time",0);
+		conf.set("GOLDNUGset.buytime",0);
+		conf.set("GOLDNUGset.selltime",0);
 
 		conf.set("NETHERWART.velocity", 3.7);
 		conf.set("NETHERWART.id", 372);
@@ -2762,7 +4027,8 @@ public class Initialize {
 		conf.set("NETHERWART.description", "A hell-ridden plant!");
 		conf.set("NETHERWART.stock",50);
 		conf.set("NETHERWART.spread", 3.7);
-		conf.set("NETHERWART.time",0);
+		conf.set("NETHERWART.buytime",0);
+		conf.set("NETHERWART.selltime",0);
 
 		conf.set("GLASSBOTTLE.velocity", .09);
 		conf.set("GLASSBOTTLE.id", 374);
@@ -2772,7 +4038,8 @@ public class Initialize {
 		conf.set("GLASSBOTTLE.description", "A bottle to make potions in!");
 		conf.set("GLASSBOTTLE.stock",50);
 		conf.set("GLASSBOTTLE.spread", .09);
-		conf.set("GLASSBOTTLE.time",0);
+		conf.set("GLASSBOTTLE.buytime",0);
+		conf.set("GLASSBOTTLE.selltime",0);
 
 		conf.set("SPIDEREYE.velocity", .9);
 		conf.set("SPIDEREYE.id", 375);
@@ -2782,7 +4049,8 @@ public class Initialize {
 		conf.set("SPIDEREYE.description", "I see 8 hairy legs!");
 		conf.set("SPIDEREYE.stock",50);
 		conf.set("SPIDEREYE.spread", .9);
-		conf.set("SPIDEREYE.time",0);
+		conf.set("SPIDEREYE.buytime",0);
+		conf.set("SPIDEREYE.selltime",0);
 		
 		conf.set("EXPERIENCE.velocity", .001);
 		conf.set("EXPERIENCE.id", 999);
@@ -2792,7 +4060,8 @@ public class Initialize {
 		conf.set("EXPERIENCE.description", "Orbs of wisdom!");
 		conf.set("EXPERIENCE.stock",100000);
 		conf.set("EXPERIENCE.spread", .9);
-		conf.set("EXPERIENCE.time",0);
+		conf.set("EXPERIENCE.buytime",0);
+		conf.set("EXPERIENCE.selltime",0);
 		
 		// BEGIN POSTIONS
 		
@@ -2804,7 +4073,8 @@ public class Initialize {
 		conf.set("MUNDANEPOTION.description", "Base potion of Weakness and Splash Mundane potion");
 		conf.set("MUNDANEPOTION.stock",50);
 		conf.set("MUNDANEPOTION.spread", .9);
-		conf.set("MUNDANEPOTION.time",0);
+		conf.set("MUNDANEPOTION.buytime",0);
+		conf.set("MUNDANEPOTION.selltime",0);
 		
 		conf.set("WATERBOTTLE.velocity", .2);
 		conf.set("WATERBOTTLE.id", 373000);
@@ -2814,7 +4084,8 @@ public class Initialize {
 		conf.set("WATERBOTTLE.description", "Starting point for every recipe.. Nice h20");
 		conf.set("WATERBOTTLE.stock",50);
 		conf.set("WATERBOTTLE.spread", .9);
-		conf.set("WATERBOTTLE.time",0);
+		conf.set("WATERBOTTLE.buytime",0);
+		conf.set("WATERBOTTLE.selltime",0);
 		
 		conf.set("MUNDANEPOTIONEXTENDED.velocity", .2);
 		conf.set("MUNDANEPOTIONEXTENDED.id", 3730064);
@@ -2824,7 +4095,8 @@ public class Initialize {
 		conf.set("MUNDANEPOTIONEXTENDED.description", "Base for potion of weakness (extended)");
 		conf.set("MUNDANEPOTIONEXTENDED.stock",50);
 		conf.set("MUNDANEPOTIONEXTENDED.spread", .9);
-		conf.set("MUNDANEPOTIONEXTENDED.time",0);
+		conf.set("MUNDANEPOTIONEXTENDED.buytime",0);
+		conf.set("MUNDANEPOTIONEXTENDED.selltime",0);
 		
 		conf.set("THICKPOTION.velocity", .2);
 		conf.set("THICKPOTION.id", 3730064);
@@ -2834,7 +4106,8 @@ public class Initialize {
 		conf.set("THICKPOTION.description", "Base for potion of weakness");
 		conf.set("THICKPOTION.stock",50);
 		conf.set("THICKPOTION.spread", .9);
-		conf.set("THICKPOTION.time",0);
+		conf.set("THICKPOTION.buytime",0);
+		conf.set("THICKPOTION.selltime",0);
 		
 		conf.set("POTIONOFREGENERATION.velocity", .2);
 		conf.set("POTIONOFREGENERATION.id", 373008193);
@@ -2844,7 +4117,8 @@ public class Initialize {
 		conf.set("POTIONOFREGENERATION.description", "Restores 23 hearts of health over 0:45");
 		conf.set("POTIONOFREGENERATION.stock",50);
 		conf.set("POTIONOFREGENERATION.spread", .9);
-		conf.set("POTIONOFREGENERATION.time",0);
+		conf.set("POTIONOFREGENERATION.buytime",0);
+		conf.set("POTIONOFREGENERATION.selltime",0);
 		
 		conf.set("POTIONOFREGENERATIONEXTENDED.velocity", .2);
 		conf.set("POTIONOFREGENERATIONEXTENDED.id", 373008257);
@@ -2854,7 +4128,8 @@ public class Initialize {
 		conf.set("POTIONOFREGENERATIONEXTENDED.description", "Restores 54 hearts of health over 2:00");
 		conf.set("POTIONOFREGENERATIONEXTENDED.stock",50);
 		conf.set("POTIONOFREGENERATIONEXTENDED.spread", .9);
-		conf.set("POTIONOFREGENERATIONEXTENDED.time",0);
+		conf.set("POTIONOFREGENERATIONEXTENDED.buytime",0);
+		conf.set("POTIONOFREGENERATIONEXTENDED.selltime",0);
 
 		conf.set("POTIONOFSWIFTNESS.velocity", .2);
 		conf.set("POTIONOFSWIFTNESS.id", 373008194);
@@ -2864,7 +4139,8 @@ public class Initialize {
 		conf.set("POTIONOFSWIFTNESS.description", "Increases a players movement, sprinting speed, jumping length, and FOV, for 3:00");
 		conf.set("POTIONOFSWIFTNESS.stock",50);
 		conf.set("POTIONOFSWIFTNESS.spread", .9);
-		conf.set("POTIONOFSWIFTNESS.time",0);
+		conf.set("POTIONOFSWIFTNESS.buytime",0);
+		conf.set("POTIONOFSWIFTNESS.selltime",0);
 		
 		conf.set("POTIONOFSWIFTNESSEXTENDED.velocity", .2);
 		conf.set("POTIONOFSWIFTNESSEXTENDED.id", 373008258);
@@ -2874,7 +4150,8 @@ public class Initialize {
 		conf.set("POTIONOFSWIFTNESSEXTENDED.description", "Increases a players movement, sprinting speed, jumping length, and FOV, for 8:00");
 		conf.set("POTIONOFSWIFTNESSEXTENDED.stock",50);
 		conf.set("POTIONOFSWIFTNESSEXTENDED.spread", .9);
-		conf.set("POTIONOFSWIFTNESSEXTENDED.time",0);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.buytime",0);
+		conf.set("POTIONOFSWIFTNESSEXTENDED.selltime",0);
 
 		conf.set("POTIONOFFIRERESISTANCE.velocity", .2);
 		conf.set("POTIONOFFIRERESISTANCE.id", 373008195);
@@ -2884,7 +4161,8 @@ public class Initialize {
 		conf.set("POTIONOFFIRERESISTANCE.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 3:00");
 		conf.set("POTIONOFFIRERESISTANCE.stock",50);
 		conf.set("POTIONOFFIRERESISTANCE.spread", .9);
-		conf.set("POTIONOFFIRERESISTANCE.time",0);
+		conf.set("POTIONOFFIRERESISTANCE.buytime",0);
+		conf.set("POTIONOFFIRERESISTANCE.selltime",0);
 		
 		conf.set("POTIONOFFIRERESISTANCEEXTENDED.velocity", .2);
 		conf.set("POTIONOFFIRERESISTANCEEXTENDED.id", 373008259);
@@ -2894,7 +4172,8 @@ public class Initialize {
 		conf.set("POTIONOFFIRERESISTANCEEXTENDED.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 8:00");
 		conf.set("POTIONOFFIRERESISTANCEEXTENDED.stock",50);
 		conf.set("POTIONOFFIRERESISTANCEEXTENDED.spread", .9);
-		conf.set("POTIONOFFIRERESISTANCEEXTENDED.time",0);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.buytime",0);
+		conf.set("POTIONOFFIRERESISTANCEEXTENDED.selltime",0);
 
 		conf.set("POTIONOFPOISON.velocity", .2);
 		conf.set("POTIONOFPOISON.id", 373008196);
@@ -2904,7 +4183,8 @@ public class Initialize {
 		conf.set("POTIONOFPOISON.description", "Poisons the player for 0:45, reducing the health to 1 heart at most.");
 		conf.set("POTIONOFPOISON.stock",50);
 		conf.set("POTIONOFPOISON.spread", .9);
-		conf.set("POTIONOFPOISON.time",0);
+		conf.set("POTIONOFPOISON.buytime",0);
+		conf.set("POTIONOFPOISON.selltime",0);
 		
 		conf.set("POTIONOFPOISONEXTENDED.velocity", .2);
 		conf.set("POTIONOFPOISONEXTENDED.id", 373008260);
@@ -2914,7 +4194,8 @@ public class Initialize {
 		conf.set("POTIONOFPOISONEXTENDED.description", "Poisons the player for 2:00, reducing the health to 1 heart at most.");
 		conf.set("POTIONOFPOISONEXTENDED.stock",50);
 		conf.set("POTIONOFPOISONEXTENDED.spread", .9);
-		conf.set("POTIONOFPOISONEXTENDED.time",0);
+		conf.set("POTIONOFPOISONEXTENDED.buytime",0);
+		conf.set("POTIONOFPOISONEXTENDED.selltime",0);
 
 		conf.set("POTIONOFHEALING.velocity", .2);
 		conf.set("POTIONOFHEALING.id", 373008197);
@@ -2924,7 +4205,8 @@ public class Initialize {
 		conf.set("POTIONOFHEALING.description", "Restores 3 hearts");
 		conf.set("POTIONOFHEALING.stock",50);
 		conf.set("POTIONOFHEALING.spread", .9);
-		conf.set("POTIONOFHEALING.time",0);
+		conf.set("POTIONOFHEALING.buytime",0);
+		conf.set("POTIONOFHEALING.selltime",0);
 		
 		conf.set("POTIONOFHEALINGEXTENDED.velocity", .2);
 		conf.set("POTIONOFHEALINGEXTENDED.id", 373008261);
@@ -2934,7 +4216,8 @@ public class Initialize {
 		conf.set("POTIONOFHEALINGEXTENDED.description", "Restores 3 hearts");
 		conf.set("POTIONOFHEALINGEXTENDED.stock",50);
 		conf.set("POTIONOFHEALINGEXTENDED.spread", .9);
-		conf.set("POTIONOFHEALINGEXTENDED.time",0);
+		conf.set("POTIONOFHEALINGEXTENDED.buytime",0);
+		conf.set("POTIONOFHEALINGEXTENDED.selltime",0);
 
 		conf.set("POTIONOFWEAKNESS.velocity", .2);
 		conf.set("POTIONOFWEAKNESS.id", 373008200);
@@ -2944,7 +4227,8 @@ public class Initialize {
 		conf.set("POTIONOFWEAKNESS.description", "Reduces melee damage by one heart for 1:30");
 		conf.set("POTIONOFWEAKNESS.stock",50);
 		conf.set("POTIONOFWEAKNESS.spread", .9);
-		conf.set("POTIONOFWEAKNESS.time",0);
+		conf.set("POTIONOFWEAKNESS.buytime",0);
+		conf.set("POTIONOFWEAKNESS.selltime",0);
 		
 		conf.set("POTIONOFWEAKNESSEXTENDED.velocity", .2);
 		conf.set("POTIONOFWEAKNESSEXTENDED.id", 373008264);
@@ -2954,7 +4238,8 @@ public class Initialize {
 		conf.set("POTIONOFWEAKNESSEXTENDED.description", "Reduces melee damage by one heart for 4:00");
 		conf.set("POTIONOFWEAKNESSEXTENDED.stock",50);
 		conf.set("POTIONOFWEAKNESSEXTENDED.spread", .9);
-		conf.set("POTIONOFWEAKNESSEXTENDED.time",0);
+		conf.set("POTIONOFWEAKNESSEXTENDED.buytime",0);
+		conf.set("POTIONOFWEAKNESSEXTENDED.selltime",0);
 
 		conf.set("POTIONOFSTRENGTH.velocity", .2);
 		conf.set("POTIONOFSTRENGTH.id", 373008201);
@@ -2964,7 +4249,8 @@ public class Initialize {
 		conf.set("POTIONOFSTRENGTH.description", "Increases melee damage by one and a half hearts for 3:00");
 		conf.set("POTIONOFSTRENGTH.stock",50);
 		conf.set("POTIONOFSTRENGTH.spread", .9);
-		conf.set("POTIONOFSTRENGTH.time",0);
+		conf.set("POTIONOFSTRENGTH.buytime",0);
+		conf.set("POTIONOFSTRENGTH.selltime",0);
 		
 		conf.set("POTIONOFSTRENGTHEXTENDED.velocity", .2);
 		conf.set("POTIONOFSTRENGTHEXTENDED.id", 373008265);
@@ -2974,7 +4260,8 @@ public class Initialize {
 		conf.set("POTIONOFSTRENGTHEXTENDED.description", "Increases melee damage by one and a half hearts for 8:00");
 		conf.set("POTIONOFSTRENGTHEXTENDED.stock",50);
 		conf.set("POTIONOFSTRENGTHEXTENDED.spread", .9);
-		conf.set("POTIONOFSTRENGTHEXTENDED.time",0);
+		conf.set("POTIONOFSTRENGTHEXTENDED.buytime",0);
+		conf.set("POTIONOFSTRENGTHEXTENDED.selltime",0);
 
 		conf.set("POTIONOFSLOWNESS.velocity", .2);
 		conf.set("POTIONOFSLOWNESS.id", 373008202);
@@ -2984,7 +4271,8 @@ public class Initialize {
 		conf.set("POTIONOFSLOWNESS.description", "Players movement is slowed to a crouch for 1:30");
 		conf.set("POTIONOFSLOWNESS.stock",50);
 		conf.set("POTIONOFSLOWNESS.spread", .9);
-		conf.set("POTIONOFSLOWNESS.time",0);
+		conf.set("POTIONOFSLOWNESS.buytime",0);
+		conf.set("POTIONOFSLOWNESS.selltime",0);
 		
 		conf.set("POTIONOFSLOWNESSEXTENDED.velocity", .2);
 		conf.set("POTIONOFSLOWNESSEXTENDED.id", 373008266);
@@ -2994,7 +4282,8 @@ public class Initialize {
 		conf.set("POTIONOFSLOWNESSEXTENDED.description", "Players movement is slowed to a crouch for 4:00");
 		conf.set("POTIONOFSLOWNESSEXTENDED.stock",50);
 		conf.set("POTIONOFSLOWNESSEXTENDED.spread", .9);
-		conf.set("POTIONOFSLOWNESSEXTENDED.time",0);
+		conf.set("POTIONOFSLOWNESSEXTENDED.buytime",0);
+		conf.set("POTIONOFSLOWNESSEXTENDED.selltime",0);
 
 		conf.set("POTIONOFHARMING.velocity", .2);
 		conf.set("POTIONOFHARMING.id", 373008204);
@@ -3004,7 +4293,8 @@ public class Initialize {
 		conf.set("POTIONOFHARMING.description", "Inflicts 3 hearts of damage");
 		conf.set("POTIONOFHARMING.stock",50);
 		conf.set("POTIONOFHARMING.spread", .9);
-		conf.set("POTIONOFHARMING.time",0);
+		conf.set("POTIONOFHARMING.buytime",0);
+		conf.set("POTIONOFHARMING.selltime",0);
 		
 		conf.set("POTIONOFHARMINGEXTENDED.velocity", .2);
 		conf.set("POTIONOFHARMINGEXTENDED.id", 373008268);
@@ -3014,7 +4304,8 @@ public class Initialize {
 		conf.set("POTIONOFHARMINGEXTENDED.description", "Inflicts 3 hearts of damage");
 		conf.set("POTIONOFHARMINGEXTENDED.stock",50);
 		conf.set("POTIONOFHARMINGEXTENDED.spread", .9);
-		conf.set("POTIONOFHARMINGEXTENDED.time",0);
+		conf.set("POTIONOFHARMINGEXTENDED.buytime",0);
+		conf.set("POTIONOFHARMINGEXTENDED.selltime",0);
 
 		conf.set("AWKWARDPOTION.velocity", .2);
 		conf.set("AWKWARDPOTION.id", 3730016);
@@ -3024,7 +4315,8 @@ public class Initialize {
 		conf.set("AWKWARDPOTION.description", "This potion is highly awkward, you should avoid social encounters.");
 		conf.set("AWKWARDPOTION.stock",50);
 		conf.set("AWKWARDPOTION.spread", .9);
-		conf.set("AWKWARDPOTION.time",0);
+		conf.set("AWKWARDPOTION.buytime",0);
+		conf.set("AWKWARDPOTION.selltime",0);
 
 		// II STRENGHT POTIONS
 		
@@ -3036,7 +4328,8 @@ public class Initialize {
 		conf.set("POTIONOFREGENERATIONII.description", "Restores 24 hearts over 0:22 seconds");
 		conf.set("POTIONOFREGENERATIONII.stock",50);
 		conf.set("POTIONOFREGENERATIONII.spread", .9);
-		conf.set("POTIONOFREGENERATIONII.time",0);
+		conf.set("POTIONOFREGENERATIONII.buytime",0);
+		conf.set("POTIONOFREGENERATIONII.selltime",0);
 
 		conf.set("POTIONOFSWIFTNESSII.velocity", .2);
 		conf.set("POTIONOFSWIFTNESSII.id", 373008226);
@@ -3046,7 +4339,8 @@ public class Initialize {
 		conf.set("POTIONOFSWIFTNESSII.description", "Increases players movement, sprinting speed, jumping length, and FOV for 1:30");
 		conf.set("POTIONOFSWIFTNESSII.stock",50);
 		conf.set("POTIONOFSWIFTNESSII.spread", .9);
-		conf.set("POTIONOFSWIFTNESSII.time",0);
+		conf.set("POTIONOFSWIFTNESSII.buytime",0);
+		conf.set("POTIONOFSWIFTNESSII.selltime",0);
 
 		conf.set("POTIONOFFIRERESISTANCEII.velocity", .2);
 		conf.set("POTIONOFFIRERESISTANCEII.id", 373008227);
@@ -3056,7 +4350,8 @@ public class Initialize {
 		conf.set("POTIONOFFIRERESISTANCEII.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 3:00");
 		conf.set("POTIONOFFIRERESISTANCEII.stock",50);
 		conf.set("POTIONOFFIRERESISTANCEII.spread", .9);
-		conf.set("POTIONOFFIRERESISTANCEII.time",0);
+		conf.set("POTIONOFFIRERESISTANCEII.buytime",0);
+		conf.set("POTIONOFFIRERESISTANCEII.selltime",0);
 
 		conf.set("POTIONOFPOISONII.velocity", .2);
 		conf.set("POTIONOFPOISONII.id", 373008228);
@@ -3066,7 +4361,8 @@ public class Initialize {
 		conf.set("POTIONOFPOISONII.description", "Poisons the player, reducing the health for :22 to half a heart at most.");
 		conf.set("POTIONOFPOISONII.stock",50);
 		conf.set("POTIONOFPOISONII.spread", .9);
-		conf.set("POTIONOFPOISONII.time",0);
+		conf.set("POTIONOFPOISONII.buytime",0);
+		conf.set("POTIONOFPOISONII.selltime",0);
 
 		conf.set("POTIONOFHEALINGII.velocity", .2);
 		conf.set("POTIONOFHEALINGII.id", 373008229);
@@ -3076,7 +4372,8 @@ public class Initialize {
 		conf.set("POTIONOFHEALINGII.description", "Restores 6 hearts");
 		conf.set("POTIONOFHEALINGII.stock",50);
 		conf.set("POTIONOFHEALINGII.spread", .9);
-		conf.set("POTIONOFHEALINGII.time",0);
+		conf.set("POTIONOFHEALINGII.buytime",0);
+		conf.set("POTIONOFHEALINGII.selltime",0);
 
 		conf.set("POTIONOFWEAKNESSII.velocity", .2);
 		conf.set("POTIONOFWEAKNESSII.id", 373008232);
@@ -3086,7 +4383,8 @@ public class Initialize {
 		conf.set("POTIONOFWEAKNESSII.description", "Reduces melee damage by one heart for 1:30");
 		conf.set("POTIONOFWEAKNESSII.stock",50);
 		conf.set("POTIONOFWEAKNESSII.spread", .9);
-		conf.set("POTIONOFWEAKNESSII.time",0);
+		conf.set("POTIONOFWEAKNESSII.buytime",0);
+		conf.set("POTIONOFWEAKNESSII.selltime",0);
 
 		conf.set("POTIONOFSTRENGTHII.velocity", .2);
 		conf.set("POTIONOFSTRENGTHII.id", 373008233);
@@ -3096,7 +4394,8 @@ public class Initialize {
 		conf.set("POTIONOFSTRENGTHII.description", "Increases melee damage by 3 hearts for 1:30");
 		conf.set("POTIONOFSTRENGTHII.stock",50);
 		conf.set("POTIONOFSTRENGTHII.spread", .9);
-		conf.set("POTIONOFSTRENGTHII.time",0);
+		conf.set("POTIONOFSTRENGTHII.buytime",0);
+		conf.set("POTIONOFSTRENGTHII.selltime",0);
 
 		conf.set("POTIONOFSLOWNESSII.velocity", .2);
 		conf.set("POTIONOFSLOWNESSII.id", 373008234);
@@ -3106,7 +4405,8 @@ public class Initialize {
 		conf.set("POTIONOFSLOWNESSII.description", "Players movement is slowed to a crouch for 1:30");
 		conf.set("POTIONOFSLOWNESSII.stock",50);
 		conf.set("POTIONOFSLOWNESSII.spread", .9);
-		conf.set("POTIONOFSLOWNESSII.time",0);
+		conf.set("POTIONOFSLOWNESSII.buytime",0);
+		conf.set("POTIONOFSLOWNESSII.selltime",0);
 
 		conf.set("POTIONOFHARMINGII.velocity", .2);
 		conf.set("POTIONOFHARMINGII.id", 373008236);
@@ -3116,7 +4416,8 @@ public class Initialize {
 		conf.set("POTIONOFHARMINGII.description", "Inflicts 6 hearts of damage");
 		conf.set("POTIONOFHARMINGII.stock",50);
 		conf.set("POTIONOFHARMINGII.spread", .9);
-		conf.set("POTIONOFHARMINGII.time",0);
+		conf.set("POTIONOFHARMINGII.buytime",0);
+		conf.set("POTIONOFHARMINGII.selltime",0);
 		
 		// BEGIN SPLASH POTIONS
 		
@@ -3128,7 +4429,8 @@ public class Initialize {
 		conf.set("SPLASHMUNDANEPOTION.description", "Base potion of Weakness and Splash Mundane potion");
 		conf.set("SPLASHMUNDANEPOTION.stock",50);
 		conf.set("SPLASHMUNDANEPOTION.spread", .9);
-		conf.set("SPLASHMUNDANEPOTION.time",0);
+		conf.set("SPLASHMUNDANEPOTION.buytime",0);
+		conf.set("SPLASHMUNDANEPOTION.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFREGENERATION.velocity", .2);
 		conf.set("SPLASHPOTIONOFREGENERATION.id", 3730016385L);
@@ -3138,7 +4440,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFREGENERATION.description", "Restores 19 hearts over 0:33");
 		conf.set("SPLASHPOTIONOFREGENERATION.stock",50);
 		conf.set("SPLASHPOTIONOFREGENERATION.spread", .9);
-		conf.set("SPLASHPOTIONOFREGENERATION.time",0);
+		conf.set("SPLASHPOTIONOFREGENERATION.buytime",0);
+		conf.set("SPLASHPOTIONOFREGENERATION.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.id", 3730016449L);
@@ -3148,7 +4451,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.description", "Restores 42.5 hearts over 1:30");
 		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFREGENERATIONEXTENDED.selltime",0);
 
 		conf.set("SPLASHPOTIONOFSWIFTNESS.velocity", .2);
 		conf.set("SPLASHPOTIONOFSWIFTNESS.id", 3730016386L);
@@ -3158,7 +4462,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSWIFTNESS.description", "Increases a players movement, sprinting speed, jumping length, and FOV, for 3:00");
 		conf.set("SPLASHPOTIONOFSWIFTNESS.stock",50);
 		conf.set("SPLASHPOTIONOFSWIFTNESS.spread", .9);
-		conf.set("SPLASHPOTIONOFSWIFTNESS.time",0);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.buytime",0);
+		conf.set("SPLASHPOTIONOFSWIFTNESS.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.id", 3730016450L);
@@ -3168,7 +4473,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.description", "Increases a players movement, sprinting speed, jumping length, and FOV, for 8:00");
 		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFSWIFTNESSEXTENDED.selltime",0);
 
 		conf.set("SPLASHPOTIONOFFIRERESISTANCE.velocity", .2);
 		conf.set("SPLASHPOTIONOFFIRERESISTANCE.id", 3730016387L);
@@ -3178,7 +4484,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFFIRERESISTANCE.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 3:00");
 		conf.set("SPLASHPOTIONOFFIRERESISTANCE.stock",50);
 		conf.set("SPLASHPOTIONOFFIRERESISTANCE.spread", .9);
-		conf.set("SPLASHPOTIONOFFIRERESISTANCE.time",0);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.buytime",0);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCE.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.id", 3730016451L);
@@ -3188,7 +4495,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 8:00");
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEEXTENDED.selltime",0);
 
 		conf.set("SPLASHPOTIONOFPOISON.velocity", .2);
 		conf.set("SPLASHPOTIONOFPOISON.id", 3730016388L);
@@ -3198,7 +4506,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFPOISON.description", "Poisons humans, but undead and spiders are immune to this poison");
 		conf.set("SPLASHPOTIONOFPOISON.stock",50);
 		conf.set("SPLASHPOTIONOFPOISON.spread", .9);
-		conf.set("SPLASHPOTIONOFPOISON.time",0);
+		conf.set("SPLASHPOTIONOFPOISON.buytime",0);
+		conf.set("SPLASHPOTIONOFPOISON.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFPOISONEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFPOISONEXTENDED.id", 3730016452L);
@@ -3208,7 +4517,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFPOISONEXTENDED.description", "Poisons humans, but undead and spiders are immune to this poison");
 		conf.set("SPLASHPOTIONOFPOISONEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFPOISONEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFPOISONEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFPOISONEXTENDED.selltime",0);
 
 		conf.set("SPLASHPOTIONOFHEALING.velocity", .2);
 		conf.set("SPLASHPOTIONOFHEALING.id", 3730016389L);
@@ -3218,7 +4528,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFHEALING.description", "Restores health of people, but hurts the undead.");
 		conf.set("SPLASHPOTIONOFHEALING.stock",50);
 		conf.set("SPLASHPOTIONOFHEALING.spread", .9);
-		conf.set("SPLASHPOTIONOFHEALING.time",0);
+		conf.set("SPLASHPOTIONOFHEALING.buytime",0);
+		conf.set("SPLASHPOTIONOFHEALING.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.id", 3730016453L);
@@ -3228,7 +4539,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.description", "Restores health of people, but hurts the undead.");
 		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFHEALINGEXTENDED.selltime",0);
 
 		conf.set("SPLASHPOTIONOFWEAKNESS.velocity", .2);
 		conf.set("SPLASHPOTIONOFWEAKNESS.id", 3730016392L);
@@ -3238,7 +4550,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFWEAKNESS.description", "Reduces melee damage by one heart for 1:30");
 		conf.set("SPLASHPOTIONOFWEAKNESS.stock",50);
 		conf.set("SPLASHPOTIONOFWEAKNESS.spread", .9);
-		conf.set("SPLASHPOTIONOFWEAKNESS.time",0);
+		conf.set("SPLASHPOTIONOFWEAKNESS.buytime",0);
+		conf.set("SPLASHPOTIONOFWEAKNESS.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.id", 3730016456L);
@@ -3248,7 +4561,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.description", "Reduces melee damage by one heart for 4:00");
 		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFWEAKNESSEXTENDED.selltime",0);
 
 		conf.set("SPLASHPOTIONOFSTRENGTH.velocity", .2);
 		conf.set("SPLASHPOTIONOFSTRENGTH.id", 3730016393L);
@@ -3258,7 +4572,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSTRENGTH.description", "Increases melee damage by one and a half hearts for 3:00");
 		conf.set("SPLASHPOTIONOFSTRENGTH.stock",50);
 		conf.set("SPLASHPOTIONOFSTRENGTH.spread", .9);
-		conf.set("SPLASHPOTIONOFSTRENGTH.time",0);
+		conf.set("SPLASHPOTIONOFSTRENGTH.buytime",0);
+		conf.set("SPLASHPOTIONOFSTRENGTH.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.id", 3730016457L);
@@ -3268,7 +4583,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.description", "Increases melee damage by one and a half hearts for 8:00");
 		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFSTRENGTHEXTENDED.selltime",0);
 
 		conf.set("SPLASHPOTIONOFSLOWNESS.velocity", .2);
 		conf.set("SPLASHPOTIONOFSLOWNESS.id", 3730016394L);
@@ -3278,7 +4594,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSLOWNESS.description", "Players movement is slowed to a crouch for 1:30");
 		conf.set("SPLASHPOTIONOFSLOWNESS.stock",50);
 		conf.set("SPLASHPOTIONOFSLOWNESS.spread", .9);
-		conf.set("SPLASHPOTIONOFSLOWNESS.time",0);
+		conf.set("SPLASHPOTIONOFSLOWNESS.buytime",0);
+		conf.set("SPLASHPOTIONOFSLOWNESS.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.id", 3730016458L);
@@ -3288,7 +4605,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.description", "Players movement is slowed to a crouch for 4:00");
 		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFSLOWNESSEXTENDED.selltime",0);
 
 		conf.set("SPLASHPOTIONOFHARMING.velocity", .2);
 		conf.set("SPLASHPOTIONOFHARMING.id", 3730016396L);
@@ -3298,7 +4616,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFHARMING.description", "Hurts humans, but heals the undead");
 		conf.set("SPLASHPOTIONOFHARMING.stock",50);
 		conf.set("SPLASHPOTIONOFHARMING.spread", .9);
-		conf.set("SPLASHPOTIONOFHARMING.time",0);
+		conf.set("SPLASHPOTIONOFHARMING.buytime",0);
+		conf.set("SPLASHPOTIONOFHARMING.selltime",0);
 		
 		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.velocity", .2);
 		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.id", 3730016460L);
@@ -3308,7 +4627,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.description", "Hurts humans, but heals the undead");
 		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.stock",50);
 		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.spread", .9);
-		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.time",0);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.buytime",0);
+		conf.set("SPLASHPOTIONOFHARMINGEXTENDED.selltime",0);
 
 		// II STRENGHTH SPLASH POTIONS
 		
@@ -3320,7 +4640,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFREGENERATIONII.description", "Restores 19.5 hearts over 0:16");
 		conf.set("SPLASHPOTIONOFREGENERATIONII.stock",50);
 		conf.set("SPLASHPOTIONOFREGENERATIONII.spread", .9);
-		conf.set("SPLASHPOTIONOFREGENERATIONII.time",0);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.buytime",0);
+		conf.set("SPLASHPOTIONOFREGENERATIONII.selltime",0);
 
 		conf.set("SPLASHPOTIONOFSWIFTNESSII.velocity", .2);
 		conf.set("SPLASHPOTIONOFSWIFTNESSII.id", 3730016418L);
@@ -3330,7 +4651,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSWIFTNESSII.description", "Increases players movement, sprinting speed, jumping length, and FOV for 1:30");
 		conf.set("SPLASHPOTIONOFSWIFTNESSII.stock",50);
 		conf.set("SPLASHPOTIONOFSWIFTNESSII.spread", .9);
-		conf.set("SPLASHPOTIONOFSWIFTNESSII.time",0);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.buytime",0);
+		conf.set("SPLASHPOTIONOFSWIFTNESSII.selltime",0);
 
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.velocity", .2);
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.id", 3730016419L);
@@ -3340,7 +4662,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.description", "Gives immunity to damage from fire, lava, and ranged Blaze attacks for 3:00");
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.stock",50);
 		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.spread", .9);
-		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.time",0);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.buytime",0);
+		conf.set("SPLASHPOTIONOFFIRERESISTANCEII.selltime",0);
 
 		conf.set("SPLASHPOTIONOFPOISONII.velocity", .2);
 		conf.set("SPLASHPOTIONOFPOISONII.id", 3730016420L);
@@ -3350,7 +4673,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFPOISONII.description", "Poisons humans, but undead and spiders are immune to this poison");
 		conf.set("SPLASHPOTIONOFPOISONII.stock",50);
 		conf.set("SPLASHPOTIONOFPOISONII.spread", .9);
-		conf.set("SPLASHPOTIONOFPOISONII.time",0);
+		conf.set("SPLASHPOTIONOFPOISONII.buytime",0);
+		conf.set("SPLASHPOTIONOFPOISONII.selltime",0);
 
 		conf.set("SPLASHPOTIONOFHEALINGII.velocity", .2);
 		conf.set("SPLASHPOTIONOFHEALINGII.id", 3730016421L);
@@ -3360,7 +4684,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFHEALINGII.description", "Restores 6 hearts");
 		conf.set("SPLASHPOTIONOFHEALINGII.stock",50);
 		conf.set("SPLASHPOTIONOFHEALINGII.spread", .9);
-		conf.set("SPLASHPOTIONOFHEALINGII.time",0);
+		conf.set("SPLASHPOTIONOFHEALINGII.buytime",0);
+		conf.set("SPLASHPOTIONOFHEALINGII.selltime",0);
 
 		conf.set("SPLASHPOTIONOFWEAKNESSII.velocity", .2);
 		conf.set("SPLASHPOTIONOFWEAKNESSII.id", 3730016424L);
@@ -3370,7 +4695,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFWEAKNESSII.description", "Reduces melee damage by one heart for 1:30");
 		conf.set("SPLASHPOTIONOFWEAKNESSII.stock",50);
 		conf.set("SPLASHPOTIONOFWEAKNESSII.spread", .9);
-		conf.set("SPLASHPOTIONOFWEAKNESSII.time",0);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.buytime",0);
+		conf.set("SPLASHPOTIONOFWEAKNESSII.selltime",0);
 
 		conf.set("SPLASHPOTIONOFSTRENGTHII.velocity", .2);
 		conf.set("SPLASHPOTIONOFSTRENGTHII.id", 3730016425L);
@@ -3380,7 +4706,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSTRENGTHII.description", "Increases melee damage by 3 hearts for 1:30");
 		conf.set("SPLASHPOTIONOFSTRENGTHII.stock",50);
 		conf.set("SPLASHPOTIONOFSTRENGTHII.spread", .9);
-		conf.set("SPLASHPOTIONOFSTRENGTHII.time",0);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.buytime",0);
+		conf.set("SPLASHPOTIONOFSTRENGTHII.selltime",0);
 
 		conf.set("SPLASHPOTIONOFSLOWNESSII.velocity", .2);
 		conf.set("SPLASHPOTIONOFSLOWNESSII.id", 3730016426L);
@@ -3390,7 +4717,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFSLOWNESSII.description", "Players movement is slowed to a crouch for 1:30");
 		conf.set("SPLASHPOTIONOFSLOWNESSII.stock",50);
 		conf.set("SPLASHPOTIONOFSLOWNESSII.spread", .9);
-		conf.set("SPLASHPOTIONOFSLOWNESSII.time",0);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.buytime",0);
+		conf.set("SPLASHPOTIONOFSLOWNESSII.selltime",0);
 
 		conf.set("SPLASHPOTIONOFHARMINGII.velocity", .2);
 		conf.set("SPLASHPOTIONOFHARMINGII.id", 3730016428L);
@@ -3400,7 +4728,8 @@ public class Initialize {
 		conf.set("SPLASHPOTIONOFHARMINGII.description", "Hurts humans, but heals the undead");
 		conf.set("SPLASHPOTIONOFHARMINGII.stock",50);
 		conf.set("SPLASHPOTIONOFHARMINGII.spread", .9);
-		conf.set("SPLASHPOTIONOFHARMINGII.time",0);
+		conf.set("SPLASHPOTIONOFHARMINGII.buytime",0);
+		conf.set("SPLASHPOTIONOFHARMINGII.selltime",0);
 		
 		// MUSIC CDS START
 		
@@ -3412,7 +4741,8 @@ public class Initialize {
 		conf.set("MUSICDISK13.description", "A CD with the Song '13' on it");
 		conf.set("MUSICDISK13.stock",50);
 		conf.set("MUSICDISK13.spread", .9);
-		conf.set("MUSICDISK13.time",0);
+		conf.set("MUSICDISK13.buytime",0);
+		conf.set("MUSICDISK13.selltime",0);
 		
 		conf.set("MUSICDISKCAT.velocity", 80);
 		conf.set("MUSICDISKCAT.id", 2257);
@@ -3422,7 +4752,8 @@ public class Initialize {
 		conf.set("MUSICDISKCAT.description", "A CD with the Song 'Cat' on it");
 		conf.set("MUSICDISKCAT.stock",50);
 		conf.set("MUSICDISKCAT.spread", .9);
-		conf.set("MUSICDISKCAT.time",0);
+		conf.set("MUSICDISKCAT.buytime",0);
+		conf.set("MUSICDISKCAT.selltime",0);
 		
 		conf.set("MUSICDISKBLOCKS.velocity", 80);
 		conf.set("MUSICDISKBLOCKS.id", 2258);
@@ -3432,7 +4763,8 @@ public class Initialize {
 		conf.set("MUSICDISKBLOCKS.description", "A CD with the Song 'Blocks' on it");
 		conf.set("MUSICDISKBLOCKS.stock",50);
 		conf.set("MUSICDISKBLOCKS.spread", .9);
-		conf.set("MUSICDISKBLOCKS.time",0);
+		conf.set("MUSICDISKBLOCKS.buytime",0);
+		conf.set("MUSICDISKBLOCKS.selltime",0);
 		
 		conf.set("MUSICDISKCHIRP.velocity", 80);
 		conf.set("MUSICDISKCHIRP.id", 2259);
@@ -3442,7 +4774,8 @@ public class Initialize {
 		conf.set("MUSICDISKCHIRP.description", "A CD with the Song 'Chirp' on it");
 		conf.set("MUSICDISKCHIRP.stock",50);
 		conf.set("MUSICDISKCHIRP.spread", .9);
-		conf.set("MUSICDISKCHIRP.time",0);
+		conf.set("MUSICDISKCHIRP.buytime",0);
+		conf.set("MUSICDISKCHIRP.selltime",0);
 		
 		conf.set("MUSICDISKFAR.velocity", 80);
 		conf.set("MUSICDISKFAR.id", 2260);
@@ -3452,7 +4785,8 @@ public class Initialize {
 		conf.set("MUSICDISKFAR.description", "A CD with the Song 'Far' on it");
 		conf.set("MUSICDISKFAR.stock",50);
 		conf.set("MUSICDISKFAR.spread", .9);
-		conf.set("MUSICDISKFAR.time",0);
+		conf.set("MUSICDISKFAR.buytime",0);
+		conf.set("MUSICDISKFAR.selltime",0);
 		
 		conf.set("MUSICDISKMALL.velocity", 80);
 		conf.set("MUSICDISKMALL.id", 2261);
@@ -3462,7 +4796,8 @@ public class Initialize {
 		conf.set("MUSICDISKMALL.description", "A CD with the Song 'Mall' on it");
 		conf.set("MUSICDISKMALL.stock",50);
 		conf.set("MUSICDISKMALL.spread", .9);
-		conf.set("MUSICDISKMALL.time",0);
+		conf.set("MUSICDISKMALL.buytime",0);
+		conf.set("MUSICDISKMALL.selltime",0);
 		
 		conf.set("MUSICDISKMELLOHI.velocity", 80);
 		conf.set("MUSICDISKMELLOHI.id", 2262);
@@ -3472,7 +4807,8 @@ public class Initialize {
 		conf.set("MUSICDISKMELLOHI.description", "A CD with the Song 'Mellohi' on it");
 		conf.set("MUSICDISKMELLOHI.stock",50);
 		conf.set("MUSICDISKMELLOHI.spread", .9);
-		conf.set("MUSICDISKMELLOHI.time",0);
+		conf.set("MUSICDISKMELLOHI.buytime",0);
+		conf.set("MUSICDISKMELLOHI.selltime",0);
 		
 		conf.set("MUSICDISKSTAL.velocity", 80);
 		conf.set("MUSICDISKSTAL.id", 2263);
@@ -3482,7 +4818,8 @@ public class Initialize {
 		conf.set("MUSICDISKSTAL.description", "A CD with the Song 'Stal' on it");
 		conf.set("MUSICDISKSTAL.stock",50);
 		conf.set("MUSICDISKSTAL.spread", .9);
-		conf.set("MUSICDISKSTAL.time",0);
+		conf.set("MUSICDISKSTAL.buytime",0);
+		conf.set("MUSICDISKSTAL.selltime",0);
 		
 		conf.set("MUSICDISKSTRAD.velocity", 80);
 		conf.set("MUSICDISKSTRAD.id", 2264);
@@ -3492,7 +4829,8 @@ public class Initialize {
 		conf.set("MUSICDISKSTRAD.description", "A CD with the Song 'Strad' on it");
 		conf.set("MUSICDISKSTRAD.stock",50);
 		conf.set("MUSICDISKSTRAD.spread", .9);
-		conf.set("MUSICDISKSTRAD.time",0);
+		conf.set("MUSICDISKSTRAD.buytime",0);
+		conf.set("MUSICDISKSTRAD.selltime",0);
 		
 		conf.set("MUSICDISKWARD.velocity", 80);
 		conf.set("MUSICDISKWARD.id", 2265);
@@ -3502,7 +4840,8 @@ public class Initialize {
 		conf.set("MUSICDISKWARD.description", "A CD with the Song 'Ward' on it");
 		conf.set("MUSICDISKWARD.stock",50);
 		conf.set("MUSICDISKWARD.spread", .9);
-		conf.set("MUSICDISKWARD.time",0);
+		conf.set("MUSICDISKWARD.buytime",0);
+		conf.set("MUSICDISKWARD.selltime",0);
 		
 		conf.set("MUSICDISK11.velocity", 80);
 		conf.set("MUSICDISK11.id", 2266);
@@ -3512,7 +4851,8 @@ public class Initialize {
 		conf.set("MUSICDISK11.description", "A CD with the Song '11' on it");
 		conf.set("MUSICDISK11.stock",50);
 		conf.set("MUSICDISK11.spread", .9);
-		conf.set("MUSICDISK11.time",0);
+		conf.set("MUSICDISK11.buytime",0);
+		conf.set("MUSICDISK11.selltime",0);
 
 
 		

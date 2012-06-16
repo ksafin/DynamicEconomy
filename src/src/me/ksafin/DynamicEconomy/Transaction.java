@@ -1,16 +1,20 @@
 package me.ksafin.DynamicEconomy;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -71,21 +75,10 @@ public class Transaction implements Runnable {
 		
 		boolean withinRegion = true;
 		
-		if (DynamicEconomy.useRegions) {
-			Location loc = player.getLocation();
-			int x = loc.getBlockX();
-			int y = loc.getBlockY();
-			int z = loc.getBlockZ();
-			
-			withinRegion = regionUtils.withinRegion(x, y, z);
-			
-			if (withinRegion == false) {
-				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.notWithinRegion);
-				Utility.writeToLog(stringPlay + " called /buy outside of an economy region.");
-				return false;
-			}
-			
-		}
+		double tax = DynamicEconomy.purchasetax;
+		String bannedItem;
+		
+		
 		String[] itemInfo = new String[7];
 		
 		try {
@@ -103,6 +96,60 @@ public class Transaction implements Runnable {
 			int itemStock = Integer.parseInt(itemInfo[5]);
 			long itemID = Long.parseLong(itemInfo[6]);
 			
+			
+			if (DynamicEconomy.useRegions) {
+				Location loc = player.getLocation();
+				int x = loc.getBlockX();
+				int y = loc.getBlockY();
+				int z = loc.getBlockZ();
+				
+				withinRegion = regionUtils.withinRegion(x, y, z);
+				
+				if (withinRegion == false) {
+					color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.notWithinRegion);
+					Utility.writeToLog(stringPlay + " called /buy outside of an economy region.");
+					return false;
+				}
+				
+				if (DynamicEconomy.useRegionFlags) {
+					
+				String reg = regionUtils.getRegion(x, y, z);
+				String node = "regions." + reg + ".flags";
+				tax = DynamicEconomy.regionConfig.getDouble(node + ".purchasetax");
+				
+				
+				String[] regionBannedItems = DynamicEconomy.regionConfig.getString(node + ".banned-purchase-items","").split(",");
+				
+				for (int i = 0; i < regionBannedItems.length; i++) {
+					bannedItem = Item.getTrueName(regionBannedItems[i]);
+					if (bannedItem.equals(itemName)) {
+						color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.bannedInRegion);
+						Utility.writeToLog(stringPlay + " attempted to buy the banned item: " + bannedItem);
+						return false;
+					}
+				}
+				
+				if (DynamicEconomy.groupControl) {
+					List<String> allowedGroups = DynamicEconomy.regionConfig.getStringList(node + ".allowed-purchase-groups");
+					boolean inRegion = Item.isItemInRegionGroup(allowedGroups,itemName);
+				
+					if (inRegion == false) {
+						color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You cannot buy &f" + itemName + "&2 in this region.");
+						Utility.writeToLog(stringPlay + " attempted to buy " + itemName + " in region " + reg + ", but it's not in any allowed item groups.");
+						return false;
+					}
+			    }
+			}
+	      }	
+			
+		if (DynamicEconomy.groupControl) {
+			if(Item.canBuy(player, itemName) == false) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You are not permitted to purchase &f" + itemName);
+				Utility.writeToLog(stringPlay + " tried to purchase " + itemName + " but was denied access.");
+				return false;
+			}
+		}
+			
 		if (itemName.equals("")) {
 			color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.itemDoesntExist);
 			Utility.writeToLog(stringPlay + " attempted to buy the non-existent item '" + itemName + "'");
@@ -110,7 +157,7 @@ public class Transaction implements Runnable {
 			return false;
 		}
 		
-		String bannedItem;
+		
 		
 		for (int x = 0; x < DynamicEconomy.bannedPurchaseItems.length; x++) {
 			bannedItem = Item.getTrueName(DynamicEconomy.bannedPurchaseItems[x]);
@@ -209,9 +256,8 @@ public class Transaction implements Runnable {
 		}
 		
 		
-		
-			
-		double tax = DynamicEconomy.purchasetax * totalCost;
+		double percentTax = tax * 100;		
+		tax *= totalCost;
 		totalCost += tax;
 		
 		if (DynamicEconomy.depositTax == true) {
@@ -265,9 +311,8 @@ public class Transaction implements Runnable {
 			
 			totalCost = Double.valueOf(decFormat.format(totalCost));
 			oldPrice = Double.valueOf(decFormat.format(oldPrice));
-			double percentTax = DynamicEconomy.purchasetax * 100;			
 			
-			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou bought " + purchaseAmount + " &2of " + itemName + "&f - " + percentTax + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalCost + " &2TOTAL" );
+			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou bought " + purchaseAmount + " &2of " + itemName + "&f + " + decFormat.format(percentTax) + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalCost + " &2TOTAL" );
 			
 			changeFormat.applyPattern("#.#####");
 			
@@ -288,7 +333,7 @@ public class Transaction implements Runnable {
 			
 				Utility.writeToLog(DynamicEconomy.prefix + " New price of " + itemName + " changed dynamically to " + newPrice + "(+" + change + ")");
 			}
-			itemConfig.set(itemName + ".time", Calendar.getInstance().getTimeInMillis());
+			itemConfig.set(itemName + ".buytime", Calendar.getInstance().getTimeInMillis());
 			
 			
 			int mat = 0;
@@ -395,7 +440,7 @@ public class Transaction implements Runnable {
 		
 		double percentTax;
 		
-		double tax;
+		double tax = DynamicEconomy.salestax;
 		
 		double dur;
 		String itemSearchID = "";
@@ -406,16 +451,45 @@ public class Transaction implements Runnable {
 		
 		ArrayList<String> banned = new ArrayList<String>();
 		
+		if (DynamicEconomy.useRegions) {
+			Location loc = player.getLocation();
+			int x = loc.getBlockX();
+			int y = loc.getBlockY();
+			int z = loc.getBlockZ();
+			
+			boolean withinRegion = regionUtils.withinRegion(x, y, z);
+			
+			if (withinRegion == false) {
+				color.sendColouredMessage(player, DynamicEconomy.prefix + Messages.notWithinRegion);
+				Utility.writeToLog(player.getName() + " called /buy outside of an economy region.");
+				return false;
+			}
+			
+			if (DynamicEconomy.useRegionFlags) {
+			
+				
+			  String reg = regionUtils.getRegion(x, y, z);
+			  String node = "regions." + reg + ".flags";;
+			  tax = DynamicEconomy.regionConfig.getDouble(node + ".salestax",0.0);
+			
+			}
+			
+		}
+		
+		
+		
 		for (int x = 0; x < DynamicEconomy.bannedSaleItems.length; x++) {
 			banned.add(DynamicEconomy.bannedSaleItems[x]);
 		}
 		
+		String bannedItem;
+		
+		Inv:
 		for(ItemStack item : contents) {
 			
 			if (item == null) {
 				continue;
 			}
-			
 			
 			dur = item.getDurability();
 			itemID = item.getTypeId();
@@ -438,6 +512,49 @@ public class Transaction implements Runnable {
 			itemID = Long.parseLong(itemInfo[6]);
 			saleAmount = item.getAmount();
 			
+			if (DynamicEconomy.groupControl) {
+				if(Item.canSell(player, itemName) == false) {
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You are not permitted to sell &f" + itemName);
+					Utility.writeToLog(player.getName() + " tried to sell " + itemName + " but was denied access.");
+					continue;
+				}
+			}
+			
+			if (DynamicEconomy.useRegions) {
+				Location loc = player.getLocation();
+				int x = loc.getBlockX();
+				int y = loc.getBlockY();
+				int z = loc.getBlockZ();
+				
+				if (DynamicEconomy.useRegionFlags) {
+				
+				String reg = regionUtils.getRegion(x, y, z);
+				String node = "regions." + reg + ".flags";;
+				
+				String[] regionBannedItems = DynamicEconomy.regionConfig.getString(node + ".banned-sale-items","").split(",");
+						
+				
+				for (int i = 0; i < regionBannedItems.length; i++) {
+					bannedItem = Item.getTrueName(regionBannedItems[i]);
+					if (bannedItem.equals(itemName)) {
+						color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.bannedInRegion);
+						Utility.writeToLog(player.getName() + " attempted to sell the banned item: " + bannedItem);
+						continue Inv;
+					}
+				}
+				
+				if (DynamicEconomy.groupControl) {
+					List<String> allowedGroups = DynamicEconomy.regionConfig.getStringList(node + ".allowed-sale-groups");
+					boolean inRegion = Item.isItemInRegionGroup(allowedGroups,itemName);
+				
+					if (inRegion == false) {
+						color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You cannot sell &f" + itemName + "&2 in this region.");
+						Utility.writeToLog(player.getName() + " attempted to sell " + itemName + " in region " + reg + ", but it's not in any allowed item groups.");
+						continue Inv;
+					}
+			    }
+			}
+			}
 			
 			oldPrice = itemPrice;
 			
@@ -506,7 +623,8 @@ public class Transaction implements Runnable {
 			
 		}
 			
-		tax = totalSale * DynamicEconomy.salestax;
+		percentTax = tax * 100;
+		tax *= totalSale;
 			
 			if (DynamicEconomy.depositTax == true) {
 				try {
@@ -532,10 +650,9 @@ public class Transaction implements Runnable {
 					totalSale = Double.valueOf(decFormat.format(totalSale));
 					
 					totalSale -= tax;
-					percentTax = DynamicEconomy.salestax * 100;	
 					
 					
-					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou sold&f your inventory &2 - " + percentTax + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalSale + " &2TOTAL" );
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou sold&f your inventory &2 - " + decFormat.format(percentTax) + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalSale + " &2TOTAL" );
 				
 				
 				Utility.writeToLog(DynamicEconomy.prefix + player.getName() + " sold his entire inventory for " + totalSale);
@@ -614,6 +731,9 @@ public boolean sell(Player player, String[] args) {
 			String spreadRequest = itemName + ".spread";
 			double itemSpread = itemConfig.getDouble(spreadRequest,itemVelocity);
 			
+			double tax = DynamicEconomy.salestax;
+			String bannedItem;
+			
 			if (DynamicEconomy.useRegions) {
 				Location loc = player.getLocation();
 				int x = loc.getBlockX();
@@ -628,6 +748,47 @@ public boolean sell(Player player, String[] args) {
 					return false;
 				}
 				
+				if (DynamicEconomy.useRegionFlags == true) {
+				
+				
+				String reg = regionUtils.getRegion(x, y, z);
+				String node = "regions." + reg + ".flags";;
+				tax = DynamicEconomy.regionConfig.getDouble(node + ".salestax");
+				
+				
+				String[] regionBannedItems = DynamicEconomy.regionConfig.getString(node + ".banned-sale-items","").split(",");
+						
+				
+				for (int i = 0; i < regionBannedItems.length; i++) {
+					bannedItem = Item.getTrueName(regionBannedItems[i]);
+					if (bannedItem.equals(itemName)) {
+						color.sendColouredMessage(player, DynamicEconomy.prefix +  Messages.bannedInRegion);
+						Utility.writeToLog(stringPlay + " attempted to sell the banned item: " + bannedItem);
+						return false;
+					}
+				}
+				
+				if (DynamicEconomy.groupControl) {
+					List<String> allowedGroups = DynamicEconomy.regionConfig.getStringList(node + ".allowed-sale-groups");
+					boolean inRegion = Item.isItemInRegionGroup(allowedGroups,itemName);
+				
+					if (inRegion == false) {
+						color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You cannot sell &f" + itemName + "&2 in this region.");
+						Utility.writeToLog(stringPlay + " attempted to sell " + itemName + " in region " + reg + ", but it's not in any allowed item groups.");
+						return false;
+					}
+			    }
+			  }
+			}
+			
+			
+			
+			if (DynamicEconomy.groupControl) {
+				if(Item.canSell(player, itemName) == false) {
+					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2You are not permitted to sell &f" + itemName);
+					Utility.writeToLog(stringPlay + " tried to sell " + itemName + " but was denied access.");
+					return false;
+				}
 			}
 			
 			
@@ -637,7 +798,6 @@ public boolean sell(Player player, String[] args) {
 			return false;
 		}
 		
-		String bannedItem;
 		
 		for (int x = 0; x < DynamicEconomy.bannedSaleItems.length; x++) {
 			bannedItem = Item.getTrueName(DynamicEconomy.bannedSaleItems[x]);
@@ -786,7 +946,8 @@ public boolean sell(Player player, String[] args) {
 			return false;
 		}
 		
-		double tax = DynamicEconomy.salestax * totalSale;
+		double percentTax = tax * 100;	
+		tax *= totalSale;
 		totalSale -= tax;
 		
 		if (DynamicEconomy.depositTax == true) {
@@ -827,7 +988,6 @@ public boolean sell(Player player, String[] args) {
 			double playerDur;
 			double indivsale;
 			
-			double percentTax;
 			
 			decFormat.applyPattern("#.##");
 			
@@ -864,11 +1024,11 @@ public boolean sell(Player player, String[] args) {
 					//color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou sold &2" + saleAmount + "&f of &2" + itemName + "&f - " + percentTax + "&2% tax = &f$" + totalSale + " &2TOTAL" );
 					Utility.writeToLog(stringPlay + " sold a '" + itemName + "' at " + percentDur + "% durability for " + indivsale);
 				}
-				percentTax = DynamicEconomy.salestax * 100;
+				percentTax = tax * 100;
 				tax = DynamicEconomy.salestax * totalSale;
 				totalSale -= tax;
 				totalSale = Double.valueOf(decFormat.format(totalSale));
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2TOTAL SALE (with " + percentTax + "% tax): &f" + DynamicEconomy.currencySymbol + totalSale );
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2TOTAL SALE (with " + decFormat.format(percentTax) + "% tax): &f" + DynamicEconomy.currencySymbol + totalSale );
 				
 			} else {
 				
@@ -910,10 +1070,9 @@ public boolean sell(Player player, String[] args) {
 				totalSale = Double.valueOf(decFormat.format(totalSale));
 				oldPrice = Double.valueOf(decFormat.format(oldPrice));
 				newPrice = Double.valueOf(decFormat.format(newPrice));
-				percentTax = DynamicEconomy.salestax * 100;	
 				
 				
-				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou sold &2" + saleAmount + "&f of &2" + itemName + "&f - " + percentTax + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalSale + " &2TOTAL" );
+				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&fYou sold &2" + saleAmount + "&f of &2" + itemName + "&f - " + decFormat.format(percentTax) + "&2% tax = &f" + DynamicEconomy.currencySymbol + totalSale + " &2TOTAL" );
 				Utility.writeToLog(stringPlay + " succesfully sold " + saleAmount + " of '" + itemName + "' for " + totalSale);
 			}
 			
@@ -935,6 +1094,7 @@ public boolean sell(Player player, String[] args) {
 			
 				Utility.writeToLog(DynamicEconomy.prefix + " New price of " + itemName + " changed dynamically to " + newPrice + "(" + change + ")");
 			}
+			itemConfig.set(itemName + ".selltime", Calendar.getInstance().getTimeInMillis());
 			
 			//inv.removeFromInventory(player, itemID, saleAmount);
 			
@@ -1055,27 +1215,67 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
 	
 	public void setTaxes(Player player, String[] args) {
 		String stringPlay = player.getName();
-		if ((args.length > 2) || (args.length < 2)) {
- 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Wrong Command Usage. &f/settax [sale/purchase] [amount]");
+		if (args.length != 3) {
+ 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Wrong Command Usage. &f/settax [region] [sale|purchase] [amount]");
  			Utility.writeToLog(stringPlay + " incorrectly called /settax");
  		} else {
- 			if (args[0].equalsIgnoreCase("sale")) {
- 				try {
- 					config.set("salestax", Double.parseDouble(args[1]));
- 					config.save(confFile);
- 				} catch (Exception e) {
- 					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2 " + args[1] + "&f% is an invalid amount");
- 				}
- 			} else if (args[0].equalsIgnoreCase("purchase")) {
- 				try {
- 					config.set("purchasetax", Double.parseDouble(args[1]));
- 					config.save(confFile);
- 				} catch (Exception e) {
- 					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2 " + args[1] + "&f% is an invalid amount");
- 				}
+ 			String region = args[0].toUpperCase();
+ 			Double tax = 0.0;
+ 			try {
+ 				tax = Double.parseDouble(args[2]);
+ 			} catch (Exception e) {
+ 				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2 " + args[2] + "&f% is an invalid amount.");
+ 	 			return;
  			}
- 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2" + args[0] + "tax set to &f" + (Double.parseDouble(args[1])*100) + "%");
- 			Utility.writeToLog(stringPlay + " set " + args[0] + "tax to " + args[1]);
+ 			
+ 			if ((args[1].equalsIgnoreCase("sale") == false) && (args[1].equalsIgnoreCase("purchase") == false)) {
+ 				color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2This is an invalid tax name. Use either &fsale or &fpurchase");
+ 	 			Utility.writeToLog(stringPlay + " tried to set tax '" + args[1] + "', which doesn't exist.");
+ 	 			return;
+ 			}
+ 			
+ 			FileConfiguration conf;
+ 			File file;
+ 			
+ 			if (region.equalsIgnoreCase("GLOBAL")) {
+ 				if (args[1].equalsIgnoreCase("sale")) {
+ 					config.set("salestax", tax);
+ 				} else if (args[1].equalsIgnoreCase("purchase")) {
+ 					config.set("purchasetax", tax);
+ 				}
+ 				conf = config;
+ 				file = confFile;
+ 			} else {
+ 				
+ 				if(DynamicEconomy.regionConfig.contains("regions." + region) == false) {
+ 					color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2Region &f" + region + "&2 doesn't exist.");
+ 	 	 			Utility.writeToLog(stringPlay + " tried to set tax of region '" + region + "', which doesn't exist.");
+ 	 	 			return;
+ 				}
+ 				
+ 				
+ 				String node = "regions." + region + ".flags";
+ 				if (args[1].equalsIgnoreCase("sale")) {
+ 					node += ".salestax";
+ 				} else if (args[1].equalsIgnoreCase("purchase")) {
+ 					node += ".purchasetax";
+ 				}
+ 				DynamicEconomy.regionConfig.set(node, tax);
+ 				conf = DynamicEconomy.regionConfig;
+ 				file = DynamicEconomy.regionFile;
+ 			}
+ 			
+ 			try {
+ 				conf.save(file);
+ 			} catch (Exception e) {
+ 				log.info("[DynamicEconomy] Error saving config in /settax");
+ 				e.printStackTrace();
+ 			}
+ 			
+ 			
+ 			decFormat.applyPattern("###.###");
+ 			color.sendColouredMessage(player, DynamicEconomy.prefix +  "&2" + args[0] + " " + args[1] + "tax set to &f" + decFormat.format(tax*100) + "%");
+ 			Utility.writeToLog(stringPlay + " set " + region + " " + args[1] + "tax to " + decFormat.format(tax * 100));
  			DynamicEconomy.relConfig();
  		}
 	}
@@ -1089,7 +1289,7 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
 		
 		Set<String> itemsSet = itemConfig.getKeys(false);
 		//ConfigurationSection root = itemConfig.getConfigurationSection("STONE").getParent();
-			
+		
 		//log.info(root.toString());
 		
 		Object[] itemsObj = (itemsSet.toArray());
@@ -1099,17 +1299,26 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
 			items[i] = itemsObj[i].toString();
 		}
 		
-		long time;
+		long buyTime;
+		long sellTime;
 		double price;
-		long period = DynamicEconomy.overTimePriceDecayPeriod * 60 * 1000;
+		long period = DynamicEconomy.overTimePriceChangePeriod * 60 * 1000;
+		
+		double floor;
+		double ceiling;
 		
 		for (int x = 0; x < items.length; x++) {
-			time = itemConfig.getLong(items[x] + ".time");
-			long difference = Calendar.getInstance().getInstance().getTimeInMillis() - time;
+			buyTime = itemConfig.getLong(items[x] + ".buytime");
+			sellTime = itemConfig.getLong(items[x] + ".selltime");
+			long buyDifference = Calendar.getInstance().getInstance().getTimeInMillis() - buyTime;
+			long sellDifference = Calendar.getInstance().getInstance().getTimeInMillis() - sellTime;
 			
-			if ((difference >= period) && (time != 0)) {
-				price = itemConfig.getDouble(items[x] + ".price");
-				double oldPrice = price;
+			price = itemConfig.getDouble(items[x] + ".price");
+			floor = itemConfig.getDouble(items[x] + ".floor");
+			ceiling = itemConfig.getDouble(items[x] + ".ceiling");
+			
+			if (DynamicEconomy.enableOverTimePriceDecay) {
+			if ((buyDifference >= period) && (buyTime != 0)) {
 				price = price - (price * DynamicEconomy.overTimePriceDecayPercent);
 				itemConfig.set(items[x] + ".price",price);
 				
@@ -1123,15 +1332,36 @@ public static void removeInventoryItems(Inventory inv, Material type, int amount
 						}
 					} 
 				}
-				itemConfig.set(items[x] + ".time",Calendar.getInstance().getTimeInMillis());
-				
-				try {
-					itemConfig.save(itemsFile);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				
+				itemConfig.set(items[x] + ".buytime",Calendar.getInstance().getTimeInMillis());
 			}
+		}
+			
+			if (DynamicEconomy.enableOverTimePriceInflation) {
+				if ((sellDifference >= period) && (sellTime != 0)) {
+					price = price + (price * DynamicEconomy.overTimePriceInflationPercent);
+					itemConfig.set(items[x] + ".price",price);
+					
+					decFormat.applyPattern("#.##");
+					
+					if (DynamicEconomy.globalNotify) {
+						for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+							if (!(Utility.isQuiet(p))) {
+								price = Double.valueOf(decFormat.format(price));
+								color.sendColouredMessage(p, DynamicEconomy.prefix +  "&2New Price of &f" + items[x] + "&2 is &f" + DynamicEconomy.currencySymbol + price + "&2 ( +" + (DynamicEconomy.overTimePriceInflationPercent * 100 ) + "% )");
+							}
+						} 
+					}
+					itemConfig.set(items[x] + ".selltime",Calendar.getInstance().getTimeInMillis());
+				}
+			}
+			
+			
+		}
+		
+		try {
+			itemConfig.save(itemsFile);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		
